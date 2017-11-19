@@ -7,7 +7,7 @@
 #include "Mesh.hpp"
 #include "Vertex.hpp"
 #include "Model.hpp"
-
+#include "Shader.hpp"
 
 const char* vertex_shader =
   "#version 440\n"
@@ -26,7 +26,7 @@ const char* fragment_shader =
 
 int main() {
   Display display(640, 480, "Test Model class");
-  Model model("../res/models/nano/nanosuit.obj");
+  Model model("res/models/nano/nanosuit.obj");
 
   /* OTHER STUFF GOES HERE NEXT */
   GLfloat points[] = {

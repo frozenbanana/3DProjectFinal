@@ -3,12 +3,18 @@
 #include <iostream>
 
 Display::Display(int width, int height, const std::string& title) {
-	// start GL context and O/S window using the GLFW helper library
+  // start GL context and O/S window using the GLFW helper library
   if (!glfwInit()) {
     std::cout << "ERROR: could not start GLFW3" << std::endl;
     return;
   }
-
+  
+  // Set appropriate openGL version
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  
+  // Create a window
   m_window = glfwCreateWindow(640, 480, title.c_str(), NULL, NULL);
   if (!m_window) {
     std::cout << "ERROR: could not open window with GLFW3\n" << std::endl;
