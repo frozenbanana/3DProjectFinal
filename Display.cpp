@@ -1,49 +1,45 @@
-#include "Display.h"
+#include "Display.hpp"
 #include <GL/glew.h>
 #include <iostream>
 
 Display::Display(int width, int height, const std::string& title) {
-	SDL_Init(SDL_INIT_EVERYTHING);
+	// start GL context and O/S window using the GLFW helper library
+  if (!glfwInit()) {
+    std::cout << "ERROR: could not start GLFW3" << std::endl;
+    return;
+  }
 
-	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-	SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 32);
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);	// Gives OpenGL one buffer to write to and the window another to display
-													// Avoid displaying something drawing in progress.
+  m_window = glfwCreateWindow(640, 480, title.c_str(), NULL, NULL);
+  if (!m_window) {
+    std::cout << "ERROR: could not open window with GLFW3\n" << std::endl;
+    glfwTerminate();
+    return;
+  }
 
-	this->m_window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL);
-	this->m_glContext = SDL_GL_CreateContext(this->m_window);
+  glfwMakeContextCurrent(m_window);
 
-	GLenum status = glewInit();
+  // start GLEW extension handler
+  glewExperimental = GL_TRUE;
+  glewInit();
 
-	if (status != GLEW_OK)
-	{
-		std::cerr << "Glew failed to initialize!" << std::endl;
-	}
+  // get version info
+  const GLubyte* renderer = glGetString(GL_RENDERER); // get renderer string
+  const GLubyte* version = glGetString(GL_VERSION); // version as a string
+  std::cout << "Renderer: " << renderer << std::endl;
+  std::cout << "Version: " << version << std::endl;
 
-	m_isClosed = false;
-
-	glEnable(GL_DEPTH_TEST);
-
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+  // tell GL to only draw onto a pixel if the shape is closer to the viewer
+  glEnable(GL_DEPTH_TEST); // enable depth-testing
+  glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 }
 
 
 void Display::Update() {
-	SDL_GL_SwapWindow(this->m_window);
-	SDL_Event e;
-
-	while (SDL_PollEvent(&e))
-	{
-		if (e.type == SDL_QUIT)
-		{
-			this->m_isClosed = true;
-		}
-	}
+  glfwSwapBuffers(m_window);
+  glfwPollEvents();
+  if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    m_isClosed = true;
+  }
 }
 
 void Display::Clear(float r, float g, float b, float a) {
@@ -56,7 +52,5 @@ bool Display::IsClosed() {
 }
 
 Display::~Display() {
-	SDL_GL_DeleteContext(this->m_glContext);
-	SDL_DestroyWindow(this->m_window);
-	SDL_Quit();
+  glfwTerminate();
 }

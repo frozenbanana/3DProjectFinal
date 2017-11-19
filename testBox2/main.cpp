@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include <iostream>
 #include "Display.hpp"
+#include "Mesh.hpp"
+#include "Vertex.hpp"
+#include "Model.hpp"
+
 
 const char* vertex_shader =
   "#version 440\n"
@@ -21,7 +25,8 @@ const char* fragment_shader =
 
 
 int main() {
-  Display display(640, 480, "Test Display class");
+  Display display(640, 480, "Test Model class");
+  Model model("../res/models/nano/nanosuit.obj");
 
   /* OTHER STUFF GOES HERE NEXT */
   GLfloat points[] = {
@@ -76,13 +81,19 @@ int main() {
     std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
   }
 
+  std::vector<GLuint> vaos = model.GetVAOs();
+
   while(!display.IsClosed()) {
     // wipe the drawing surface clear
     display.Clear(0.0f, 0.20f, 0.1f, 1.0f);
     glUseProgram(shader_program);
-    glBindVertexArray(vao);
+    // glBindVertexArray(vao);
+    for (int i = 0; i < model.GetModelMeshes().size(); i++) {
+    glBindVertexArray(vaos[i]);
     // draw points 0-3 from the currently bound VAO with current in-use shader
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    // glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, model.GetModelMeshes()[i].m_indices.size(), GL_UNSIGNED_INT, 0);
+    }
     // update other events like input handling
     // put the stuff we've been drawing onto the display
     display.Update();

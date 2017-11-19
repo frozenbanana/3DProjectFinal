@@ -1,5 +1,13 @@
+// testbox2
+#include <GL/glew.h> // include GLEW and new version of GL on Windows
+#include <GLFW/glfw3.h> // GLFW helper library
+#include <stdio.h>
 #include <iostream>
-#include "Display.h"
+#include "Display.hpp"
+#include "Mesh.hpp"
+#include "Vertex.hpp"
+#include "Model.hpp"
+
 
 const char* vertex_shader =
   "#version 440\n"
@@ -10,14 +18,17 @@ const char* vertex_shader =
 
 const char* fragment_shader =
   "#version 440\n"
+  "out vec4 FragColor;"
   "void main() {"
-  "  gl_FragColor = vec4(0.5, 0.0, 0.5, 1.0);"
+  "  FragColor = vec4(0.5, 0.0, 0.5, 1.0);"
   "}";
 
-int main()
-{
-  Display aDisplay(800, 600, "Hello Test");
 
+int main() {
+  Display display(640, 480, "Test Model class");
+  Model model("../res/models/nano/nanosuit.obj");
+
+  /* OTHER STUFF GOES HERE NEXT */
   GLfloat points[] = {
     0.0f,  0.5f,  0.0f,
     0.5f, -0.5f,  0.0f,
@@ -70,19 +81,23 @@ int main()
     std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
   }
 
-  while(!aDisplay.IsClosed())
-    {
-      aDisplay.Clear(0.0f, 0.15f, 0.3f, 1.0f);
+  std::vector<GLuint> vaos = model.GetVAOs();
 
-      glUseProgram(shader_program);
-      glBindVertexArray(vao);
-
-      glDrawArrays(GL_TRIANGLES, 0, 3);
-
-      aDisplay.Update();
+  while(!display.IsClosed()) {
+    // wipe the drawing surface clear
+    display.Clear(0.0f, 0.20f, 0.1f, 1.0f);
+    glUseProgram(shader_program);
+    // glBindVertexArray(vao);
+    for (int i = 0; i < model.GetModelMeshes().size(); i++) {
+    glBindVertexArray(vaos[i]);
+    // draw points 0-3 from the currently bound VAO with current in-use shader
+    // glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, model.GetModelMeshes()[i].m_indices.size(), GL_UNSIGNED_INT, 0);
     }
+    // update other events like input handling
+    // put the stuff we've been drawing onto the display
+    display.Update();
+  }
 
-  glDeleteShader(vs);
-  glDeleteShader(fs);
   return 0;
 }
