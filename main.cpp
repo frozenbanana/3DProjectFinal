@@ -34,7 +34,7 @@ int main() {
     0.5f, -0.5f,  0.0f,
     -0.5f, -0.5f,  0.0f
   };
-
+  
   GLuint vbo = 0;
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
