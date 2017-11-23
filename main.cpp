@@ -25,7 +25,8 @@ const char* fragment_shader =
 
 
 int main() {
-  Display display(640, 480, "Test Model class");
+  Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
+  Display display(640, 480, "Test Model class", &camera);
   Model model("res/models/nano/nanosuit.obj");
 
   /* OTHER STUFF GOES HERE NEXT */
