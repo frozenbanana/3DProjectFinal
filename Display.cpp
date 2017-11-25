@@ -1,6 +1,8 @@
 #include "Display.hpp"
 #include <GL/glew.h>
 #include <iostream>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 bool g_firstMouse = true;
 GLfloat g_lastX = 640 / 2.0;
@@ -75,6 +77,25 @@ void Display::Update() {
   if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     m_isClosed = true;
   }
+
+
+  glm::mat4 modelMatrix = glm::mat4(1.0f);
+  glm::mat4 viewMatrix = m_camPtr->GetViewMatrix();
+  glm::mat4 persMatrix = m_camPtr->GetPersMatrix();
+  m_shaderPtr->UpdateMatrix(modelMatrix, 0);
+  m_shaderPtr->UpdateMatrix(viewMatrix, 1);
+  m_shaderPtr->UpdateMatrix(persMatrix, 2);
+}
+
+void Display::Draw(ModelData& modelData) {
+  glUseProgram(m_shaderPtr->GetProgram());
+
+  m_shaderPtr->UpdateMatrix(modelData.s_modelMat, 0);
+  for (GLuint i = 0; i < modelData.s_meshIndices.size(); i++) {
+    glBindVertexArray(modelData.s_VAOs[i]);
+    // draw points 0-3 from the currently bound VAO with current in-use shader
+    glDrawElements(GL_TRIANGLES, modelData.s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
+  }
 }
 
 void Display::Clear(float r, float g, float b, float a) {
@@ -82,12 +103,16 @@ void Display::Clear(float r, float g, float b, float a) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-bool Display::IsClosed() {
-	return this->m_isClosed;
+void Display::SetShader(Shader* shaderPtr) {
+  m_shaderPtr = shaderPtr;
+  // Bind shader to display
+  m_shaderPtr->GetUniformMatrixLoc("model");
+  m_shaderPtr->GetUniformMatrixLoc("view");
+  m_shaderPtr->GetUniformMatrixLoc("perspective");
 }
 
-void Display::DoMovement() {
-  // Camera controls
+bool Display::IsClosed() {
+	return this->m_isClosed;
 }
 
 Display::~Display() {
@@ -111,6 +136,7 @@ void KeyCallback(GLFWwindow* winPtr, int key, int scan, int act, int mode) {
         g_key_data[key] = false;
       }
   }
+
   Display* d = (Display*)glfwGetWindowUserPointer(winPtr);
 	if (g_key_data[GLFW_KEY_W])
 		d->m_camPtr->ProcessKeyboard(FORWARD, d->m_deltaTime);

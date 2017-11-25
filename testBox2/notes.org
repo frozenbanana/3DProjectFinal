@@ -1,4 +1,0 @@
-* Tasks
-** TODO 
-   [2017-11-19 sön]
-   [[file:~/Programming/3DProjectFinal/testBox2/main.cpp][file:~/Programming/3DProjectFinal/testBox2/main.cpp]]

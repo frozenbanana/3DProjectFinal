@@ -14,15 +14,16 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-
+#include "Transform.hpp"
 #include "Mesh.hpp"
+#include "GLOBALS.hpp"
 
-
-class Model
+class Model : public Transform
 {
 private:
   std::vector<Mesh> m_meshes;
   std::string m_directory;
+  Transform m_transform;
   std::vector<Texture> m_textures_loaded;
   std::vector<GLuint> m_vaos;
   std::vector<GLuint> m_vbos;
@@ -31,12 +32,15 @@ private:
   void ProcessNode(aiNode* node, const aiScene* scene);
   Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
   std::vector<Texture> LoadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName);
-public:
-  Model(std::string path);
   std::vector<GLuint> GetVAOs();
   std::vector<GLuint> GetVBOs();
   std::vector<GLuint> GetEBOs();
+  std::vector<std::vector<GLuint> > GetModelMeshesIndices();
+  ModelData m_modelData;
+public:
+  Model(std::string path);
   std::vector<Mesh> GetModelMeshes();
+  ModelData& GetModelData();
   ~Model();
 };
 

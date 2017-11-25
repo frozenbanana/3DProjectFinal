@@ -3,7 +3,7 @@
 
 GLint TextureFromFile(const char* path, std::string directory);
 
-Model::Model(std::string path) {
+Model::Model(std::string path) : Transform() {
   LoadModel(path.c_str());
 }
 
@@ -79,7 +79,7 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene){
     for (GLuint i = 0; i < mesh->mNumFaces; i++) {
       aiFace face = mesh->mFaces[i];
       // get all indices from the triangle face and store them
-      for (int j = 0; j < face.mNumIndices; j++) {
+      for (GLuint j = 0; j < face.mNumIndices; j++) {
         indices.push_back(face.mIndices[j]);
       }
   }
@@ -184,6 +184,21 @@ std::vector<GLuint> Model::GetEBOs() {
   return m_ebos;
 }
 
+std::vector<std::vector<GLuint> > Model::GetModelMeshesIndices() {
+  std::vector<std::vector<GLuint> > retMeshesIndices;
+  for(GLuint i = 0; i < m_meshes.size(); i++) {
+    retMeshesIndices.push_back(m_meshes[i].m_indices);
+  }
+  return retMeshesIndices;
+}
+
 std::vector<Mesh> Model::GetModelMeshes() { return m_meshes; }
+
+ModelData& Model::GetModelData() {
+  m_modelData.s_VAOs = GetVAOs();
+  m_modelData.s_meshIndices = GetModelMeshesIndices();
+  m_modelData.s_modelMat = GetModelMatrix();
+  return m_modelData;
+}
 
 Model::~Model() {}

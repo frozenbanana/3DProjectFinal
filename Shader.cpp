@@ -73,6 +73,21 @@ void Shader::MakeShader(GLuint id, const char* path) {
   }
 }
 
+void Shader::GetUniformMatrixLoc(std::string uniformName) {
+  GLint uniformLoc = glGetUniformLocation(m_program, uniformName.c_str());
+  if(uniformLoc == (GLint)-1) {
+    std::cout << "ERROR::SHADER::" << uniformName << "::UNIFORM_NOT_FOUND" << std::endl;
+  }
+  else {
+    std::cout << uniformName << "found\n";
+    m_matrixUniforms.push_back(uniformLoc);
+  }
+}
+
+void Shader::UpdateMatrix(glm::mat4 matrix, GLuint index) {
+  glUniformMatrix4fv(m_matrixUniforms[index], 1, GL_FALSE, glm::value_ptr(matrix));
+}
+
 void Shader::LinkProgram() {
   glLinkProgram(this->m_program);
 

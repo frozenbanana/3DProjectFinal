@@ -1,9 +1,9 @@
 LIBS= -lGLEW -lSOIL -lassimp -lGL -lGLU -lglfw -lX11 -lXxf86vm -lXrandr -lpthread -lXi
 CC= g++
-CFLAGS = -Wall
+CFLAGS = -g -Wall
 
 make: Display.o Shader.o Model.o Mesh.o Camera.o
-		g++ main.cpp -o run $^ $(LIBS)
+		$(CC) $(CFLAGS) main.cpp -o run $^ $(LIBS)
 
 Display.o: Display.cpp
 		$(CC) $(CFLAGS) Display.cpp -c
