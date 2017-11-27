@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include <vector>
 #include <glm/glm.hpp>
+#include "Mesh.hpp"
 
 //Constants
 const int WINDOW_HEIGHT = 640;
