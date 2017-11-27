@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+//Global------------------------------------------------------------------------
+
 bool g_firstMouse = true;
 GLfloat g_lastX = 640 / 2.0;
 GLfloat g_lastY = 480 / 2.0;
@@ -14,7 +16,42 @@ GLfloat g_pitch = 0.0f;
 //Array in which the data for key presses is stored (used in key_callback())
 bool g_key_data[1024];
 
+//Private-----------------------------------------------------------------------
+
+void Display::FixLightUniforms(std::string pnt_str, std::string dir_str, std::string spt_str, int n_pnt, int n_dir, int n_spt) {
+  //Try to allocate space in shader for n lights of a type
+  for (int i = 0; i < n_pnt; i++) {
+    this->m_shaderPtr->FindUniformPntLightLoc(pnt_str, i); //SEND IN NAMES
+  }
+
+  for (int i = 0; i < n_dir; i++) {
+    this->m_shaderPtr->FindUniformDirLightLoc(dir_str, i);
+  }
+
+  for (int i = 0; i < n_spt; i++) {
+    this->m_shaderPtr->FindUniformSptLightLoc(spt_str, i);
+  }
+}
+
+void Display::UploadLightPack(LightPack& lPack) {
+  //If there are lights saved in the vector pass them to shader and upload them
+  for (GLuint i = 0; i < lPack.s_pnt_lights.size(); i++) {
+    this->m_shaderPtr->UploadPntLight(lPack.s_pnt_lights[i], i);
+  }
+
+  for (GLuint i = 0; i < lPack.s_dir_lights.size(); i++) {
+    this->m_shaderPtr->UploadDirLight(lPack.s_dir_lights[i], i);
+  }
+
+  for (GLuint i = 0; i < lPack.s_spt_lights.size(); i++) {
+    this->m_shaderPtr->UploadSptLight(lPack.s_spt_lights[i], i);
+  }
+}
+
+//Public------------------------------------------------------------------------
+
 Display::Display(int width, int height, const std::string& title, Camera* camPtr) {
+
   // start GL context and O/S window using the GLFW helper library
   if (!glfwInit()) {
     std::cout << "ERROR: could not start GLFW3" << std::endl;
@@ -65,7 +102,6 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 }
 
-
 void Display::Update() {
   glfwSwapBuffers(m_window);
   glfwPollEvents();
@@ -82,15 +118,17 @@ void Display::Update() {
   glm::mat4 modelMatrix = glm::mat4(1.0f);
   glm::mat4 viewMatrix = m_camPtr->GetViewMatrix();
   glm::mat4 persMatrix = m_camPtr->GetPersMatrix();
-  m_shaderPtr->UpdateMatrix(modelMatrix, 0);
-  m_shaderPtr->UpdateMatrix(viewMatrix, 1);
-  m_shaderPtr->UpdateMatrix(persMatrix, 2);
+  m_shaderPtr->UploadMatrix(modelMatrix, 0);
+  m_shaderPtr->UploadMatrix(viewMatrix, 1);
+  m_shaderPtr->UploadMatrix(persMatrix, 2);
 }
 
-void Display::Draw(ModelData& modelData) {
+void Display::Draw(ModelData& modelData, LightPack& lPack) {
   glUseProgram(m_shaderPtr->GetProgram());
 
-  m_shaderPtr->UpdateMatrix(modelData.s_modelMat, 0);
+  this->UploadLightPack(lPack);
+
+  m_shaderPtr->UploadMatrix(modelData.s_modelMat, 0);
   for (GLuint i = 0; i < modelData.s_meshIndices.size(); i++) {
     glBindVertexArray(modelData.s_VAOs[i]);
     // draw points 0-3 from the currently bound VAO with current in-use shader
@@ -104,11 +142,17 @@ void Display::Clear(float r, float g, float b, float a) {
 }
 
 void Display::SetShader(Shader* shaderPtr) {
+  //NTS: Function specific for this program
+
   m_shaderPtr = shaderPtr;
-  // Bind shader to display
-  m_shaderPtr->GetUniformMatrixLoc("model");
-  m_shaderPtr->GetUniformMatrixLoc("view");
-  m_shaderPtr->GetUniformMatrixLoc("perspective");
+
+  //Locate space in shader for matrices
+  m_shaderPtr->FindUniformMatrixLoc("model");
+  m_shaderPtr->FindUniformMatrixLoc("view");
+  m_shaderPtr->FindUniformMatrixLoc("perspective");
+
+  //Locate space in shader for lights
+  this->FixLightUniforms("pnt_lights", "dir_lights", "spt_lights", 1, 0, 0);
 }
 
 bool Display::IsClosed() {
@@ -118,7 +162,6 @@ bool Display::IsClosed() {
 Display::~Display() {
   glfwTerminate();
 }
-
 
 void KeyCallback(GLFWwindow* winPtr, int key, int scan, int act, int mode) {
 	if (key == GLFW_KEY_ESCAPE && act == GLFW_PRESS) {
@@ -167,5 +210,3 @@ void MouseCallback(GLFWwindow* winPtr, double xPos, double yPos) {
   Display* d = (Display*)glfwGetWindowUserPointer(winPtr);
   d->m_camPtr->ProcessMouseMovement(g_xoffset, g_yoffset);
 }
-
-

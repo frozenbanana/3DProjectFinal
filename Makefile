@@ -1,8 +1,8 @@
 LIBS= -lGLEW -lSOIL -lassimp -lGL -lGLU -lglfw -lX11 -lXxf86vm -lXrandr -lpthread -lXi
 CC= g++
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -std=c++11
 
-make: Display.o Shader.o Model.o Mesh.o Camera.o
+make: Display.o Shader.o Model.o Mesh.o Camera.o LightHandler.o Light.o PntLight.o DirLight.o SptLight.o 
 		$(CC) $(CFLAGS) main.cpp -o run $^ $(LIBS)
 
 Display.o: Display.cpp
@@ -15,11 +15,25 @@ Model.o: Model.cpp
 		$(CC) $(CFLAGS) Model.cpp -c
 
 Mesh.o: Mesh.cpp
-		$(CC) $(CFLAGS) Mesh.cpp -m
+		$(CC) $(CFLAGS) Mesh.cpp -c
 
 Camera.o: Camera.cpp
 		$(CC) $(CFLAGS) Camera.cpp -c
 
+LightHandler.o: LightHandler.cpp
+		$(CC) $(CFLAGS) LightHandler.cpp -c
+
+Light.o: Light.cpp
+		$(CC) $(CFLAGS) Light.cpp -c
+
+PntLight.o: PntLight.cpp
+		$(CC) $(CFLAGS) PntLight.cpp -c
+
+DirLight.o: DirLight.cpp
+		$(CC) $(CFLAGS) DirLight.cpp -c
+
+SptLight.o: SptLight.cpp
+		$(CC) $(CFLAGS) SptLight.cpp -c
 clean:
 		-rm *.o
 		-rm run

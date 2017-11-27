@@ -2,13 +2,28 @@
 #include <GLFW/glfw3.h> // GLFW helper library
 #include <stdio.h>
 #include <iostream>
+
+//View Domain
 #include "Display.hpp"
+#include "Shader.hpp"
+
+//Model Domain
 #include "Mesh.hpp"
 #include "Vertex.hpp"
 #include "Model.hpp"
+<<<<<<< HEAD
 #include "Shader.hpp"
 #include "Frustum.hpp"
+=======
+
+#include "LightHandler.hpp"
+
+//Trickster Domain
+>>>>>>> 529c64269eae889871fb5b850a5ef441a0668898
 #include "GLOBALS.hpp"
+#include "PackageStructs.hpp"
+
+
 
 const char* vertex_shader = "res/shaders/base_vs.glsl";
 const char* fragment_shader = "res/shaders/base_fs.glsl";
@@ -20,7 +35,7 @@ int main() {
   Camera camera(glm::vec3(0.0f, 0.0f, -5.0f));
   Display display(WINDOW_HEIGHT, WINDOW_WIDTH, "Test Model class", &camera);
   Shader shader(vertex_shader, fragment_shader);
-  display.SetShader(&shader);
+  display.SetShader(&shader);   //Function also fixes uniforms for 3 matrices an a bunch of lights
 
   // SETUP MODELS
   Model model("res/models/nano/nanosuit.obj");
@@ -36,13 +51,25 @@ int main() {
   glm::mat4 viewPers = camera.GetViewMatrix() * camera.GetPersMatrix();
   Frustum frustum(viewPers);
 
+  // SETUP lights
+  LightHandler lightHandler;
+  lightHandler.AddPntLight(glm::vec3(0.0f, 10.0f, 0.0f), COLOR_BLUE, COLOR_CYAN, COLOR_WHITE);
+
+  //PACKAGE LIGHT DATA TO DISPLAY (STATIC)
+  LightPack lPack = lightHandler.GetLightPack();
+
   // DRAW LOOP
   while(!display.IsClosed()) {
     display.Clear(0.0f, 0.20f, 0.1f, 1.0f);
+<<<<<<< HEAD
     frustum.SetFrustum(camera.GetViewMatrix() * camera.GetPersMatrix());
     modifiedModeldata1 = CullMeshes(frustum, modelData1);
     display.Draw(modifiedModeldata1);
     display.Draw(modelData2);
+=======
+    //display.Draw(modelData);
+    display.Draw(modelData2, lPack);
+>>>>>>> 529c64269eae889871fb5b850a5ef441a0668898
     display.Update();
   }
 
