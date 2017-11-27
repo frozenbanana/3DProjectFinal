@@ -194,6 +194,16 @@ std::vector<std::vector<GLuint> > Model::GetModelMeshesIndices() {
 
 std::vector<Mesh> Model::GetModelMeshes() { return m_meshes; }
 
+std::vector<std::vector<glm::vec3> > Model::GetModelMeshesPos() {
+  std::vector<std::vector<glm::vec3> > retMeshesPos;
+  for(GLuint i = 0; i < m_meshes.size(); i++) {                 // Loop through each mesh
+    for(GLuint j = 0; j < m_meshes[i].m_vertices.size(); j++) { // Loop through each vertex in mesh
+      retMeshesPos[i].push_back(m_meshes[i].m_vertices[j].GetPos());  // Package vertices.pos in 2D vector
+    }
+  }
+  return retMeshesPos;
+}
+
 ModelData& Model::GetModelData() {
   m_modelData.s_VAOs = GetVAOs();
   m_modelData.s_meshIndices = GetModelMeshesIndices();

@@ -3,6 +3,7 @@
 #include <GL/glew.h> 
 #include <vector>
 #include <glm/glm.hpp>
+#include "Mesh.hpp"
 
 const int WINDOW_HEIGHT = 640;
 const int WINDOW_WIDTH = 480;
@@ -11,6 +12,7 @@ const GLfloat PI = 3.1415926535f;
 struct ModelData {
   std::vector<GLuint> s_VAOs;
   std::vector<std::vector<GLuint> > s_meshIndices;
+  std::vector<std::vector<glm::vec3> > s_meshPos;
   glm::mat4 s_modelMat;
 };
 

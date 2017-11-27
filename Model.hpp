@@ -36,6 +36,7 @@ private:
   std::vector<GLuint> GetVBOs();
   std::vector<GLuint> GetEBOs();
   std::vector<std::vector<GLuint> > GetModelMeshesIndices();
+  std::vector<std::vector<glm::vec3> > GetModelMeshesPos();
   ModelData m_modelData;
 public:
   Model(std::string path);
