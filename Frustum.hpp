@@ -19,6 +19,10 @@ private:
   Plane m_planes[NUM_PLANES];
 public:
   Frustum(glm::mat4 matrix) {
+    SetFrustum(matrix);
+  }
+
+ void SetFrustum(glm::mat4 matrix) {
     // Near clipping plane
     m_planes[NEAR].m_n.x = matrix[0][2];
     m_planes[NEAR].m_n.y = matrix[1][2];

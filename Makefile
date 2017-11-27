@@ -19,3 +19,7 @@ Mesh.o: Mesh.cpp
 
 Camera.o: Camera.cpp
 		$(CC) $(CFLAGS) Camera.cpp -c
+
+clean:
+		-rm *.o
+		-rm run
