@@ -7,6 +7,7 @@
 #include "Vertex.hpp"
 #include "Model.hpp"
 #include "Shader.hpp"
+#include "Frustum.hpp"
 #include "GLOBALS.hpp"
 
 const char* vertex_shader = "res/shaders/base_vs.glsl";
@@ -28,6 +29,23 @@ int main() {
   // PACKAGE MODEL DATA TO DISPLAY (STATIC)
   ModelData modelData = model.GetModelData();
   ModelData modelData2 = model2.GetModelData();
+
+  // Frustum culling
+  bool meshIsInside = false;
+  glm::mat4 viewPers = camera.GetViewMatrix() * camera.GetPersMatrix();
+  Frustum frustum(viewPers);
+
+  for(GLuint i = 0; i < modelData.s_meshPos.size(); i++) {
+    // Check every point in current mesh
+    for(GLuint j = 0; j < modelData.s_meshPos[i].size() && !meshIsInside; j++) {
+      meshIsInside = frustum.InsideFrustrum(modelData.s_meshPos[i][j]);
+    }
+    // if no point in mesh is in frustum it remove it from stuff to be rendered
+    if(!meshIsInside) {
+      modelData.s_VAOs.erase(modelData.s_VAOs.begin() + i);
+      modelData.s_meshIndices.erase(modelData.s_meshIndices.begin() + i);
+    }
+  }
 
   // DRAW LOOP
   while(!display.IsClosed()) {
