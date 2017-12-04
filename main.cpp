@@ -7,19 +7,16 @@
 #include "Display.hpp"
 #include "Shader.hpp"
 
+#include "Frustum.hpp"
+
 //Model Domain
 #include "Mesh.hpp"
 #include "Vertex.hpp"
 #include "Model.hpp"
-<<<<<<< HEAD
-#include "Shader.hpp"
-#include "Frustum.hpp"
-=======
 
 #include "LightHandler.hpp"
 
 //Trickster Domain
->>>>>>> 529c64269eae889871fb5b850a5ef441a0668898
 #include "GLOBALS.hpp"
 #include "PackageStructs.hpp"
 
@@ -47,6 +44,7 @@ int main() {
   ModelData modelData1= model.GetModelData();
   ModelData modelData2 = model2.GetModelData();
   ModelData modifiedModeldata1;
+
   // Frustum culling
   glm::mat4 viewPers = camera.GetViewMatrix() * camera.GetPersMatrix();
   Frustum frustum(viewPers);
@@ -61,15 +59,15 @@ int main() {
   // DRAW LOOP
   while(!display.IsClosed()) {
     display.Clear(0.0f, 0.20f, 0.1f, 1.0f);
-<<<<<<< HEAD
-    frustum.SetFrustum(camera.GetViewMatrix() * camera.GetPersMatrix());
-    modifiedModeldata1 = CullMeshes(frustum, modelData1);
-    display.Draw(modifiedModeldata1);
-    display.Draw(modelData2);
-=======
+//<<<<<<< HEAD
+//    frustum.SetFrustum(camera.GetViewMatrix() * camera.GetPersMatrix());
+//    modifiedModeldata1 = CullMeshes(frustum, modelData1);
+//    display.Draw(modifiedModeldata1);
+//    display.Draw(modelData2);
+//=======
     //display.Draw(modelData);
     display.Draw(modelData2, lPack);
->>>>>>> 529c64269eae889871fb5b850a5ef441a0668898
+//>>>>>>> 529c64269eae889871fb5b850a5ef441a0668898
     display.Update();
   }
 
