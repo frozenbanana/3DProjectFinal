@@ -25,21 +25,21 @@ enum Camera_Movement
 class Camera
 {
 private:
-	// Camera Attributes
-	glm::vec3 m_front;
-	glm::vec3 m_up;
-	glm::vec3 m_right;
-	glm::vec3 m_worldUp;
+    // Camera Attributes
+  glm::vec3 m_front;
+  glm::vec3 m_up;
+  glm::vec3 m_right;
+  glm::vec3 m_worldUp;
   glm::mat4 m_view; // Will be passed to shader
 
 	// Eular Angles
-	GLfloat m_yaw;
-	GLfloat m_pitch;
+    GLfloat m_yaw;
+    GLfloat m_pitch;
 
-	// Camera options
-	GLfloat m_movementSpeed;
-	GLfloat m_mouseSensitivity;
-	GLfloat m_zoom;
+    // Camera options
+    GLfloat m_movementSpeed;
+    GLfloat m_mouseSensitivity;
+    GLfloat m_zoom;
 
   // Perspective attributes
   GLfloat m_fov;
@@ -47,6 +47,7 @@ private:
   GLfloat m_nearPlane;
   GLfloat m_farPlane;
   glm::mat4 m_pers; // perspective will be passed to shader
+  glm::mat4 m_viewPers; // perspective will be passed to shader
 
 	// Calculates the front vector from the Camera's (updated) Eular Angles
 	void UpdateCameraVectors();
@@ -60,6 +61,7 @@ public:
 	// Returns the view matrix calculated using Eular Angles and the LookAt Matrix
 	glm::mat4 GetViewMatrix();
 	glm::mat4 GetPersMatrix();
+	glm::mat4& GetViewPersMatrixRef();
 	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
 	void ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime);
 	// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.

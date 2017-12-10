@@ -76,35 +76,38 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene){
   }
 
   // Indices
-    for (GLuint i = 0; i < mesh->mNumFaces; i++) {
-      aiFace face = mesh->mFaces[i];
-      // get all indices from the triangle face and store them
-      for (GLuint j = 0; j < face.mNumIndices; j++) {
-        indices.push_back(face.mIndices[j]);
-      }
+  for (GLuint i = 0; i < mesh->mNumFaces; i++) {
+    aiFace face = mesh->mFaces[i];
+    // get all indices from the triangle face and store them
+    for (GLuint j = 0; j < face.mNumIndices; j++) {
+      indices.push_back(face.mIndices[j]);
+    }
   }
 
   // if it mesh has materials
-    if (mesh->mMaterialIndex >= 0) {
-      aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-      // Convension for sampler names in shader is
-      // texture_diffuseX where X is a number. Same goes for Specular and Normal
+  if (mesh->mMaterialIndex >= 0) {
+    aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+    // Convension for sampler names in shader is
+    // texture_diffuseX where X is a number. Same goes for Specular and Normal
 
-      // Diffuse maps
-      std::vector<Texture> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-      textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
     // Diffuse maps
-      std::vector<Texture> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-      textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-    }
+    std::vector<Texture> diffuseMaps = LoadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+    textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+    // Diffuse maps
+    std::vector<Texture> specularMaps = LoadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+    textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+  }
 
-    return Mesh(vertices, indices, textures);
+  // debug
+  std::cout << "Creating mesh with "<< vertices.size() << " verts." << "\n";
+    
+  return Mesh(vertices, indices, textures);
 };
 
- std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName) {
+std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName) {
   std::vector<Texture> textures;
   for (GLuint i = 0; i < material->GetTextureCount(type); i++)
-  {
+    {
       aiString str;
       material->GetTexture(type, i, &str);
 
@@ -112,17 +115,17 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene){
       bool skip = false;
 
       for (GLuint j = 0; j < m_textures_loaded.size(); j++)
-      {
+	{
           if(m_textures_loaded[j].path == str)
-          {
+	    {
               textures.push_back(m_textures_loaded[j]);
               skip = true; // A texture with the same filepath has already been loaded, continue to next one. (optimization)
               break;
-          }
-      }
+	    }
+	}
 
       if(!skip)
-      {   // If texture hasn't been loaded already, load it
+	{   // If texture hasn't been loaded already, load it
           Texture texture;
           texture.id = TextureFromFile(str.C_Str(), m_directory);
           texture.type = typeName;
@@ -130,8 +133,8 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene){
           textures.push_back(texture);
 
           m_textures_loaded.push_back(texture);  // Store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
-      }
-  }
+	}
+    }
 
   return textures;
 }
@@ -145,7 +148,7 @@ GLint TextureFromFile(const char *path, std::string directory)
   glGenTextures(1, &textureID);
   int width, height;
 
-unsigned char *image = SOIL_load_image(filename.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
+  unsigned char *image = SOIL_load_image(filename.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
 
   // Assign texture to ID
   glBindTexture(GL_TEXTURE_2D, textureID);
@@ -196,17 +199,18 @@ std::vector<Mesh> Model::GetModelMeshes() { return m_meshes; }
 
 std::vector<std::vector<glm::vec3> > Model::GetModelMeshesPos() {
   std::vector<std::vector<glm::vec3> > retMeshesPos;
-  for(GLuint i = 0; i < m_meshes.size(); i++) {                 // Loop through each mesh
-    for(GLuint j = 0; j < m_meshes[i].m_vertices.size(); j++) { // Loop through each vertex in mesh
-      retMeshesPos[i].push_back(m_meshes[i].m_vertices[j].GetPos());  // Package vertices.pos in 2D vector
-    }
+
+  for(GLuint i = 0; i < m_meshes.size(); i++) {     // Loop through each mesh
+    retMeshesPos.push_back(m_meshes[i].GetPos());
   }
   return retMeshesPos;
 }
 
 ModelData& Model::GetModelData() {
+  m_modelData.s_insideFrustum = false;
   m_modelData.s_VAOs = GetVAOs();
   m_modelData.s_meshIndices = GetModelMeshesIndices();
+  m_modelData.s_meshPos = GetModelMeshesPos();
   m_modelData.s_modelMat = GetModelMatrix();
   return m_modelData;
 }

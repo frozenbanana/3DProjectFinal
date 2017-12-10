@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "Vertex.hpp"
+#include <iostream>
 
 class Plane
 {
@@ -17,16 +18,20 @@ public:
   glm::vec3 m_n;
   GLfloat m_d;
 
-  Plane(glm::vec3 n_in = glm::vec3(), GLfloat d_in = 0.0f) {
-    m_n = n_in;
-    m_d = d_in;
+  Plane(glm::vec4 plane_in = glm::vec4()) {
+    SetPlane(plane_in);
   }
-
   ~Plane() {}
 
+  void SetPlane(glm::vec4 plane_in) {
+    m_n.x = plane_in.x;
+    m_n.y = plane_in.y;
+    m_n.z = plane_in.z;
+    m_d = plane_in.w;
+  }
+
   void Normalize() {
-    m_d = m_d/glm::length(m_n);
-    m_n = glm::normalize(m_n);
+    m_n = glm::normalize(m_n); 
   }
 
   GLfloat DistanceToPlane(glm::vec3 point) {

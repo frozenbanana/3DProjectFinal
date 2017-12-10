@@ -38,7 +38,7 @@ void Camera::UpdateCameraVectors()
 
   // Update view matrix
   m_view = glm::lookAt(m_position, m_position + m_front, m_worldUp); // might me m_up instead
-
+  m_viewPers = m_pers * m_view;
   // std::cout << "x: "<< m_front.x << ", y: " << m_front.y << ", z: " << m_front.z << std::endl;
 }
 
@@ -49,6 +49,10 @@ glm::mat4 Camera::GetViewMatrix() {
 
 glm::mat4 Camera::GetPersMatrix() {
   return m_pers;
+}
+
+glm::mat4& Camera::GetViewPersMatrixRef() {
+  return m_viewPers;
 }
 
 // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)

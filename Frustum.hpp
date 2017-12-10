@@ -2,84 +2,64 @@
 #define FRUSTUM_H
 #include "Plane.hpp"
 #include "Mesh.hpp"
+#include "PackageStructs.hpp"
+#include <glm/gtc/matrix_access.hpp>
 
+const GLuint NUM_PLANES = 6;
 class Frustum
 {
 private:
-  enum PlanesPos{
-    NEAR,
-    FAR,
-    LEFT,
-    RIGHT,
-    UP,
-    DOWN,
-    NUM_PLANES
-  };
-
   Plane m_planes[NUM_PLANES];
 public:
-  Frustum(glm::mat4 matrix) {
+  Frustum(glm::mat4& matrix) {
     SetFrustum(matrix);
   }
 
- void SetFrustum(glm::mat4 matrix) {
-    // Near clipping plane
-    m_planes[NEAR].m_n.x = matrix[0][2];
-    m_planes[NEAR].m_n.y = matrix[1][2];
-    m_planes[NEAR].m_n.z = matrix[2][2];
-    m_planes[NEAR].m_d = matrix[3][2];
-    // Far clipping plane
-    m_planes[FAR].m_n.x = matrix[0][3] - matrix[0][2];
-    m_planes[FAR].m_n.y = matrix[1][3] - matrix[1][2];
-    m_planes[FAR].m_n.z = matrix[2][3] - matrix[2][2];
-    m_planes[FAR].m_d = matrix[3][3] - matrix[3][2];
+  void SetFrustum(glm::mat4& matrix) {
 
-    // Left clipping plane
-    m_planes[LEFT].m_n.x = matrix[0][3] + matrix[0][0];
-    m_planes[LEFT].m_n.y = matrix[1][3] + matrix[1][0];
-    m_planes[LEFT].m_n.z = matrix[2][3] + matrix[2][0];
-    m_planes[LEFT].m_d = matrix[3][3] + matrix[3][0];
+    glm::vec4 rowX = glm::column(matrix, 0);
+    glm::vec4 rowY = glm::column(matrix, 1);
+    glm::vec4 rowZ = glm::column(matrix, 2);
+    glm::vec4 rowW = glm::column(matrix, 3);
+    m_planes[0].SetPlane(rowW + rowX);
+    m_planes[1].SetPlane(rowW - rowX);
+    m_planes[2].SetPlane(rowW + rowY);
+    m_planes[3].SetPlane(rowW - rowY);
+    m_planes[4].SetPlane(rowW + rowZ);
+    m_planes[5].SetPlane(rowW - rowZ);
 
-    // Right clipping plane
-    m_planes[RIGHT].m_n.x = matrix[0][3] - matrix[0][0];
-    m_planes[RIGHT].m_n.y = matrix[1][3] - matrix[1][0];
-    m_planes[RIGHT].m_n.z = matrix[2][3] - matrix[2][0];
-    m_planes[RIGHT].m_d = matrix[3][3] - matrix[3][0];
-
-    // Up clipping plane
-    m_planes[UP].m_n.x = matrix[0][3] - matrix[0][1];
-    m_planes[UP].m_n.y = matrix[1][3] - matrix[1][1];
-    m_planes[UP].m_n.z = matrix[2][3] - matrix[2][1];
-    m_planes[UP].m_d = matrix[3][3] - matrix[3][1];
-
-    // Down clipping plane
-    m_planes[DOWN].m_n.x = matrix[0][3] + matrix[0][1];
-    m_planes[DOWN].m_n.y = matrix[1][3] + matrix[1][1];
-    m_planes[DOWN].m_n.z = matrix[2][3] + matrix[2][1];
-    m_planes[DOWN].m_d = matrix[3][3] + matrix[3][1];
-
-    // Normalize the planes
-    m_planes[NEAR].Normalize();
-    m_planes[FAR].Normalize();
-    m_planes[LEFT].Normalize();
-    m_planes[RIGHT].Normalize();
-    m_planes[UP].Normalize();
-    m_planes[DOWN].Normalize();
+    m_planes[0].Normalize();
+    m_planes[1].Normalize();
+    m_planes[2].Normalize();
+    m_planes[3].Normalize();
+    m_planes[4].Normalize();
+    m_planes[5].Normalize();
   }
 
   ~Frustum() {}
 
-  GLboolean InsideFrustrum(glm::vec3 p) {
+  GLboolean InsideFrustrum(glm::vec3 point) {
     for (GLuint i = 0; i < NUM_PLANES; i++) {
-      if(m_planes[i].ClassifyPoint(p) == Plane::NEGATIVE) {
+      if(m_planes[i].ClassifyPoint(point) == Plane::NEGATIVE) {
         return false;
       }
     }
-
     return true;
   }
 
+
+  void CullMeshes(ModelData* modelData) {
+    GLuint meshCount = modelData->s_meshPos.size();
+    modelData->s_insideFrustum = false;
+    for(GLuint i = 0; i < meshCount && !modelData->s_insideFrustum; i++) {
+      // Check every point in current mesh
+      for(GLuint j = 0; j < modelData->s_meshPos[i].size() && !modelData->s_insideFrustum; j++) {
+	// Keep looping until one point is inside frustum 
+	modelData->s_insideFrustum = InsideFrustrum(modelData->s_meshPos[i][j]);
+      }
+    } 
+  }
+
 };
+
 #endif
-
-

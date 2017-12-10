@@ -40,6 +40,15 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vecto
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(2*sizeof(glm::vec3)));
  }
 
+std::vector<glm::vec3> Mesh::GetPos() {
+  std::vector<glm::vec3> pos;
+    std::cout << "Getting pos from this Mesh. vertSize: "<< m_vertices.size() << " verts." << "\n";
+  for (GLuint i = 0; i < m_vertices.size(); i++) {
+    pos.push_back(m_vertices[i].GetPos());
+  }
+  return pos;
+}
+
 GLuint Mesh::GetVAO() { return m_vao; }
 GLuint Mesh::GetVBO() { return m_vbo; }
 GLuint Mesh::GetEBO() { return m_ebo; }

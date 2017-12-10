@@ -124,15 +124,17 @@ void Display::Update() {
 }
 
 void Display::Draw(ModelData& modelData, LightPack& lPack) {
-  glUseProgram(m_shaderPtr->GetProgram());
+  if (modelData.s_insideFrustum) {
+    glUseProgram(m_shaderPtr->GetProgram());
 
-  this->UploadLightPack(lPack);
+    UploadLightPack(lPack);
 
-  m_shaderPtr->UploadMatrix(modelData.s_modelMat, 0);
-  for (GLuint i = 0; i < modelData.s_meshIndices.size(); i++) {
-    glBindVertexArray(modelData.s_VAOs[i]);
-    // draw points 0-3 from the currently bound VAO with current in-use shader
-    glDrawElements(GL_TRIANGLES, modelData.s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
+    m_shaderPtr->UploadMatrix(modelData.s_modelMat, 0);
+    for (GLuint i = 0; i < modelData.s_meshIndices.size(); i++) {
+	glBindVertexArray(modelData.s_VAOs[i]);
+	// draw points 0-3 from the currently bound VAO with current in-use shader
+	glDrawElements(GL_TRIANGLES, modelData.s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
+    }
   }
 }
 
