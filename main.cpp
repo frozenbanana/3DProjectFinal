@@ -25,7 +25,7 @@ const char* fragment_shader = "res/shaders/base_fs.glsl";
 int main() {
   // SETUP VIEW
   Camera camera(glm::vec3(0.0f, 0.0f, -5.0f));
-  Display display(WINDOW_HEIGHT, WINDOW_WIDTH, "Test Model class", &camera);
+  Display display(WINDOW_HEIGHT, WINDOW_WIDTH, "Test terrain class", &camera);
   Shader shader(vertex_shader, fragment_shader);
   display.SetShader(&shader);   //Function also fixes uniforms for 3 matrices an a bunch of lights
 
@@ -34,6 +34,10 @@ int main() {
   Model model2("res/models/cube/cube_green_phong_12_tris_QUADS.obj");
   model2.SetPos(glm::vec3(0.0f, 0.0f, 5.0f));
   model2.SetScale(glm::vec3(10.0f, 10.0f, 10.0f));
+
+  // PACKAGE MODEL DATA 
+  ModelData modelData1 = model1.GetModelData();
+  ModelData modelData2 = model2.GetModelData();
 
   Frustum frustum(camera.GetViewPersMatrixRef());
   
@@ -44,7 +48,6 @@ int main() {
   //PACKAGE LIGHT DATA TO DISPLAY (STATIC)
   LightPack lPack = lightHandler.GetLightPack();
 
-  ModelData culledModelData2;
   // DRAW LOOP
   while(!display.IsClosed()) {
     display.Clear(0.0f, 0.20f, 0.1f, 1.0f);
