@@ -225,6 +225,7 @@ std::vector< std::vector<Texture> > Model::GetMeshTextures() {
 
 ModelData& Model::GetModelData() {
   m_modelData.s_insideFrustum = false;
+  m_modelData.s_mode = GL_TRIANGLES;
   m_modelData.s_VAOs = GetVAOs();
   m_modelData.s_meshIndices = GetModelMeshesIndices();
   m_modelData.s_meshTextures = GetMeshTextures();
