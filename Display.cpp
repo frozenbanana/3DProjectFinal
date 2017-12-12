@@ -79,8 +79,8 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
   glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   //Set callback functions
-  glfwSetKeyCallback(m_window, KeyCallback);				//This sets the basic key_callback function 'key_callback' as default.
-  glfwSetCursorPosCallback(m_window, MouseCallback);		//This sets the basic mouse_callback function 'mouse_callback' as default.
+  glfwSetKeyCallback(m_window, KeyCallback);			// This sets the basic key_callback function 'key_callback' as default.
+  glfwSetCursorPosCallback(m_window, MouseCallback);		// This sets the basic mouse_callback function 'mouse_callback' as default.
 
   // second argument could be a struct of relevant pointers to control in callbackfunctions down below
   glfwSetWindowUserPointer(m_window, this);
@@ -132,15 +132,14 @@ void Display::Draw(ModelData& modelData, LightPack& lPack) {
     m_shaderPtr->UploadMatrix(modelData.s_modelMat, 0);
     for (GLuint i = 0; i < modelData.s_meshIndices.size(); i++) {
 	glBindVertexArray(modelData.s_VAOs[i]);
-	// draw points 0-3 from the currently bound VAO with current in-use shader
-	glDrawElements(GL_TRIANGLES, modelData.s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
+	glDrawElements(modelData.s_mode, modelData.s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
     }
   }
 }
 
 void Display::Clear(float r, float g, float b, float a) {
-	glClearColor(r, g, b, a);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClearColor(r, g, b, a);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Display::SetShader(Shader* shaderPtr) {
@@ -158,7 +157,7 @@ void Display::SetShader(Shader* shaderPtr) {
 }
 
 bool Display::IsClosed() {
-	return this->m_isClosed;
+  return this->m_isClosed;
 }
 
 Display::~Display() {
@@ -166,48 +165,48 @@ Display::~Display() {
 }
 
 void KeyCallback(GLFWwindow* winPtr, int key, int scan, int act, int mode) {
-	if (key == GLFW_KEY_ESCAPE && act == GLFW_PRESS) {
-		glfwSetWindowShouldClose(winPtr, GL_TRUE);
-	}
+  if (key == GLFW_KEY_ESCAPE && act == GLFW_PRESS) {
+    glfwSetWindowShouldClose(winPtr, GL_TRUE);
+  }
 
-	// ! setting global variable
-	//Store the data from when a key is pressed
-	if (key >= 0 && key < 1024)
+  // ! setting global variable
+  //Store the data from when a key is pressed
+  if (key >= 0 && key < 1024)
   {
-      if (act == GLFW_PRESS) {
-        g_key_data[key] = true;
-      }
-      else if (act == GLFW_RELEASE) {
-        g_key_data[key] = false;
-      }
+    if (act == GLFW_PRESS) {
+      g_key_data[key] = true;
+    }
+    else if (act == GLFW_RELEASE) {
+      g_key_data[key] = false;
+    }
   }
 
   Display* d = (Display*)glfwGetWindowUserPointer(winPtr);
-	if (g_key_data[GLFW_KEY_W])
-		d->m_camPtr->ProcessKeyboard(FORWARD, d->m_deltaTime);
-	if (g_key_data[GLFW_KEY_S])
-		d->m_camPtr->ProcessKeyboard(BACKWARD, d->m_deltaTime);
-	if (g_key_data[GLFW_KEY_A])
-		d->m_camPtr->ProcessKeyboard(LEFT, d->m_deltaTime);
-	if (g_key_data[GLFW_KEY_D])
-		d->m_camPtr->ProcessKeyboard(RIGHT, d->m_deltaTime);
-	if (g_key_data[GLFW_KEY_SPACE])
+  if (g_key_data[GLFW_KEY_W])
+    d->m_camPtr->ProcessKeyboard(FORWARD, d->m_deltaTime);
+  if (g_key_data[GLFW_KEY_S])
+    d->m_camPtr->ProcessKeyboard(BACKWARD, d->m_deltaTime);
+  if (g_key_data[GLFW_KEY_A])
+    d->m_camPtr->ProcessKeyboard(LEFT, d->m_deltaTime);
+  if (g_key_data[GLFW_KEY_D])
+    d->m_camPtr->ProcessKeyboard(RIGHT, d->m_deltaTime);
+  if (g_key_data[GLFW_KEY_SPACE])
     d->m_camPtr->ProcessKeyboard(UP, d->m_deltaTime);
 }
 
 void MouseCallback(GLFWwindow* winPtr, double xPos, double yPos) {
-	if (g_firstMouse)
-    {
-      g_lastX = xPos;
-      g_lastY = yPos;
-      g_firstMouse = false;
-    }
+  if (g_firstMouse)
+  {
+    g_lastX = xPos;
+    g_lastY = yPos;
+    g_firstMouse = false;
+  }
 
   g_xoffset = xPos - g_lastX;
   g_yoffset = g_lastY - yPos;
 
-	g_lastX = xPos;
-	g_lastY = yPos;
+  g_lastX = xPos;
+  g_lastY = yPos;
 
   Display* d = (Display*)glfwGetWindowUserPointer(winPtr);
   d->m_camPtr->ProcessMouseMovement(g_xoffset, g_yoffset);

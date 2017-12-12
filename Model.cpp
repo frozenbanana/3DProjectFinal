@@ -208,6 +208,7 @@ std::vector<std::vector<glm::vec3> > Model::GetModelMeshesPos() {
 
 ModelData& Model::GetModelData() {
   m_modelData.s_insideFrustum = false;
+  m_modelData.s_mode = GL_TRIANGLES;
   m_modelData.s_VAOs = GetVAOs();
   m_modelData.s_meshIndices = GetModelMeshesIndices();
   m_modelData.s_meshPos = GetModelMeshesPos();

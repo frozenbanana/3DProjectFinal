@@ -1,5 +1,13 @@
 #include "Mesh.hpp"
 
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices) {
+  m_vertices = vertices;
+  m_indices = indices;
+
+  // All data is set. Time to setup mesh
+    SetupMesh();
+  }
+
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture> textures) {
   m_vertices = vertices;
   m_indices = indices;
@@ -42,7 +50,6 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vecto
 
 std::vector<glm::vec3> Mesh::GetPos() {
   std::vector<glm::vec3> pos;
-    std::cout << "Getting pos from this Mesh. vertSize: "<< m_vertices.size() << " verts." << "\n";
   for (GLuint i = 0; i < m_vertices.size(); i++) {
     pos.push_back(m_vertices[i].GetPos());
   }
