@@ -6,8 +6,13 @@
 #include "Mesh.hpp"
 
 //Constants
+<<<<<<< HEAD
 const int WINDOW_WIDTH = 640;
 const int WINDOW_HEIGHT = 480;
+=======
+const int WINDOW_HEIGHT = 480;
+const int WINDOW_WIDTH = 640;
+>>>>>>> Frustum culling working for real
 const GLfloat PI = 3.1415926535f;
 
 #define COLOR_WHITE glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)

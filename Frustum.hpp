@@ -4,36 +4,36 @@
 #include "Mesh.hpp"
 #include "PackageStructs.hpp"
 #include <glm/gtc/matrix_access.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
-const GLuint NUM_PLANES = 6;
 class Frustum
 {
 private:
+  enum {
+    RIGHTP,
+    LEFTP,
+    BOTTOMP,
+    TOPP,
+    FARP,
+    NEARP,
+
+    NUM_PLANES
+  };
+
   Plane m_planes[NUM_PLANES];
 public:
-  Frustum(glm::mat4& matrix) {
+  Frustum(glm::mat4 matrix) {
     SetFrustum(matrix);
   }
 
-  void SetFrustum(glm::mat4& matrix) {
-
-    glm::vec4 rowX = glm::column(matrix, 0);
-    glm::vec4 rowY = glm::column(matrix, 1);
-    glm::vec4 rowZ = glm::column(matrix, 2);
-    glm::vec4 rowW = glm::column(matrix, 3);
-    m_planes[0].SetPlane(rowW + rowX);
-    m_planes[1].SetPlane(rowW - rowX);
-    m_planes[2].SetPlane(rowW + rowY);
-    m_planes[3].SetPlane(rowW - rowY);
-    m_planes[4].SetPlane(rowW + rowZ);
-    m_planes[5].SetPlane(rowW - rowZ);
-
-    m_planes[0].Normalize();
-    m_planes[1].Normalize();
-    m_planes[2].Normalize();
-    m_planes[3].Normalize();
-    m_planes[4].Normalize();
-    m_planes[5].Normalize();
+  void SetFrustum(glm::mat4 matrix) {
+    float *mvp = (float*)glm::value_ptr(matrix);
+    m_planes[LEFTP].Set(   mvp[3] - mvp[0], mvp[7] - mvp[4], mvp[11] - mvp[8],  mvp[15] - mvp[12] );
+    m_planes[RIGHTP].Set(  mvp[3] + mvp[0], mvp[7] + mvp[4], mvp[11] + mvp[8],  mvp[15] + mvp[12] );
+    m_planes[BOTTOMP].Set( mvp[3] + mvp[1], mvp[7] + mvp[5], mvp[11] + mvp[9],  mvp[15] + mvp[13] );
+    m_planes[TOPP].Set(    mvp[3] - mvp[1], mvp[7] - mvp[5], mvp[11] - mvp[9],  mvp[15] - mvp[13] );
+    m_planes[FARP].Set(    mvp[3] - mvp[2], mvp[7] - mvp[6], mvp[11] - mvp[10], mvp[15] - mvp[14] );
+    m_planes[NEARP].Set(   mvp[3] + mvp[2], mvp[7] + mvp[6], mvp[11] + mvp[10], mvp[15] + mvp[14] );
   }
 
   ~Frustum() {}
@@ -60,6 +60,9 @@ public:
     } 
   }
 
+  void GetModelData() {
+  }
+    
 };
 
 #endif

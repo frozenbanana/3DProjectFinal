@@ -166,6 +166,7 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
   // tell GL to only draw onto a pixel if the shape is closer to the viewer
   glEnable(GL_DEPTH_TEST); // enable depth-testing
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
+<<<<<<< HEAD
 
   //Now avoid that cute little segmentation fault by initilizing the gbuffer here instead
   this->m_gBuffer.InitGBuffer();
@@ -177,6 +178,9 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
 
 Display::~Display() {
   glfwTerminate();
+=======
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+>>>>>>> Frustum culling working for real
 }
 
 void Display::Update() {
@@ -194,9 +198,11 @@ void Display::Update() {
   glm::mat4 modelMatrix = glm::mat4(1.0f);
   glm::mat4 viewMatrix = m_camPtr->GetViewMatrix();
   glm::mat4 persMatrix = m_camPtr->GetPersMatrix();
+  glm::vec3 camPos = m_camPtr->GetPosition();
   m_shaderPtr->UploadMatrix(modelMatrix, 0);
   m_shaderPtr->UploadMatrix(viewMatrix, 1);
   m_shaderPtr->UploadMatrix(persMatrix, 2);
+  m_shaderPtr->UploadVec3(camPos, 0);
 }
 
 void Display::Draw(ModelData& modelData, LightPack& lPack) {
@@ -306,6 +312,7 @@ void Display::SetShader(Shader* shaderPtr) {
   m_shaderPtr->FindUniformMatrixLoc("model");
   m_shaderPtr->FindUniformMatrixLoc("view");
   m_shaderPtr->FindUniformMatrixLoc("perspective");
+  m_shaderPtr->FindUniformVec3Loc("camPos");
 
 
   //std::cout << "HOH" << '\n';

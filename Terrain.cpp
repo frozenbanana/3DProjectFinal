@@ -106,7 +106,6 @@ void Terrain::ComputePos() {
 
 	  // convert to 0-1 float and half range
           GLfloat currentHeightPerPixel = MAX_HEIGHT *((color / 255.0f) - 0.5f);
-          std::cout << currentHeightPerPixel << std::endl;
           // set height
 	  SetHeight(h, w, currentHeightPerPixel);
 	}
@@ -226,7 +225,7 @@ ModelData& Terrain::GetModelData() {
   terrainPos.push_back(m_terrainMeshPtr->GetPos());
   
   m_modelData.s_insideFrustum = false;
-  m_modelData.s_mode = GL_TRIANGLE_STRIP;
+  m_modelData.s_mode = GL_TRIANGLES;
   m_modelData.s_VAOs = terrainVAO; 
   m_modelData.s_meshIndices = terrainIndice;
   m_modelData.s_meshPos = terrainPos;

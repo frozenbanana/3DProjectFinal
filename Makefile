@@ -2,7 +2,7 @@ LIBS= -lGLEW -lSOIL -lassimp -lGL -lGLU -lglfw -lX11 -lXxf86vm -lXrandr -lpthrea
 CC= g++
 CFLAGS = -g -Wall -std=c++11
 
-make: Display.o Shader.o Model.o Mesh.o Camera.o LightHandler.o Light.o PntLight.o DirLight.o SptLight.o GBuffer.o
+make: Display.o Shader.o Model.o Mesh.o Camera.o LightHandler.o Light.o PntLight.o DirLight.o SptLight.o GBuffer.o Terrain.o
 		$(CC) $(CFLAGS) main.cpp -o run $^ $(LIBS)
 
 Display.o: Display.cpp
@@ -37,6 +37,10 @@ SptLight.o: SptLight.cpp
 
 GBuffer.o: GBuffer.cpp
 		$(CC) $(CFLAGS) GBuffer.cpp -c
+
+Terrain.o: Terrain.cpp
+		$(CC) $(CFLAGS) Terrain.cpp -c
+
 clean:
 		-rm *.o
 		-rm run
