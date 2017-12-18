@@ -6,8 +6,8 @@
 #include "Mesh.hpp"
 
 //Constants
-const int WINDOW_HEIGHT = 640;
-const int WINDOW_WIDTH = 480;
+const int WINDOW_HEIGHT = 480;
+const int WINDOW_WIDTH = 640;
 const GLfloat PI = 3.1415926535f;
 
 #define COLOR_WHITE glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)

@@ -63,7 +63,7 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   // Create a window
-  m_window = glfwCreateWindow(640, 480, title.c_str(), NULL, NULL);
+  m_window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
   if (!m_window) {
     std::cout << "ERROR: could not open window with GLFW3\n" << std::endl;
     glfwTerminate();
@@ -100,6 +100,7 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
   // tell GL to only draw onto a pixel if the shape is closer to the viewer
   glEnable(GL_DEPTH_TEST); // enable depth-testing
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void Display::Update() {
@@ -114,13 +115,14 @@ void Display::Update() {
     m_isClosed = true;
   }
 
-
   glm::mat4 modelMatrix = glm::mat4(1.0f);
   glm::mat4 viewMatrix = m_camPtr->GetViewMatrix();
   glm::mat4 persMatrix = m_camPtr->GetPersMatrix();
+  glm::vec3 camPos = m_camPtr->GetPosition();
   m_shaderPtr->UploadMatrix(modelMatrix, 0);
   m_shaderPtr->UploadMatrix(viewMatrix, 1);
   m_shaderPtr->UploadMatrix(persMatrix, 2);
+  m_shaderPtr->UploadVec3(camPos, 0);
 }
 
 void Display::Draw(ModelData& modelData, LightPack& lPack) {
@@ -151,6 +153,7 @@ void Display::SetShader(Shader* shaderPtr) {
   m_shaderPtr->FindUniformMatrixLoc("model");
   m_shaderPtr->FindUniformMatrixLoc("view");
   m_shaderPtr->FindUniformMatrixLoc("perspective");
+  m_shaderPtr->FindUniformVec3Loc("camPos");
 
   //Locate space in shader for lights
   this->FixLightUniforms("pnt_lights", "dir_lights", "spt_lights", 1, 0, 0);

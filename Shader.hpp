@@ -41,6 +41,7 @@ private:
 
   GLuint m_program;
   std::vector<GLint> m_matrixUniforms;
+  std::vector<GLint> m_vec3Uniforms;
   PntLightUniforms m_pnt_lights;
   DirLightUniforms m_dir_lights;
   SptLightUniforms m_spt_lights;
@@ -60,12 +61,14 @@ public:
 
   //Find functions check if the is a uniform variable and if there is saves it to
   //a variable in shader
+  void FindUniformVec3Loc(std::string uniformName);
   void FindUniformMatrixLoc(std::string uniformName);
   void FindUniformPntLightLoc(std::string shader_arr_name, int shader_arr_index);
   void FindUniformDirLightLoc(std::string shader_arr_name, int shader_arr_index);
   void FindUniformSptLightLoc(std::string shader_arr_name, int shader_arr_index);
 
   // void UploadMatrix(const Transform& transform, const glm::mat4 view, const glm::mat4 perspective);
+  void UploadVec3(glm::vec3 vec, GLuint index);
   void UploadMatrix(glm::mat4 matrix, GLuint index);
   void UploadPntLight(PntLight in_light, GLuint index);
   void UploadDirLight(DirLight in_light, GLuint index);

@@ -130,13 +130,25 @@ GLint Shader::GetUniformArrProp(std::string shader_arr_name, int shader_arr_inde
   return uniLoc;
 }
 
+void Shader::FindUniformVec3Loc(std::string uniformName) {
+  GLint uniformLoc = glGetUniformLocation(m_program, uniformName.c_str());
+  if(uniformLoc == (GLint)-1) {
+    std::cout << "ERROR::SHADER::" << uniformName << "::UNIFORM_NOT_FOUND" << std::endl;
+  }
+  else {
+    std::cout << "Uniform "<< uniformName << " found\n";
+    m_vec3Uniforms.push_back(uniformLoc);
+  }
+}
+
+
 void Shader::FindUniformMatrixLoc(std::string uniformName) {
   GLint uniformLoc = glGetUniformLocation(m_program, uniformName.c_str());
   if(uniformLoc == (GLint)-1) {
     std::cout << "ERROR::SHADER::" << uniformName << "::UNIFORM_NOT_FOUND" << std::endl;
   }
   else {
-    std::cout << uniformName << "found\n";
+    std::cout << "Uniform " << uniformName << " found\n";
     m_matrixUniforms.push_back(uniformLoc);
   }
 }
@@ -239,6 +251,9 @@ void Shader::FindUniformSptLightLoc(std::string shader_arr_name, int shader_arr_
   }
 }
 
+void Shader::UploadVec3(glm::vec3 vec, GLuint index) {
+  glUniformMatrix4fv(m_vec3Uniforms[index], 1, GL_FALSE, glm::value_ptr(vec));
+}
 
 void Shader::UploadMatrix(glm::mat4 matrix, GLuint index) {
   glUniformMatrix4fv(m_matrixUniforms[index], 1, GL_FALSE, glm::value_ptr(matrix));

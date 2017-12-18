@@ -6,6 +6,12 @@
 #include "Vertex.hpp"
 #include <iostream>
 
+class Line
+{
+  glm::vec3 m_direction;
+  glm::vec3 m_origin;
+};
+
 class Plane
 {
 public:
@@ -30,6 +36,13 @@ public:
     m_d = plane_in.w;
   }
 
+  void Set(float x, float y, float z, float d) {
+    m_n.x = x;
+    m_n.y = y;
+    m_n.z = z;
+    m_d = d;
+  }
+
   void Normalize() {
     m_n = glm::normalize(m_n); 
   }
@@ -39,11 +52,12 @@ public:
   }
 
   Halfspace ClassifyPoint(glm::vec3 point) {
-    GLfloat distance = m_n.x * point.x * m_n.y * point.y * m_n.z * point.z + m_d;
+    GLfloat distance = m_n.x * point.x + m_n.y * point.y + m_n.z * point.z + m_d;
 
     if (distance < 0) {
       return NEGATIVE;
     } else if (distance > 0) {
+      // std::cout << "Postive! Plane with normal:" << m_n.x << ", " << m_n.y << ", " << m_n.z << "\n";
       return POSITIVE;
     } else {
       return ON_PLANE;
