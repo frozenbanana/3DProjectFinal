@@ -17,6 +17,7 @@
 #include "Transform.hpp"
 #include "Mesh.hpp"
 #include "GLOBALS.hpp"
+#include "PackageStructs.hpp"
 
 class Model : public Transform
 {

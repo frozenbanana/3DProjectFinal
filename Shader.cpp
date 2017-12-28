@@ -131,12 +131,13 @@ GLint Shader::GetUniformArrProp(std::string shader_arr_name, int shader_arr_inde
 }
 
 void Shader::FindUniformMatrixLoc(std::string uniformName) {
+
   GLint uniformLoc = glGetUniformLocation(m_program, uniformName.c_str());
   if(uniformLoc == (GLint)-1) {
     std::cout << "ERROR::SHADER::" << uniformName << "::UNIFORM_NOT_FOUND" << std::endl;
   }
   else {
-    std::cout << uniformName << "found\n";
+    //std::cout << uniformName << "found\n";
     m_matrixUniforms.push_back(uniformLoc);
   }
 }

@@ -1,3 +1,5 @@
+//THIS ONE
+
 #include "Display.hpp"
 #include <GL/glew.h>
 #include <iostream>
@@ -18,33 +20,82 @@ bool g_key_data[1024];
 
 //Private-----------------------------------------------------------------------
 
-void Display::FixLightUniforms(std::string pnt_str, std::string dir_str, std::string spt_str, int n_pnt, int n_dir, int n_spt) {
+void Display::CreateQuad() {
+  //Create four vertices covering the window
+  float quad[] = {
+    //Pos                 //UVs
+    -1.0f,  1.0f, 0.0f,   0.0f, 1.0f,
+    -1.0f, -1.0f, 0.0f,   0.0f, 0.0f,
+     1.0f,  1.0f, 0.0f,   1.0f, 1.0f,
+     1.0f, -1.0f, 0.0f,   1.0f, 0.0f
+  };
+
+  //Generate arrays and buffers
+  glGenVertexArrays(1, &(this->m_quadVAO));
+  glGenBuffers(1, &(this->m_quadVBO));
+
+  //Bind them together
+  glBindVertexArray(this->m_quadVAO);
+  glBindBuffer(GL_ARRAY_BUFFER, this->m_quadVBO);
+
+  //Tell GL how to handle the buffer
+  glBufferData(GL_ARRAY_BUFFER, sizeof(quad), &quad, GL_STATIC_DRAW);
+
+  //Tell GL how to read buffer
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(
+    0,                  //Index of the attribute
+    3,                  //Number of components for the attribute
+    GL_FLOAT,           //Type of values in attribute
+    GL_FALSE,           //Are they normalized?
+    5 * sizeof(float),  //In the array, how long steps should be taken for each element?
+    (void*)0          //Inside the element, how big is the offset to the relevant values?
+  );
+
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(
+    1,                          //Index of the attribute
+    2,                          //Number of components for the attribute
+    GL_FLOAT,                   //Type of values in attribute
+    GL_FALSE,                   //Are they normalized?
+    5 * sizeof(float),          //In the array, how long steps should be taken for each element?
+    (void*)(3 * sizeof(float))  //Inside the element, how big is the offset to the relevant values?
+  );
+}
+
+void Display::RenderQuad() {
+  glBindVertexArray(this->m_quadVAO);     //Bind the quad
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);  //Draw the stuff
+  glBindVertexArray(0);                   //Unbind the quad
+}
+
+void Display::FixLightUniforms(Shader* shader_ptr, std::string pnt_str, std::string dir_str, std::string spt_str, int n_pnt, int n_dir, int n_spt) {
   //Try to allocate space in shader for n lights of a type
   for (int i = 0; i < n_pnt; i++) {
-    this->m_shaderPtr->FindUniformPntLightLoc(pnt_str, i); //SEND IN NAMES
+    shader_ptr->FindUniformPntLightLoc(pnt_str, i); //SEND IN NAMES
   }
 
   for (int i = 0; i < n_dir; i++) {
-    this->m_shaderPtr->FindUniformDirLightLoc(dir_str, i);
+    shader_ptr->FindUniformDirLightLoc(dir_str, i);
   }
 
   for (int i = 0; i < n_spt; i++) {
-    this->m_shaderPtr->FindUniformSptLightLoc(spt_str, i);
+    shader_ptr->FindUniformSptLightLoc(spt_str, i);
   }
 }
 
-void Display::UploadLightPack(LightPack& lPack) {
+void Display::UploadLightPack(Shader* shader_ptr, LightPack& lPack) {
   //If there are lights saved in the vector pass them to shader and upload them
   for (GLuint i = 0; i < lPack.s_pnt_lights.size(); i++) {
-    this->m_shaderPtr->UploadPntLight(lPack.s_pnt_lights[i], i);
+    shader_ptr->UploadPntLight(lPack.s_pnt_lights[i], i);
   }
 
   for (GLuint i = 0; i < lPack.s_dir_lights.size(); i++) {
-    this->m_shaderPtr->UploadDirLight(lPack.s_dir_lights[i], i);
+    shader_ptr->UploadDirLight(lPack.s_dir_lights[i], i);
   }
 
   for (GLuint i = 0; i < lPack.s_spt_lights.size(); i++) {
-    this->m_shaderPtr->UploadSptLight(lPack.s_spt_lights[i], i);
+    shader_ptr->UploadSptLight(lPack.s_spt_lights[i], i);
   }
 }
 
@@ -63,7 +114,7 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   // Create a window
-  m_window = glfwCreateWindow(640, 480, title.c_str(), NULL, NULL);
+  m_window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
   if (!m_window) {
     std::cout << "ERROR: could not open window with GLFW3\n" << std::endl;
     glfwTerminate();
@@ -100,6 +151,17 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
   // tell GL to only draw onto a pixel if the shape is closer to the viewer
   glEnable(GL_DEPTH_TEST); // enable depth-testing
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
+
+  //Now avoid that cute little segmentation fault by initilizing the gbuffer here instead
+  this->m_gBuffer.InitGBuffer();
+
+  //Create a quad filling the entire screen to render textures onto
+  this->CreateQuad();
+
+} //Display::Display()
+
+Display::~Display() {
+  glfwTerminate();
 }
 
 void Display::Update() {
@@ -114,7 +176,6 @@ void Display::Update() {
     m_isClosed = true;
   }
 
-
   glm::mat4 modelMatrix = glm::mat4(1.0f);
   glm::mat4 viewMatrix = m_camPtr->GetViewMatrix();
   glm::mat4 persMatrix = m_camPtr->GetPersMatrix();
@@ -126,7 +187,7 @@ void Display::Update() {
 void Display::Draw(ModelData& modelData, LightPack& lPack) {
   glUseProgram(m_shaderPtr->GetProgram());
 
-  this->UploadLightPack(lPack);
+  this->UploadLightPack(m_shaderPtr, lPack);
 
   m_shaderPtr->UploadMatrix(modelData.s_modelMat, 0);
   for (GLuint i = 0; i < modelData.s_meshIndices.size(); i++) {
@@ -136,9 +197,61 @@ void Display::Draw(ModelData& modelData, LightPack& lPack) {
   }
 }
 
-void Display::Clear(float r, float g, float b, float a) {
-	glClearColor(r, g, b, a);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+void Display::UpdateDR() {
+  //std::cout << "In UpdateDR" << '\n';
+
+  glfwSwapBuffers(this->m_window);
+  glfwPollEvents();
+
+  // Set frame time
+  GLfloat currentFrame = glfwGetTime();
+  this->m_deltaTime = currentFrame - this->m_lastFrame;
+  this->m_lastFrame = currentFrame;
+
+  if (glfwGetKey(this->m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    this->m_isClosed = true;
+  }
+
+  glm::mat4 modelMatrix = glm::mat4(1.0f);
+  glm::mat4 viewMatrix = this->m_camPtr->GetViewMatrix();
+  glm::mat4 persMatrix = this->m_camPtr->GetPersMatrix();
+
+  this->m_geoShaderPtr->UploadMatrix(modelMatrix, 0);
+  this->m_geoShaderPtr->UploadMatrix(viewMatrix, 1);
+  this->m_geoShaderPtr->UploadMatrix(persMatrix, 2);
+}
+
+void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
+  //std::cout << "In DrawDR" << '\n';
+  /*########## GEOMETRY PASS #################################################*/
+  //Select program to use and bind framebuffer
+  glUseProgram(this->m_geoShaderPtr->GetProgram());
+  this->m_gBuffer.PrepGeoPass();
+
+  //Upload the model matrix for the model and loop through all meshes
+  this->m_geoShaderPtr->UploadMatrix(modelData.s_modelMat, 0);
+
+  for (GLuint i = 0; i < modelData.s_meshIndices.size(); i++) {
+    glBindVertexArray(modelData.s_VAOs[i]);
+    // draw points 0-3 from the currently bound VAO with current in-use shader
+    glDrawElements(GL_TRIANGLES, modelData.s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
+  }
+
+  //Unbind framebuffer after render
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+  /*########## LIGHT PASS ####################################################*/
+  //Select the program to use and load up the gBuffer textures
+  glUseProgram(this->m_lgtShaderPtr->GetProgram());
+
+  this->m_gBuffer.PrepLightPass();
+
+  //Upload all lights in the LightPack
+  this->UploadLightPack(this->m_lgtShaderPtr, lPack);
+
+  //Draw the quad filling the screen
+  this->RenderQuad();
+
 }
 
 void Display::SetShader(Shader* shaderPtr) {
@@ -151,17 +264,42 @@ void Display::SetShader(Shader* shaderPtr) {
   m_shaderPtr->FindUniformMatrixLoc("view");
   m_shaderPtr->FindUniformMatrixLoc("perspective");
 
+
+  //std::cout << "HOH" << '\n';
   //Locate space in shader for lights
-  this->FixLightUniforms("pnt_lights", "dir_lights", "spt_lights", 1, 0, 0);
+  this->FixLightUniforms(m_shaderPtr, "pnt_lights", "dir_lights", "spt_lights", 1, 0, 0);
+}
+
+void Display::SetDRShaders(Shader* geoS, Shader* lgtS) {
+  //NTS: Fuction specific for this program
+
+  this->m_geoShaderPtr = geoS;
+  this->m_lgtShaderPtr = lgtS;
+
+  //Locate space in shader for matrices
+  this->m_geoShaderPtr->FindUniformMatrixLoc("model");
+  this->m_geoShaderPtr->FindUniformMatrixLoc("view");
+  this->m_geoShaderPtr->FindUniformMatrixLoc("perspective");
+
+  //std::cout << "HAH" << '\n';
+  //Locate space in shader for textures
+  this->m_gBuffer.FindUniformSamplerLocs(this->m_lgtShaderPtr->GetProgram());
+
+  //Locate space in shader for lights
+  this->FixLightUniforms(this->m_lgtShaderPtr, "pnt_lights", "dir_lights", "spt_lights", 1, 0, 0);
+
 }
 
 bool Display::IsClosed() {
 	return this->m_isClosed;
 }
 
-Display::~Display() {
-  glfwTerminate();
+void Display::Clear(float r, float g, float b, float a) {
+	glClearColor(r, g, b, a);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
+
+//GLOBAL------------------------------------------------------------------------
 
 void KeyCallback(GLFWwindow* winPtr, int key, int scan, int act, int mode) {
 	if (key == GLFW_KEY_ESCAPE && act == GLFW_PRESS) {
