@@ -52,11 +52,11 @@ public:
   }
 
   Halfspace ClassifyPoint(glm::vec3 point) {
-    GLfloat distance = m_n.x * point.x + m_n.y * point.y + m_n.z * point.z + m_d;
+    GLfloat dot = m_n.x * point.x + m_n.y * point.y + m_n.z * point.z + m_d;
 
-    if (distance < 0) {
+    if (dot < 0) {
       return NEGATIVE;
-    } else if (distance > 0) {
+    } else if (dot > 0) {
       // std::cout << "Postive! Plane with normal:" << m_n.x << ", " << m_n.y << ", " << m_n.z << "\n";
       return POSITIVE;
     } else {

@@ -20,6 +20,9 @@ struct ModelData {
 };
 
 /*ModelPack*/
+struct ModelPack {
+  std::vector<ModelData> s_Models;
+};
 
 //For Lights
 struct LightPack {

@@ -213,8 +213,8 @@ void Display::Draw(ModelData& modelData, LightPack& lPack) {
 
     m_shaderPtr->UploadMatrix(modelData.s_modelMat, 0);
     for (GLuint i = 0; i < modelData.s_meshIndices.size(); i++) {
-	glBindVertexArray(modelData.s_VAOs[i]);
-	glDrawElements(modelData.s_mode, modelData.s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
+    	glBindVertexArray(modelData.s_VAOs[i]);
+    	glDrawElements(modelData.s_mode, modelData.s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
     }
   }
 }
