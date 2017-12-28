@@ -1,7 +1,7 @@
 # 3DProjectFinal
 Our final 3D Project for our course: DV1542
 
-## TODO LIST ##
+## TO-DO LIST ##
 0. Setup
 1. Parsing OBJ
   1.1 Lights

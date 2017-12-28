@@ -1,6 +1,6 @@
 LIBS= -lGLEW -lSOIL -lassimp -lGL -lGLU -lglfw -lX11 -lXxf86vm -lXrandr -lpthread -lXi
 CC= g++
-CFLAGS = -g -Wall -std=c++11
+CFLAGS = -g -Wall -std=c++1z
 
 make: Display.o Shader.o Model.o Mesh.o Camera.o LightHandler.o Light.o PntLight.o DirLight.o SptLight.o Terrain.o
 		$(CC) $(CFLAGS) main.cpp -o run $^ $(LIBS)

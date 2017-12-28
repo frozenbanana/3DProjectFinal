@@ -2,6 +2,7 @@
 #define FRUSTUM_H
 #include "Plane.hpp"
 #include "Mesh.hpp"
+#include "QuadTree.hpp"
 #include "PackageStructs.hpp"
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -54,15 +55,33 @@ public:
     for(GLuint i = 0; i < meshCount && !modelData->s_insideFrustum; i++) {
       // Check every point in current mesh
       for(GLuint j = 0; j < modelData->s_meshPos[i].size() && !modelData->s_insideFrustum; j++) {
-	// Keep looping until one point is inside frustum 
-	modelData->s_insideFrustum = InsideFrustrum(modelData->s_meshPos[i][j]);
+      	// Keep looping until one point is inside frustum
+      	modelData->s_insideFrustum = InsideFrustrum(modelData->s_meshPos[i][j]);
       }
-    } 
+    }
   }
 
-  void GetModelData() {
+  void CullNode(Node* nodePtr) {
+    nodePtr->s_insideFrustum = false;
+    glm::vec3 nodeCorners[4];
+    float xPos = (float)nodePtr->s_x;
+    float zPos = (float)nodePtr->s_z;
+    float nodeWidth = (float)nodePtr->s_width;
+    nodePos[TOP_LEFT]     = glm::vec3(xPos,             0, zPos + nodeWidth);
+    nodePos[TOP_RIGHT]    = glm::vec3(xPos + nodeWidth, 0, zPos + nodeWidth);
+    nodePos[BOTTOM_LEFT]  = glm::vec3(xPos,             0, zPos);
+    nodePos[BOTTOM_RIGHT] = glm::vec3(xPos + nodeWidth, 0, zPos);
+
+    for (size_t i = 0; i < 4 && !nodePos->s_insideFrustum; i++) {
+      	nodePr->s_insideFrustum = InsideFrustrum(nodeCorner[i]);
+    }
+
+    CullNode(nodePtr->s_children[TOP_LEFT]);
+    CullNode(nodePtr->s_children[TOP_RIGHT]);
+    CullNode(nodePtr->s_children[BOTTOM_LEFT]);
+    CullNode(nodePtr->s_children[BOTTOM_RIGHT]);
   }
-    
+
 };
 
 #endif

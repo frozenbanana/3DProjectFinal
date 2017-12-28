@@ -15,7 +15,7 @@
 #include "Frustum.hpp"
 #include "LightHandler.hpp"
 #include "Terrain.hpp"
-
+#include "QuadTree.hpp"
 //Trickster Domain
 #include "GLOBALS.hpp"
 #include "PackageStructs.hpp"
@@ -33,16 +33,17 @@ int main() {
 
   // SETUP MODELS
   Terrain terrain("res/heightmap/example/BMP_example.bmp", 20);
-  // Model model1("res/models/nano/nanosuit.obj");
+  Model model1("res/models/nano/nanosuit.obj");
   // Model model2("res/models/cube/cube_green_phong_12_tris_QUADS.obj");
   // model2.SetPos(glm::vec3(0.0f, 0.0f, 5.0f));
   // model2.SetScale(glm::vec3(10.0f, 10.0f, 10.0f));
-  // // PACKAGE MODEL DATA 
-  // ModelData modelData1 = model1.GetModelData();
+  // // PACKAGE MODEL DATA
+  ModelData modelData1 = model1.GetModelData();
   // ModelData modelData2 = model2.GetModelData();
   ModelData terrainData = terrain.GetModelData();
   Frustum frustum(camera.GetViewPersMatrix());
-  
+  QuadTree quadtree(128);
+  quadtree.InsertModelInTree(modelData1);
   // SETUP lights
   LightHandler lightHandler;
   lightHandler.AddPntLight(glm::vec3(0.0f, 10.0f, 0.0f), COLOR_BLUE, COLOR_CYAN, COLOR_WHITE);
@@ -65,4 +66,3 @@ int main() {
 
   return 0;
 }
-
