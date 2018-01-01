@@ -15,7 +15,7 @@ struct Node {
   GLuint s_id;
   GLuint s_x, s_z;
   GLuint s_width;
-  std::vector<GLuint> s_VAOs;
+  std::vector<ModelData> s_modelData;
   Node* s_children[NUM_OF_NODES];
   Node* s_parent;
   bool s_isLeaf;
@@ -109,7 +109,7 @@ public:
       }
       currentNodePtr = currentNodePtr->s_children[correctIndex];
     }
-    currentNodePtr->s_VAOs = modeldata.s_VAOs;
+    currentNodePtr->s_modelData = modeldata;
   }
 
   // TODO cull quadtree with frustum

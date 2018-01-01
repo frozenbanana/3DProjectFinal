@@ -34,16 +34,19 @@ int main() {
   // SETUP MODELS
   Terrain terrain("res/heightmap/example/BMP_example.bmp", 20);
   Model model1("res/models/nano/nanosuit.obj");
-  // Model model2("res/models/cube/cube_green_phong_12_tris_QUADS.obj");
-  // model2.SetPos(glm::vec3(0.0f, 0.0f, 5.0f));
-  // model2.SetScale(glm::vec3(10.0f, 10.0f, 10.0f));
-  // // PACKAGE MODEL DATA
+  model2.SetPos(glm::vec3(40.0f, 20.0f, 0.0f));
+  Model model2("res/models/cube/cube_green_phong_12_tris_QUADS.obj");
+  model2.SetPos(glm::vec3(40.0f, 0.0f, 0.0f));
+  model2.SetScale(glm::vec3(10.0f, 10.0f, 10.0f));
+
+  // PACKAGE MODEL DATA
   ModelData modelData1 = model1.GetModelData();
-  // ModelData modelData2 = model2.GetModelData();
+  ModelData modelData2 = model2.GetModelData();
   ModelData terrainData = terrain.GetModelData();
   Frustum frustum(camera.GetViewPersMatrix());
   QuadTree quadtree(128);
   quadtree.InsertModelInTree(modelData1);
+  quadtree.InsertModelInTree(modelData2);
   // SETUP lights
   LightHandler lightHandler;
   lightHandler.AddPntLight(glm::vec3(0.0f, 10.0f, 0.0f), COLOR_BLUE, COLOR_CYAN, COLOR_WHITE);
@@ -55,9 +58,7 @@ int main() {
   while(!display.IsClosed()) {
     display.Clear(0.0f, 0.20f, 0.1f, 1.0f);
     frustum.SetFrustum(camera.GetViewPersMatrix());
-    // frustum.CullMeshes(&modelData1); // modified
-    // frustum.CullMeshes(&modelData2); // modified
-    frustum.CullMeshes(&terrainData);   // modified
+    frustum.CullNode(&quadtree.m_rootNode);  // modified
     // display.Draw(modelData1, lPack);
     // display.Draw(modelData2, lPack);
     display.Draw(terrainData, lPack);
