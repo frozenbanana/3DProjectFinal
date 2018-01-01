@@ -63,17 +63,18 @@ public:
 
   void CullNode(Node* nodePtr) {
     nodePtr->s_insideFrustum = false;
-    glm::vec3 nodeCorners[4];
     float xPos = (float)nodePtr->s_x;
     float zPos = (float)nodePtr->s_z;
     float nodeWidth = (float)nodePtr->s_width;
-    nodePos[TOP_LEFT]     = glm::vec3(xPos,             0, zPos + nodeWidth);
-    nodePos[TOP_RIGHT]    = glm::vec3(xPos + nodeWidth, 0, zPos + nodeWidth);
-    nodePos[BOTTOM_LEFT]  = glm::vec3(xPos,             0, zPos);
-    nodePos[BOTTOM_RIGHT] = glm::vec3(xPos + nodeWidth, 0, zPos);
+
+    glm::vec3 nodeCorners[4];
+    nodeCorner[TOP_LEFT]     = glm::vec3(xPos,             0, zPos + nodeWidth);
+    nodeCorner[TOP_RIGHT]    = glm::vec3(xPos + nodeWidth, 0, zPos + nodeWidth);
+    nodeCorner[BOTTOM_LEFT]  = glm::vec3(xPos,             0, zPos);
+    nodeCorner[BOTTOM_RIGHT] = glm::vec3(xPos + nodeWidth, 0, zPos);
 
     for (size_t i = 0; i < 4 && !nodePos->s_insideFrustum; i++) {
-      	nodePr->s_insideFrustum = InsideFrustrum(nodeCorner[i]);
+      	nodePtr->s_insideFrustum = InsideFrustrum(nodeCorner[i]);
     }
 
     CullNode(nodePtr->s_children[TOP_LEFT]);
