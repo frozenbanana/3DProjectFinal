@@ -13,7 +13,7 @@ uniform sampler2D placeholder2;
 
 void main() {
   //gPosition = v_pos;
-  gPosition = vec3(1.0f, 0.0f, 0.0f);
+  gPosition = v_pos;
 
   gNormal = normalize(v_nor);
 

@@ -41,8 +41,8 @@ int main() {
   std::string disName = "Display heyheyhey";
   Display display = Display(WINDOW_WIDTH, WINDOW_HEIGHT, disName, &camera);
 
-  Shader shader(vertex_shader, fragment_shader);
-  display.SetShader(&shader);   //Function also fixes uniforms for 3 matrices an a bunch of lights
+  //Shader shader(vertex_shader, fragment_shader);
+  //display.SetShader(&shader);   //Function also fixes uniforms for 3 matrices an a bunch of lights
 
   Shader geoShader(geo_vs, geo_fs);
   Shader lightShader(lgt_vs, lgt_fs);
@@ -70,17 +70,17 @@ int main() {
   //PACKAGE LIGHT DATA TO DISPLAY (STATIC)
   LightPack lPack = lightHandler.GetLightPack();
 
+  display.Clear(0.0f, 0.20f, 0.1f, 1.0f);
+
   //DRAW LOOP
   while(!display.IsClosed()) {
-    display.Clear(0.0f, 0.20f, 0.1f, 1.0f);
+    //display.Update();   //FIX FOR DR
+    display.UpdateDR();
 
     //display.Draw(modelData1, lPack);
     //display.Draw(modelData2, lPack);    //FIX FOR DR
-    //display.DrawDR(modelData1, lPack);
-    display.DrawDR(modelData2, lPack);
-
-    //display.Update();   //FIX FOR DR
-    display.UpdateDR();
+    display.DrawDR(modelData1, lPack);
+    //display.DrawDR(modelData2, lPack);
   }
 
   return 0;

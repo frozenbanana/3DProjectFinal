@@ -13,8 +13,7 @@ uniform mat4 view;
 uniform mat4 perspective;
 
 void main() {
-  //gl_Position = perspective * view * model * vec4(in_pos, 1.0);
-  gl_Position = model * vec4(in_pos, 1.0);
+  gl_Position = perspective * view * model * vec4(in_pos, 1.0);
 
   v_pos = vec3( model * vec4(in_pos, 1.0) );   //Save pos in world space
 

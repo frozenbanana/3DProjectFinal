@@ -212,13 +212,9 @@ void Display::UpdateDR() {
     this->m_isClosed = true;
   }
 
-  glm::mat4 modelMatrix = glm::mat4(1.0f);
-  glm::mat4 viewMatrix = this->m_camPtr->GetViewMatrix();
-  glm::mat4 persMatrix = this->m_camPtr->GetPersMatrix();
+  this->m_view = this->m_camPtr->GetViewMatrix();
+  this->m_pers = this->m_camPtr->GetPersMatrix();
 
-  this->m_geoShaderPtr->UploadMatrix(modelMatrix, 0);
-  this->m_geoShaderPtr->UploadMatrix(viewMatrix, 1);
-  this->m_geoShaderPtr->UploadMatrix(persMatrix, 2);
 }
 
 void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
@@ -227,9 +223,12 @@ void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
   //Select program to use and bind framebuffer
   glUseProgram(this->m_geoShaderPtr->GetProgram());
   this->m_gBuffer.PrepGeoPass();
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   //Upload the model matrix for the model and loop through all meshes
   this->m_geoShaderPtr->UploadMatrix(modelData.s_modelMat, 0);
+  this->m_geoShaderPtr->UploadMatrix(this->m_view, 1);
+  this->m_geoShaderPtr->UploadMatrix(this->m_pers, 2);
 
   for (GLuint i = 0; i < modelData.s_meshIndices.size(); i++) {
     glBindVertexArray(modelData.s_VAOs[i]);
@@ -239,6 +238,7 @@ void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
 
   //Unbind framebuffer after render
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   /*########## LIGHT PASS ####################################################*/
   //Select the program to use and load up the gBuffer textures
@@ -276,14 +276,20 @@ void Display::SetDRShaders(Shader* geoS, Shader* lgtS) {
   this->m_geoShaderPtr = geoS;
   this->m_lgtShaderPtr = lgtS;
 
+  //USE GEO-SHADER
+  glUseProgram(this->m_geoShaderPtr->GetProgram());
+
   //Locate space in shader for matrices
   this->m_geoShaderPtr->FindUniformMatrixLoc("model");
   this->m_geoShaderPtr->FindUniformMatrixLoc("view");
   this->m_geoShaderPtr->FindUniformMatrixLoc("perspective");
 
-  //std::cout << "HAH" << '\n';
+  //USE LIGHT-SHADER
+  glUseProgram(this->m_lgtShaderPtr->GetProgram());
+
   //Locate space in shader for textures
   this->m_gBuffer.FindUniformSamplerLocs(this->m_lgtShaderPtr->GetProgram());
+  this->m_gBuffer.UploadUniformSamplers();
 
   //Locate space in shader for lights
   this->FixLightUniforms(this->m_lgtShaderPtr, "pnt_lights", "dir_lights", "spt_lights", 1, 0, 0);

@@ -149,6 +149,11 @@ void GBuffer::PrepLightPass() {
   //NTS: Bind2DTextureTo() lies in texturefunctions.hpp
   Bind2DTextureTo(this->m_gPosition, POS_TEX);
 
+  //---
+  //glActiveTexture(GL_TEXTURE0);
+  //glBindTexture(GL_TEXTURE_2D, this->m_gPosition);
+  //---
+
   Bind2DTextureTo(this->m_gNormal, NOR_TEX);
 
   Bind2DTextureTo(this->m_gDiffSpec, DIFFSPEC_TEX);

@@ -139,6 +139,7 @@ void Shader::FindUniformMatrixLoc(std::string uniformName) {
   else {
     //std::cout << uniformName << "found\n";
     m_matrixUniforms.push_back(uniformLoc);
+    //std::cout << "Pushed " << uniformName << " to index: " << (this->m_matrixUniforms.size() - 1) << '\n';
   }
 }
 
@@ -243,6 +244,7 @@ void Shader::FindUniformSptLightLoc(std::string shader_arr_name, int shader_arr_
 
 void Shader::UploadMatrix(glm::mat4 matrix, GLuint index) {
   glUniformMatrix4fv(m_matrixUniforms[index], 1, GL_FALSE, glm::value_ptr(matrix));
+  //std::cout << "Uploaded index: " << index << '\n';
 }
 
 void Shader::UploadPntLight(PntLight in_light, GLuint index) {

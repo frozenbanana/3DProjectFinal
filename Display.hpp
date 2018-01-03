@@ -37,6 +37,9 @@ private:
 
   GBuffer m_gBuffer;
 
+  glm::mat4 m_view;
+  glm::mat4 m_pers;
+
   Shader* m_geoShaderPtr;
   Shader* m_lgtShaderPtr;
 
