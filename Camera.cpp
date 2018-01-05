@@ -39,7 +39,7 @@ void Camera::UpdateCameraVectors()
   // Update view matrix
   m_view = glm::lookAt(m_position, m_position + m_front, m_worldUp); // might me m_up instead
   m_viewPers = m_pers * m_view;
-   // std::cout << "x: "<< m_position.x << ", y: " << m_position.y << ", z: " << m_position.z << std::endl;
+  //std::cout << "x: "<< m_position.x << ", y: " << m_position.y << ", z: " << m_position.z << std::endl;
 }
 
 // Returns the view matrix calculated using Eular Angles and the LookAt Matrix
@@ -116,4 +116,3 @@ glm::vec3 Camera::GetPosition() {
 glm::vec3 Camera::GetFront() {
   return m_front;
 }
-

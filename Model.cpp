@@ -100,7 +100,7 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene){
 
   // debug
   std::cout << "Creating mesh with "<< vertices.size() << " verts." << "\n";
-    
+
   return Mesh(vertices, indices, textures);
 };
 

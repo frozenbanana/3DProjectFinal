@@ -39,17 +39,17 @@ bool cullPrimitive(){
   float coe;		   //A coefficient holder
 
   cornerVer = vec3(v_posWorld[1]);
-	
+
   edge1 = vec3(cornerVer - v_posWorld[0]);
   edge2 = vec3(cornerVer - v_posWorld[2]);
 
-  cullNorm = normalize(cross(edge2, edge1));
+  cullNorm = normalize(cross(edge1, edge2));
 
-  cullCam = normalize(camPos - cornerVer);
+  cullCam = normalize(cornerVer - camPos);
 
   coe = dot(cullNorm, cullCam);
 
-  if(coe > 0.0f){
+  if(coe >= 0.0f){
     //If the dot-product is positive the triangle should not be culled
     doCull = false;
   }

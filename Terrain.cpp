@@ -17,7 +17,7 @@ void Terrain::SetMeshData(BMPData BMPData) {
       m_height = BMPData.height;
       m_vertices.resize(m_width * m_height);
       m_indices.resize((m_width-1) * (m_height-1) * 2 * 2 * 3); // 2 to make quad, 2 to make triangles, 3 indices per triangle.
-      
+
       ComputePos();
       ComputeNormals();
       ComputeTexCoords();
@@ -224,7 +224,7 @@ ModelData& Terrain::GetModelData() {
   terrainIndice.push_back(m_indices);
   terrainPos.push_back(m_terrainMeshPtr->GetPos());
 
-  m_modelData.s_insideFrustum = false;
+  m_modelData.s_insideFrustum = true;
   m_modelData.s_mode = GL_TRIANGLES;
   m_modelData.s_VAOs = terrainVAO;
   m_modelData.s_meshIndices = terrainIndice;

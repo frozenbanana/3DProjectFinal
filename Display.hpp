@@ -24,13 +24,6 @@ extern bool g_key_data[1024];
 
 class Display
 {
-private:
-  GLFWwindow* m_window;
-  bool m_isClosed;
-  GLfloat m_lastFrame;
-
-  void FixLightUniforms(std::string pnt_str, std::string dir_str, std::string spt_str, int n_pnt, int n_dir, int n_spt);
-  void UploadLightPack(LightPack& lPack);
 public:
   Display(int width, int height, const std::string& title, Camera* camPtr);
   Camera* m_camPtr;
@@ -38,10 +31,19 @@ public:
   GLfloat m_deltaTime;
   void SetShader(Shader* shaderPtr);
   void Draw(ModelData& modelData, LightPack& lPack);
+  void Draw(std::vector<ModelData*> models, LightPack& lPack);
   void Update();
   bool IsClosed();
   void Clear(float r, float g, float b, float a);
   ~Display();
+
+private:
+  GLFWwindow* m_window;
+  bool m_isClosed;
+  GLfloat m_lastFrame;
+  void FixLightUniforms(std::string pnt_str, std::string dir_str, std::string spt_str, int n_pnt, int n_dir, int n_spt);
+  void RenderMesh(ModelData* modelData);
+  void UploadLightPack(LightPack& lPack);
 };
 
 #endif

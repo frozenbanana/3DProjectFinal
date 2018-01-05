@@ -100,7 +100,7 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
   // tell GL to only draw onto a pixel if the shape is closer to the viewer
   glEnable(GL_DEPTH_TEST); // enable depth-testing
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void Display::Update() {
@@ -132,10 +132,28 @@ void Display::Draw(ModelData& modelData, LightPack& lPack) {
     UploadLightPack(lPack);
 
     m_shaderPtr->UploadMatrix(modelData.s_modelMat, 0);
-    for (GLuint i = 0; i < modelData.s_meshIndices.size(); i++) {
-    	glBindVertexArray(modelData.s_VAOs[i]);
-    	glDrawElements(modelData.s_mode, modelData.s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
+    RenderMesh(&modelData);
+  }
+}
+
+void Display::Draw(std::vector<ModelData*> modelPack, LightPack& lPack) {
+    // Modelpack contains all models inside frustum
+    glUseProgram(m_shaderPtr->GetProgram());
+
+    UploadLightPack(lPack);
+    for (GLuint i = 0; i < modelPack.size(); i++) {
+      m_shaderPtr->UploadMatrix(modelPack[i]->s_modelMat, 0);
+      RenderMesh(modelPack[i]);
     }
+}
+
+// Helper function to Draw funcions
+void Display::RenderMesh(ModelData* modelData) {
+  for (GLuint i = 0; i < modelData->s_meshIndices.size(); i++) {
+    // std::cout << "s_meshIndices: " << modelData->s_meshIndices.size() << '\n';
+    // std::cout << "s_VAOs: " << modelData->s_VAOs[i] << '\n';
+    glBindVertexArray(modelData->s_VAOs[i]);
+    glDrawElements(modelData->s_mode, modelData->s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
   }
 }
 
