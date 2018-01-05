@@ -18,17 +18,17 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vecto
   }
 
   void Mesh::SetupMesh() {
-    // Create buffers for this mesh
-    glGenBuffers(1 , &m_vbo);
-    glGenVertexArrays(1, &m_vao);
-    glGenBuffers(1 , &m_ebo);
+  // Create buffers for this mesh
+  glGenBuffers(1 , &m_vbo);
+  glGenVertexArrays(1, &m_vao);
+  glGenBuffers(1 , &m_ebo);
 
-    // Bind vao and vbo
-    glBindVertexArray(m_vao);
-    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+  // Bind vao and vbo
+  glBindVertexArray(m_vao);
+  glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
-    // Write vertices data to vbo
-    glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(Vertex), &m_vertices[0], GL_STATIC_DRAW);
+  // Write vertices data to vbo
+  glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(Vertex), &m_vertices[0], GL_STATIC_DRAW);
 
     // Bind ebo
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);

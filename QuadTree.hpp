@@ -5,6 +5,7 @@
 
 class QuadTree {
 public:
+<<<<<<< HEAD
   QuadTree(GLuint width) {
     m_nodeCounter = 0;
     m_rootNode = new Node();
@@ -97,9 +98,21 @@ public:
   ~QuadTree() {
     ReleaseNode(m_rootNode);
   }
+=======
+  QuadTree(GLuint width);
+  void GenerateTree(Node* parentNode, Node* nodePtr, GLuint xPos, GLuint zPos, GLuint width);
+  void ReleaseNode(Node* currentNode);
+  bool IsPointInNode(glm::vec3 point, Node* nodePtr);
+  void InsertModelInTree(ModelData* modeldata);
+  void FillModelPack(Node* nodePtr);
+  ~QuadTree();
+  std::vector<ModelData*> GetModelPack();
+  void ClearModelPack();
+  Node* GetRootNode();
+>>>>>>> It culls not somewhat OK
 private:
-  Node* m_rootNode;
-  const GLuint MIN_QUAD_SIZE = 32;
+  const GLuint MIN_QUAD_SIZE = 16;
   GLuint m_nodeCounter;
-  //ModelPack SendModels();
+  Node* m_rootNode;
+  std::vector<ModelData*> m_modelPack;
 };

@@ -2,7 +2,6 @@
 #define FRUSTUM_H
 #include "Plane.hpp"
 #include "Mesh.hpp"
-#include "QuadTree.hpp"
 #include "PackageStructs.hpp"
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -41,7 +40,7 @@ public:
 
   GLboolean InsideFrustrum(glm::vec3 point) {
     for (GLuint i = 0; i < NUM_PLANES; i++) {
-      if(m_planes[i].ClassifyPoint(point) == Plane::NEGATIVE) {
+      if (m_planes[i].ClassifyPoint(point) == Plane::NEGATIVE) {
         return false;
       }
     }
@@ -63,24 +62,39 @@ public:
 
   void CullNode(Node* nodePtr) {
     nodePtr->s_insideFrustum = false;
+    // convert nodePtr to floats to make corners
     float xPos = (float)nodePtr->s_x;
     float zPos = (float)nodePtr->s_z;
     float nodeWidth = (float)nodePtr->s_width;
 
-    glm::vec3 nodeCorners[4];
-    nodeCorner[TOP_LEFT]     = glm::vec3(xPos,             0, zPos + nodeWidth);
-    nodeCorner[TOP_RIGHT]    = glm::vec3(xPos + nodeWidth, 0, zPos + nodeWidth);
-    nodeCorner[BOTTOM_LEFT]  = glm::vec3(xPos,             0, zPos);
-    nodeCorner[BOTTOM_RIGHT] = glm::vec3(xPos + nodeWidth, 0, zPos);
+    float halfNodeWidth = nodeWidth/2.0;
+    // Create corners from node pos to test for frustum
+    glm::vec3 nodeCorners[9];
+    nodeCorners[0] = glm::vec3(xPos,             0, zPos + nodeWidth);          // TOP_LEFT
+    nodeCorners[1] = glm::vec3(xPos + nodeWidth, 0, zPos + nodeWidth);          // TOP_RIGHT
+    nodeCorners[2] = glm::vec3(xPos,             0, zPos);                      // BOTTOM_LEFT
+    nodeCorners[3] = glm::vec3(xPos + nodeWidth, 0, zPos);                      // BOTTOM_RIGHT
+    nodeCorners[4] = glm::vec3(xPos,                 0, zPos + halfNodeWidth);  // HALF_LEFT
+    nodeCorners[5] = glm::vec3(xPos + halfNodeWidth, 0, zPos);                  // HALF_BOTTOM
+    nodeCorners[6] = glm::vec3(xPos + halfNodeWidth, 0, zPos + halfNodeWidth);  // CENTER
+    nodeCorners[7] = glm::vec3(xPos + nodeWidth,     0, zPos + halfNodeWidth);  // HALF_RIGHT
+    nodeCorners[8] = glm::vec3(xPos + halfNodeWidth, 0, zPos + nodeWidth);      // HALF_TOP
 
-    for (size_t i = 0; i < 4 && !nodePos->s_insideFrustum; i++) {
-      	nodePtr->s_insideFrustum = InsideFrustrum(nodeCorner[i]);
+    // Cull node corners
+    for (size_t i = 0; i < 9 && !nodePtr->s_insideFrustum; i++) {
+        // std::cout << "i: "<< i << " : " << nodeCorners[i].x << ", " << nodeCorners[i].y << ", " <<  nodeCorners[i].z << '\n';
+      	nodePtr->s_insideFrustum = InsideFrustrum(nodeCorners[i]);
     }
 
-    CullNode(nodePtr->s_children[TOP_LEFT]);
-    CullNode(nodePtr->s_children[TOP_RIGHT]);
-    CullNode(nodePtr->s_children[BOTTOM_LEFT]);
-    CullNode(nodePtr->s_children[BOTTOM_RIGHT]);
+    std::cout << "NodeID: " << nodePtr->s_id << "___inside frustum: "<< nodePtr->s_insideFrustum << '\n';
+
+    // Keep doing it until leaf
+    if(!nodePtr->s_isLeaf) {
+      CullNode(nodePtr->s_children[TOP_LEFT]);
+      CullNode(nodePtr->s_children[TOP_RIGHT]);
+      CullNode(nodePtr->s_children[BOTTOM_LEFT]);
+      CullNode(nodePtr->s_children[BOTTOM_RIGHT]);
+    }
   }
 
 };
