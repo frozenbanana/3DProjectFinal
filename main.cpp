@@ -15,6 +15,8 @@
 #include "Frustum.hpp"
 #include "LightHandler.hpp"
 
+#include "QuadTree.hpp"
+
 //Trickster Domain
 #include "GLOBALS.hpp"
 #include "PackageStructs.hpp"
@@ -23,6 +25,7 @@ const char* vertex_shader = "res/shaders/base_vs.glsl";
 const char* fragment_shader = "res/shaders/base_fs.glsl";
 
 int main() {
+
   // SETUP VIEW
   Camera camera(glm::vec3(0.0f, 0.0f, -5.0f));
   Display display(WINDOW_HEIGHT, WINDOW_WIDTH, "Test terrain class", &camera);
@@ -35,12 +38,12 @@ int main() {
   model2.SetPos(glm::vec3(0.0f, 0.0f, 5.0f));
   model2.SetScale(glm::vec3(10.0f, 10.0f, 10.0f));
 
-  // PACKAGE MODEL DATA 
+  // PACKAGE MODEL DATA
   ModelData modelData1 = model1.GetModelData();
   ModelData modelData2 = model2.GetModelData();
 
   Frustum frustum(camera.GetViewPersMatrixRef());
-  
+
   // SETUP lights
   LightHandler lightHandler;
   lightHandler.AddPntLight(glm::vec3(0.0f, 10.0f, 0.0f), COLOR_BLUE, COLOR_CYAN, COLOR_WHITE);
@@ -48,17 +51,18 @@ int main() {
   //PACKAGE LIGHT DATA TO DISPLAY (STATIC)
   LightPack lPack = lightHandler.GetLightPack();
 
-  // DRAW LOOP
+  display.Clear(0.0f, 0.20f, 0.1f, 1.0f);
+
+  //DRAW LOOP
   while(!display.IsClosed()) {
-    display.Clear(0.0f, 0.20f, 0.1f, 1.0f);
-    frustum.SetFrustum(camera.GetViewPersMatrixRef());
-    frustum.CullMeshes(&modelData1); // modified
-    frustum.CullMeshes(&modelData2); // modified
-    display.Draw(modelData1, lPack);
-    display.Draw(modelData2, lPack);
-    display.Update();
+    //display.Update();   //FIX FOR DR
+    display.UpdateDR();
+
+    //display.Draw(modelData1, lPack);
+    //display.Draw(modelData2, lPack);    //FIX FOR DR
+    display.DrawDR(modelData1, lPack);
+    //display.DrawDR(modelData2, lPack);
   }
 
   return 0;
 }
-

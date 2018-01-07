@@ -1,3 +1,5 @@
+//THIS ONE
+
 #ifndef DISPLAY_HPP
 #define DISPLAY_HPP
 
@@ -7,6 +9,7 @@
 #include <iostream>
 #include "Camera.hpp"
 #include "Shader.hpp"
+#include "GBuffer.hpp"
 #include "GLOBALS.hpp"
 #include "PackageStructs.hpp"
 
@@ -29,19 +32,43 @@ private:
   bool m_isClosed;
   GLfloat m_lastFrame;
 
-  void FixLightUniforms(std::string pnt_str, std::string dir_str, std::string spt_str, int n_pnt, int n_dir, int n_spt);
-  void UploadLightPack(LightPack& lPack);
+  GLuint m_quadVAO;
+  GLuint m_quadVBO;
+
+  GBuffer m_gBuffer;
+
+  glm::mat4 m_view;
+  glm::mat4 m_pers;
+
+  Shader* m_geoShaderPtr;
+  Shader* m_lgtShaderPtr;
+
+  void CreateQuad();
+  void RenderQuad();
+  void FixLightUniforms(Shader* shader_ptr, std::string pnt_str, std::string dir_str, std::string spt_str, int n_pnt, int n_dir, int n_spt);
+  void UploadLightPack(Shader* shader_ptr, LightPack& lPack);
+  void FixTextureUniforms(Shader* shader_ptr, std::string type_str, int n_tex);
+  //void UploadTexture(Shader* shader_ptr, GLuint tex_id, int index);
 public:
-  Display(int width, int height, const std::string& title, Camera* camPtr);
   Camera* m_camPtr;
   Shader* m_shaderPtr;
   GLfloat m_deltaTime;
-  void SetShader(Shader* shaderPtr);
-  void Draw(ModelData& modelData, LightPack& lPack);
+
+  Display(int width, int height, const std::string& title, Camera* camPtr);
+  ~Display();
+
   void Update();
+  void Draw(ModelData& modelData, LightPack& lPack);
+
+  void UpdateDR();
+  void DrawDR(ModelData& modelData, LightPack& lPack);
+
+  void SetShader(Shader* shaderPtr);
+  void SetDRShaders(Shader* geoS, Shader* lgtS);
+
   bool IsClosed();
   void Clear(float r, float g, float b, float a);
-  ~Display();
+
 };
 
 #endif

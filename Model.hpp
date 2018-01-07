@@ -32,12 +32,14 @@ private:
   void LoadModel(std::string path);
   void ProcessNode(aiNode* node, const aiScene* scene);
   Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
+  GLint TextureFromFile(const char* path, std::string directory, std::string typeName);
   std::vector<Texture> LoadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName);
   std::vector<GLuint> GetVAOs();
   std::vector<GLuint> GetVBOs();
   std::vector<GLuint> GetEBOs();
   std::vector<std::vector<GLuint> > GetModelMeshesIndices();
   std::vector<std::vector<glm::vec3> > GetModelMeshesPos();
+  std::vector< std::vector<Texture> > GetMeshTextures();
   ModelData m_modelData;
 public:
   Model(std::string path);

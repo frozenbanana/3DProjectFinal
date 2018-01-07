@@ -72,7 +72,7 @@ void Shader::LinkProgram() {
 
 //Public
 Shader::Shader(const char* cs_path) {
-  //TBA
+  //WIP
 }
 
 Shader::Shader(const char* vs_path, const char* fs_path) {
@@ -113,6 +113,33 @@ GLuint Shader::GetProgram(){
   return this->m_program;
 }
 
+GLint Shader::GetUniform(std::string uniform_name) {
+  //Function general;
+
+  GLint uniLoc = glGetUniformLocation(this->m_program, uniform_name.c_str());
+  if(uniLoc == (GLint)-1) {
+    //If it does not, write out an error
+    std::cout << "ERROR::SHADER::" << uniform_name << "::UNIFORM_NOT_FOUND" << std::endl;
+  }
+
+  return uniLoc;
+}
+
+GLint Shader::GetUniformArr(std::string shader_arr_name, int shader_arr_index) {
+  //Function general
+
+  //Create a line of code calling an array of uniforms and pick an index
+  std::string uniformName = shader_arr_name + "[" + std::to_string(shader_arr_index) + "]";
+
+  //Now check if it exists
+  GLint uniLoc = glGetUniformLocation(this->m_program, uniformName.c_str());
+  if(uniLoc == (GLint)-1) {
+    //If it does not, write out an error
+    std::cout << "ERROR::SHADER::" << uniformName << "::UNIFORM_NOT_FOUND" << std::endl;
+  }
+
+  return uniLoc;
+}
 
 GLint Shader::GetUniformArrProp(std::string shader_arr_name, int shader_arr_index, std::string shader_prop) {
   //Function general
@@ -130,14 +157,38 @@ GLint Shader::GetUniformArrProp(std::string shader_arr_name, int shader_arr_inde
   return uniLoc;
 }
 
+void Shader::DirectInt(std::string uniform_name, int value) {
+
+  GLint uniform_loc = GetUniform(uniform_name);
+
+  if(uniform_loc != (GLint)-1) {
+    glUniform1i(uniform_loc, value);
+  }
+
+}
+
 void Shader::FindUniformMatrixLoc(std::string uniformName) {
+
   GLint uniformLoc = glGetUniformLocation(m_program, uniformName.c_str());
   if(uniformLoc == (GLint)-1) {
     std::cout << "ERROR::SHADER::" << uniformName << "::UNIFORM_NOT_FOUND" << std::endl;
   }
   else {
-    std::cout << uniformName << "found\n";
+    //std::cout << uniformName << "found\n";
     m_matrixUniforms.push_back(uniformLoc);
+    //std::cout << "Pushed " << uniformName << " to index: " << (this->m_matrixUniforms.size() - 1) << '\n';
+  }
+}
+
+void Shader::FindUniformTextureLoc(std::string texture_type, int texture_num) {
+  //NTS: Texture type should be 'diffuse', 'specular', 'compute', etc
+
+  std::string uniform_name = "texture_" + texture_type + std::to_string(texture_num);
+
+  GLint uniform_loc = GetUniform(uniform_name);
+
+  if(uniform_loc != (GLint)-1) {
+    this->m_textureUniforms.push_back(uniform_loc);
   }
 }
 
@@ -239,9 +290,19 @@ void Shader::FindUniformSptLightLoc(std::string shader_arr_name, int shader_arr_
   }
 }
 
-
 void Shader::UploadMatrix(glm::mat4 matrix, GLuint index) {
   glUniformMatrix4fv(m_matrixUniforms[index], 1, GL_FALSE, glm::value_ptr(matrix));
+  //std::cout << "Uploaded index: " << index << '\n';
+}
+
+void Shader::UploadTexture(GLuint tex_id, int index) {
+
+  if (this->m_textureUniforms.size() <= (unsigned int)index) {
+    std::cout << "ERROR::SHADER::TEXTURE_UNIFORMS::INDEX_OUT_OF_BOUNDS" << '\n';
+  }
+  else {
+    glUniform1i(this->m_textureUniforms[index], tex_id);
+  }
 }
 
 void Shader::UploadPntLight(PntLight in_light, GLuint index) {

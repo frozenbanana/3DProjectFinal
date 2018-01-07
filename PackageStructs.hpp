@@ -2,6 +2,8 @@
 #define PACKAGESTRUCTS_H
 #include <vector>
 #include <GL/glew.h>
+
+#include "Mesh.hpp"
 #include "PntLight.hpp"
 #include "DirLight.hpp"
 #include "SptLight.hpp"
@@ -10,8 +12,8 @@
 struct ModelData {
   bool s_insideFrustum;
   std::vector<GLuint> s_VAOs;
-  std::vector<std::vector<GLuint> > s_meshIndices;
-  std::vector<std::vector<glm::vec3> > s_meshPos;
+  std::vector< std::vector<GLuint> > s_meshIndices;
+  std::vector< std::vector<Texture> > s_meshTextures;
   glm::mat4 s_modelMat;
 };
 
