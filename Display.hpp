@@ -47,7 +47,8 @@ private:
   void RenderQuad();
   void FixLightUniforms(Shader* shader_ptr, std::string pnt_str, std::string dir_str, std::string spt_str, int n_pnt, int n_dir, int n_spt);
   void UploadLightPack(Shader* shader_ptr, LightPack& lPack);
-
+  void FixTextureUniforms(Shader* shader_ptr, std::string type_str, int n_tex);
+  //void UploadTexture(Shader* shader_ptr, GLuint tex_id, int index);
 public:
   Camera* m_camPtr;
   Shader* m_shaderPtr;

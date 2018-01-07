@@ -39,8 +39,9 @@ layout (binding=1) uniform sampler2D gNormal;
 layout (binding=2) uniform sampler2D gDiffSpec;
 
 void main() {
-	out_col = texture(gPosition, v_uvs);
+	//out_col = texture(gPosition, v_uvs);
   //out_col = texture(gNormal, v_uvs);
+  out_col = texture(gDiffSpec, v_uvs);
   //out_col = vec4(v_uvs, 0.0, 1.0);
 
   out_col += pnt_lights[0].dif * 0.01; //All uploads must be used or we get a segmentation error

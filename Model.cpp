@@ -1,7 +1,6 @@
 #include "Model.hpp"
 #include "Vertex.hpp"
-
-GLint TextureFromFile(const char* path, std::string directory);
+#include "texturefunctions.hpp"
 
 Model::Model(std::string path) : Transform() {
   LoadModel(path.c_str());
@@ -38,7 +37,7 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene) {
 }
 
 
-Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene){
+Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
   // Data containers to fill
   std::vector<Vertex> vertices;
   std::vector<GLuint> indices;
@@ -101,7 +100,7 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene){
     return Mesh(vertices, indices, textures);
 };
 
- std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName) {
+std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName) {
   std::vector<Texture> textures;
   for (GLuint i = 0; i < material->GetTextureCount(type); i++)
   {
@@ -124,7 +123,7 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene){
       if(!skip)
       {   // If texture hasn't been loaded already, load it
           Texture texture;
-          texture.id = TextureFromFile(str.C_Str(), m_directory);
+          texture.id = TextureFromFile(str.C_Str(), m_directory, typeName);
           texture.type = typeName;
           texture.path = str;
           textures.push_back(texture);
@@ -136,8 +135,7 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene){
   return textures;
 }
 
-GLint TextureFromFile(const char *path, std::string directory)
-{
+GLint Model::TextureFromFile(const char *path, std::string directory, std::string typeName) {
   //Generate texture ID and load texture data
   std::string filename = std::string(path);
   filename = directory + '/' + filename;
@@ -145,10 +143,20 @@ GLint TextureFromFile(const char *path, std::string directory)
   glGenTextures(1, &textureID);
   int width, height;
 
-unsigned char *image = SOIL_load_image(filename.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
+  unsigned char *image = SOIL_load_image(filename.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
 
   // Assign texture to ID
-  glBindTexture(GL_TEXTURE_2D, textureID);
+
+  //glBindTexture(GL_TEXTURE_2D, textureID);
+  //TEST:
+  if (typeName == "texture_diffuse") {
+    Bind2DTextureTo(textureID, MESHDIFF_TEX);
+  }
+  else if (typeName == "texture_specular") {
+    Bind2DTextureTo(textureID, MESHSPEC_TEX);
+  }
+  //TEST;
+
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
   glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -157,6 +165,8 @@ unsigned char *image = SOIL_load_image(filename.c_str(), &width, &height, 0, SOI
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  //Unbind and free
   glBindTexture(GL_TEXTURE_2D, 0);
   SOIL_free_image_data(image);
 
@@ -204,9 +214,20 @@ std::vector<std::vector<glm::vec3> > Model::GetModelMeshesPos() {
   return retMeshesPos;
 }
 
+std::vector< std::vector<Texture> > Model::GetMeshTextures() {
+  std::vector< std::vector<Texture> > retTextures;
+
+  for (GLuint i = 0; i < m_meshes.size(); i++) {
+    retTextures.push_back(m_meshes[i].m_textures);
+  }
+
+  return retTextures;
+}
+
 ModelData& Model::GetModelData() {
   m_modelData.s_VAOs = GetVAOs();
   m_modelData.s_meshIndices = GetModelMeshesIndices();
+  m_modelData.s_meshTextures = GetMeshTextures();
   m_modelData.s_modelMat = GetModelMatrix();
   return m_modelData;
 }

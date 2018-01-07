@@ -1,10 +1,13 @@
 //THIS ONE
 
 #include "Display.hpp"
+
 #include <GL/glew.h>
 #include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include "texturefunctions.hpp"
 
 //Global------------------------------------------------------------------------
 
@@ -98,6 +101,18 @@ void Display::UploadLightPack(Shader* shader_ptr, LightPack& lPack) {
     shader_ptr->UploadSptLight(lPack.s_spt_lights[i], i);
   }
 }
+
+void Display::FixTextureUniforms(Shader* shader_ptr, std::string type_str, int n_tex) {
+  //Try to allocate space in shader for n textures of a type
+
+  for (int i = 0; i < n_tex; i++) {
+    shader_ptr->FindUniformTextureLoc(type_str, i);
+  }
+}
+
+//void Display::UploadTexture(Shader* shader_ptr, GLuint tex_id, int index) {
+//  shader_ptr->UploadTexture(tex_id, index);
+//}
 
 //Public------------------------------------------------------------------------
 
@@ -232,6 +247,27 @@ void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
 
   for (GLuint i = 0; i < modelData.s_meshIndices.size(); i++) {
     glBindVertexArray(modelData.s_VAOs[i]);
+
+    //Upload mesh textures
+    int n_tex = 0;        //Varable tracking how many textures were found
+    switch (modelData.s_meshTextures[i].size()) {
+      case 2:
+        //NTS:  The below line SHOULD NOT BE USED. The uniform is linked to a binding from where it gets its values
+        //      Uploading to this uniform messes with how it is read. Line (And function) left for future reference.
+        //this->UploadTexture(this->m_geoShaderPtr, modelData.s_meshTextures[i][1].id, 1);    //Specular
+        Bind2DTextureTo(modelData.s_meshTextures[i][1].id, MESHSPEC_TEX);
+        n_tex++;
+      case 1:
+        //this->UploadTexture(this->m_geoShaderPtr, modelData.s_meshTextures[i][0].id, 0);    //Diffuse
+        Bind2DTextureTo(modelData.s_meshTextures[i][0].id, MESHDIFF_TEX);
+        n_tex++;
+        break;
+      default:
+        //No textures in mesh
+        break;
+    }
+    this->m_geoShaderPtr->DirectInt("n_tex", n_tex);  //Variable uploaded to shader for checking if the uniform samplers contain anything
+
     // draw points 0-3 from the currently bound VAO with current in-use shader
     glDrawElements(GL_TRIANGLES, modelData.s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
   }
@@ -283,6 +319,10 @@ void Display::SetDRShaders(Shader* geoS, Shader* lgtS) {
   this->m_geoShaderPtr->FindUniformMatrixLoc("model");
   this->m_geoShaderPtr->FindUniformMatrixLoc("view");
   this->m_geoShaderPtr->FindUniformMatrixLoc("perspective");
+
+  //WIP: Fix model texture uniforms
+  this->FixTextureUniforms(this->m_geoShaderPtr, "diffuse", 1);
+  this->FixTextureUniforms(this->m_geoShaderPtr, "specular", 1);
 
   //USE LIGHT-SHADER
   glUseProgram(this->m_lgtShaderPtr->GetProgram());

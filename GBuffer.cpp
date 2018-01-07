@@ -65,35 +65,6 @@ void GBuffer::InitGBuffer() {
     this->CreateTexture(this->m_gPosition, GL_RGB16F, GL_RGB, GL_FLOAT);
     this->AttachTexture(this->m_gPosition, GL_COLOR_ATTACHMENT0);
 
-    //----
-    /*
-    glBindTexture(GL_TEXTURE_2D, this->m_gPosition);
-    //Define some data about the texture
-    glTexImage2D(
-      GL_TEXTURE_2D,    //GLenum target         -The type of the texture
-      0,                //GLint level           -Level of detail
-      GL_RGB16F,//internalFormat,   //GLint internalFormat  -How the texture saves data
-      WINDOW_WIDTH,     //GLsizei width         -Width of texture
-      WINDOW_HEIGHT,    //GLsizei height        -Height of texture
-      0,                //GLint border          -"This value must be 0"...
-      GL_RGB,//format,           //GLenum format         -How each pixel should be read
-      GL_FLOAT,//type,             //GLenum type           -What format each pixel is representing its data in
-      NULL              //const GLvoid* data    -A pointer to where the image data lies
-    );
-    //Set mipmap levels
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    glFramebufferTexture2D(
-      GL_FRAMEBUFFER,       //GLenum target     -Specify target as the framebuffer
-      GL_COLOR_ATTACHMENT0,//attachment,           //GLenum attachment -The point where a texture shall be attatched
-      GL_TEXTURE_2D,        //GLenum textarget  -Specifies the type of the texture
-      this->m_gPosition,//id,                   //GLuint texture    -The point where the texture lies
-      0                     //GLint level       -Mipmap level, "Must be 0"...
-    );
-    */
-    //----
-
     //Create and attach texture for normals
     glGenTextures(1, &(this->m_gNormal));
     this->CreateTexture(this->m_gNormal, GL_RGB16F, GL_RGB, GL_FLOAT);
@@ -148,11 +119,6 @@ void GBuffer::PrepLightPass() {
 
   //NTS: Bind2DTextureTo() lies in texturefunctions.hpp
   Bind2DTextureTo(this->m_gPosition, POS_TEX);
-
-  //---
-  //glActiveTexture(GL_TEXTURE0);
-  //glBindTexture(GL_TEXTURE_2D, this->m_gPosition);
-  //---
 
   Bind2DTextureTo(this->m_gNormal, NOR_TEX);
 
