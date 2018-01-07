@@ -51,7 +51,12 @@ private:
 =======
 >>>>>>> It culls not somewhat OK
 public:
+<<<<<<< HEAD
   Camera* m_camPtr;
+=======
+  Display(int width, int height, const std::string& title, Camera* camPtr);
+  Camera* m_camPtr, *m_camPtr2;
+>>>>>>> Frustum not working yet
   Shader* m_shaderPtr;
   GLfloat m_deltaTime;
 <<<<<<< HEAD
@@ -74,6 +79,8 @@ public:
   void SetDRShaders(Shader* geoS, Shader* lgtS);
 
   bool IsClosed();
+  void ToggleCamera();
+  void SetExtraCamera(Camera* camPtr);
   void Clear(float r, float g, float b, float a);
 <<<<<<< HEAD
 

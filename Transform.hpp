@@ -32,9 +32,9 @@ public:
 	inline glm::vec3& GetRot() { return this->m_rot; };
 	inline glm::vec3& GetScale() { return this->m_scale; };
 
-	inline void SetPos(const glm::vec3& pos) {this->m_pos = pos;};
-	inline void SetRot(const glm::vec3& rot) {this->m_rot = rot;};
-	inline void SetScale(const glm::vec3& scale) {this->m_scale = scale;};
+	inline void SetPos(const glm::vec3& pos) { this->m_pos = pos; };
+	inline void SetRot(const glm::vec3& rot) { this->m_rot = rot; };
+	inline void SetScale(const glm::vec3& scale) { this->m_scale = scale; };
 
 	~Transform(){}
 private:
