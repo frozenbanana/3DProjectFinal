@@ -1,10 +1,11 @@
 #include "QuadTree.hpp"
 
-QuadTree::QuadTree(GLuint width) {
+QuadTree::QuadTree(GLuint width, GLuint minWidth) {
   m_nodeCounter = 0;
+  MIN_QUAD_SIZE = minWidth;
   m_rootNode = new Node();
   GenerateTree(nullptr, m_rootNode, 0, 0, width);
-  std::cout << "Tree generation finished." << '\n';
+  std::cout << "\nTree generation finished." << '\n';
 }
 
 //  Input a node*, init node and connect 4 new nodes until highest resolution is met
@@ -18,11 +19,14 @@ void QuadTree::GenerateTree(Node* parentNode, Node* nodePtr, GLuint xPos, GLuint
   nodePtr->s_isLeaf = false;
   nodePtr->s_insideFrustum = true;
 
-  std::cout << "New node, id: " << nodePtr->s_id;
+  if (nodePtr->s_parent != nullptr)
+   std::cout << "New node, id: " << nodePtr->s_id << " with parent, id: " << nodePtr->s_parent->s_id <<'\n';
 
   // check if it has reached highest resolution
-  if (width <= MIN_QUAD_SIZE) { // width <= 32
+  if (width <= MIN_QUAD_SIZE) {
     nodePtr->s_isLeaf = true;
+
+    std::cout << "nodeID: " << nodePtr->s_id << " is a leaf" << '\n';
 
     // Make children nullptr
     for (size_t i = 0; i < NUM_OF_NODES; i++) {
@@ -59,15 +63,16 @@ void QuadTree::ReleaseNode(Node* currentNode) {
 bool QuadTree::IsPointInNode(glm::vec3 point, Node* nodePtr) {
   glm::vec3 nodePos((float)nodePtr->s_x, 0, (float)nodePtr->s_z);
   float nodeWidth = (float)nodePtr->s_width;
-  std::cout << "IsPointInNode: " << point.x << ", "<< point.y << ", " << point.z << '\n';
+  std::cout << "IsPointInNode: " << point.x << ", "<< point.y << ", " << point.z;
   if (point.x <= (nodePos.x + nodeWidth) &&
       point.x >= nodePos.x &&
       point.z <= (nodePos.z + nodeWidth) &&
       point.z >= nodePos.z) {
-      std::cout << "Is in nodeID: " << nodePtr->s_id << '\n';
+      std::cout << " Is in nodeID: " << nodePtr->s_id << '\n';
           return true;
   }
   else {
+  std::cout << " Is NOT in nodeID: " << nodePtr->s_id << '\n';
   return false;
   }
 }
@@ -80,17 +85,22 @@ void QuadTree::InsertModelInTree(ModelData* modeldata) {
 
   // compare model with node pos to determine best locataion for model
   Node* currentNodePtr = m_rootNode;
-  bool activeNode = false;
+  bool correctChildFound = false;
 
   // if model is in bounds of QuadTree
   if (IsPointInNode(glm::vec3(modelPos), currentNodePtr)) {
     // Go down the tree until leafnode
     while (!currentNodePtr->s_isLeaf) {
-      for (int i = 0; i < 4 && !activeNode; i++) {
-        activeNode = IsPointInNode(glm::vec3(modelPos), currentNodePtr->s_children[i]);
+      for (int i = 0; i < 4 && !correctChildFound; i++) {
+        correctChildFound = IsPointInNode(glm::vec3(modelPos), currentNodePtr->s_children[i]);
+        // if (correctChildFound) {
+        //   std::cout << "currentNodePtr->s_children[" << i<< "] is corrent, id: " << currentNodePtr->s_children[i]->s_id << '\n';
+        // }
         correctIndex = i;
       }
       // Step a node lower
+      correctChildFound = false; // reset flag to find correct child node
+      // std::cout << "Therefore inserrting in currentNodePtr->s_children[" << correctIndex<< "] is corrent, id: " << currentNodePtr->s_children[correctIndex]->s_id << ", parentID: " << currentNodePtr->s_id << '\n';
       currentNodePtr = currentNodePtr->s_children[correctIndex];
     }
 

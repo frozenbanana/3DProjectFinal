@@ -51,22 +51,23 @@ private:
   glm::vec3 m_position;
 
   // Calculates the front vector from the Camera's (updated) Eular Angles
-  void UpdateCameraVectors();
- public:
+public:
   // Constructor with vectors
-  Camera(glm::vec3 position = glm::vec3(-0.0f, 0.0f, -5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = 0.0f, GLfloat pitch = 0.0f);
-
-  // Constructor with scalar values
-  // Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch);
+  Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, -5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = 0.0f, GLfloat pitch = 0.0f);
 
   // Returns the view matrix calculated using Eular Angles and the LookAt Matrix
   glm::mat4 GetViewMatrix();
   glm::mat4 GetPersMatrix();
   glm::mat4 GetViewPersMatrix();
+
   // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
   void ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime);
+
   // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
   void ProcessMouseMovement(GLfloat xOffset, GLfloat yOffset, GLboolean constrainPitch = true);
+
+  // Updates all relevant camera data
+  void UpdateCameraVectors();
 
   // Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
   void ProcessMouseScroll(GLfloat yOffset);
@@ -75,6 +76,7 @@ private:
   glm::vec3 GetFront();
   glm::mat4 GetCamView();
   glm::mat4 GetCamPers();
+
   // Get Mouse data
   void MouseCallback(double xPos, double yPos);
   void KeyCallback(int key, int scan, int act, int mode);

@@ -26,7 +26,7 @@ class Display
 {
 public:
   Display(int width, int height, const std::string& title, Camera* camPtr);
-  Camera* m_camPtr;
+  Camera* m_camPtr, *m_camPtr2;
   Shader* m_shaderPtr;
   GLfloat m_deltaTime;
   void SetShader(Shader* shaderPtr);
@@ -34,6 +34,8 @@ public:
   void Draw(std::vector<ModelData*> models, LightPack& lPack);
   void Update();
   bool IsClosed();
+  void ToggleCamera();
+  void SetExtraCamera(Camera* camPtr);
   void Clear(float r, float g, float b, float a);
   ~Display();
 

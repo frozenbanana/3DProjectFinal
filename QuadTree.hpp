@@ -5,7 +5,7 @@
 
 class QuadTree {
 public:
-  QuadTree(GLuint width);
+  QuadTree(GLuint width, GLuint minWidth);
   void GenerateTree(Node* parentNode, Node* nodePtr, GLuint xPos, GLuint zPos, GLuint width);
   void ReleaseNode(Node* currentNode);
   bool IsPointInNode(glm::vec3 point, Node* nodePtr);
@@ -16,7 +16,7 @@ public:
   void ClearModelPack();
   Node* GetRootNode();
 private:
-  const GLuint MIN_QUAD_SIZE = 16;
+  GLuint MIN_QUAD_SIZE;
   GLuint m_nodeCounter;
   Node* m_rootNode;
   std::vector<ModelData*> m_modelPack;

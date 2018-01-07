@@ -6,12 +6,6 @@
 #include "Vertex.hpp"
 #include <iostream>
 
-class Line
-{
-  glm::vec3 m_direction;
-  glm::vec3 m_origin;
-};
-
 class Plane
 {
 public:
@@ -44,26 +38,36 @@ public:
   }
 
   void Normalize() {
-    m_n = glm::normalize(m_n); 
+    float length = sqrt(m_n.x * m_n.x + m_n.y * m_n.y + m_n.z * m_n.z);
+	  m_n.x /= length;
+	  m_n.y /= length;
+	  m_n.z /= length;
+	  m_d /= length;
   }
 
   GLfloat DistanceToPlane(glm::vec3 point) {
-    return m_n.x * point.x * m_n.y * point.y * m_n.z * point.z + m_d;
+    return abs(m_n.x * point.x + m_n.y * point.y + m_n.z * point.z - m_d);
   }
 
-  Halfspace ClassifyPoint(glm::vec3 point) {
-    GLfloat dot = m_n.x * point.x + m_n.y * point.y + m_n.z * point.z + m_d;
-
-    if (dot < 0) {
-      return NEGATIVE;
-    } else if (dot > 0) {
-      // std::cout << "Postive! Plane with normal:" << m_n.x << ", " << m_n.y << ", " << m_n.z << "\n";
-      return POSITIVE;
-    } else {
-      return ON_PLANE;
-    }
+  // Halfspace ClassifyPoint(glm::vec3 point) {
+  GLfloat ClassifyPoint(glm::vec3 point) {
+    GLfloat dot = m_n.x * point.x + m_n.y * point.y + m_n.z * point.z;
+    std::cout << "dot: " << dot << '\n';
+    return dot;
+    // if (dot < 0) {
+    //   return NEGATIVE;
+    // } else if (dot > 0) {
+    //   return POSITIVE;
+    // } else {
+    //   return ON_PLANE;
+    // }
   }
 
+  std::string ToString() {
+    std::stringstream ss;
+    ss << m_n.x << ", " << m_n.y << ", " << m_n.z << ", " << m_d << std::endl;
+    return ss.str();
+  }
 };
 
 #endif

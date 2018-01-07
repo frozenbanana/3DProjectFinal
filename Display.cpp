@@ -74,12 +74,13 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
 
   // Bind camera to display
   m_camPtr = camPtr;
+  m_camPtr2 = nullptr;
 
   //Set the window to capture the mouse and hide it. It's like a cat but digital
   glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
   //Set callback functions
-  glfwSetKeyCallback(m_window, KeyCallback);			// This sets the basic key_callback function 'key_callback' as default.
+  glfwSetKeyCallback(m_window, KeyCallback);			      // This sets the basic key_callback function 'key_callback' as default.
   glfwSetCursorPosCallback(m_window, MouseCallback);		// This sets the basic mouse_callback function 'mouse_callback' as default.
 
   // second argument could be a struct of relevant pointers to control in callbackfunctions down below
@@ -97,10 +98,16 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
 
   m_deltaTime = 0.0f;
   m_lastFrame = 0.0f;
+
   // tell GL to only draw onto a pixel if the shape is closer to the viewer
   glEnable(GL_DEPTH_TEST); // enable depth-testing
-  glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
-  // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  glDepthFunc(GL_LESS);    // depth-testing interprets a smaller value as "closer"
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+}
+
+
+void Display::SetExtraCamera(Camera* camPtr) {
+  m_camPtr2 = camPtr;
 }
 
 void Display::Update() {
@@ -115,6 +122,7 @@ void Display::Update() {
     m_isClosed = true;
   }
 
+  // m_camPtr->UpdateCameraVectors();
   glm::mat4 modelMatrix = glm::mat4(1.0f);
   glm::mat4 viewMatrix = m_camPtr->GetViewMatrix();
   glm::mat4 persMatrix = m_camPtr->GetPersMatrix();
@@ -150,10 +158,19 @@ void Display::Draw(std::vector<ModelData*> modelPack, LightPack& lPack) {
 // Helper function to Draw funcions
 void Display::RenderMesh(ModelData* modelData) {
   for (GLuint i = 0; i < modelData->s_meshIndices.size(); i++) {
-    // std::cout << "s_meshIndices: " << modelData->s_meshIndices.size() << '\n';
-    // std::cout << "s_VAOs: " << modelData->s_VAOs[i] << '\n';
     glBindVertexArray(modelData->s_VAOs[i]);
     glDrawElements(modelData->s_mode, modelData->s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
+  }
+}
+
+bool camSwap = false;
+void Display::ToggleCamera() {
+  if (m_camPtr2 != nullptr) {
+    camSwap = !camSwap;
+    std::cout << "=== Switching camera === " << (camSwap ? "2" : "1") << '\n';
+    Camera* temp = m_camPtr;
+    m_camPtr = m_camPtr2;
+    m_camPtr2 = temp;
   }
 }
 
@@ -213,6 +230,9 @@ void KeyCallback(GLFWwindow* winPtr, int key, int scan, int act, int mode) {
     d->m_camPtr->ProcessKeyboard(RIGHT, d->m_deltaTime);
   if (g_key_data[GLFW_KEY_SPACE])
     d->m_camPtr->ProcessKeyboard(UP, d->m_deltaTime);
+
+  if (g_key_data[GLFW_KEY_C])
+    d->ToggleCamera();
 }
 
 void MouseCallback(GLFWwindow* winPtr, double xPos, double yPos) {
