@@ -6,6 +6,10 @@
 
 GLint TextureFromFile(const char* path, std::string directory);
 
+Model::Model() : Transform() {
+
+}
+
 Model::Model(std::string path) : Transform() {
   LoadModel(path.c_str());
 }

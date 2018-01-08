@@ -29,7 +29,6 @@ private:
   std::vector<GLuint> m_vaos;
   std::vector<GLuint> m_vbos;
   std::vector<GLuint> m_ebos;
-  void LoadModel(std::string path);
   void ProcessNode(aiNode* node, const aiScene* scene);
   Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
   std::vector<Texture> LoadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName);
@@ -40,6 +39,8 @@ private:
   std::vector<std::vector<glm::vec3> > GetModelMeshesPos();
   ModelData m_modelData;
 public:
+  Model();
+  void LoadModel(std::string path);
   Model(std::string path);
   std::vector<Mesh> GetModelMeshes();
   ModelData& GetModelData();
