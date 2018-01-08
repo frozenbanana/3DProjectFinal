@@ -25,7 +25,6 @@ extern bool g_key_data[1024];
 
 class Display
 {
-<<<<<<< HEAD
 private:
   GLFWwindow* m_window;
   bool m_isClosed;
@@ -48,27 +47,13 @@ private:
   void UploadLightPack(Shader* shader_ptr, LightPack& lPack);
   void FixTextureUniforms(Shader* shader_ptr, std::string type_str, int n_tex);
   //void UploadTexture(Shader* shader_ptr, GLuint tex_id, int index);
-=======
->>>>>>> It culls not somewhat OK
 public:
-<<<<<<< HEAD
   Camera* m_camPtr;
-=======
-  Display(int width, int height, const std::string& title, Camera* camPtr);
-  Camera* m_camPtr, *m_camPtr2;
->>>>>>> Frustum not working yet
   Shader* m_shaderPtr;
   GLfloat m_deltaTime;
-<<<<<<< HEAD
-
-  Display(int width, int height, const std::string& title, Camera* camPtr);
-  ~Display();
-
-=======
   void SetShader(Shader* shaderPtr);
   void Draw(ModelData& modelData, LightPack& lPack);
   void Draw(std::vector<ModelData*> models, LightPack& lPack);
->>>>>>> It culls not somewhat OK
   void Update();
   void Draw(ModelData& modelData, LightPack& lPack);
 
@@ -79,12 +64,7 @@ public:
   void SetDRShaders(Shader* geoS, Shader* lgtS);
 
   bool IsClosed();
-  void ToggleCamera();
-  void SetExtraCamera(Camera* camPtr);
   void Clear(float r, float g, float b, float a);
-<<<<<<< HEAD
-
-=======
   ~Display();
 
 private:
@@ -94,7 +74,6 @@ private:
   void FixLightUniforms(std::string pnt_str, std::string dir_str, std::string spt_str, int n_pnt, int n_dir, int n_spt);
   void RenderMesh(ModelData* modelData);
   void UploadLightPack(LightPack& lPack);
->>>>>>> It culls not somewhat OK
 };
 
 #endif
