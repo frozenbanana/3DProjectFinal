@@ -7,12 +7,13 @@
 #include "Display.hpp"
 #include "Shader.hpp"
 
+#include "Frustum.hpp"
+
 //Model Domain
 #include "Mesh.hpp"
 #include "Vertex.hpp"
 #include "Model.hpp"
-#include "Shader.hpp"
-#include "Frustum.hpp"
+
 #include "LightHandler.hpp"
 
 #include "QuadTree.hpp"
@@ -24,25 +25,41 @@
 const char* vertex_shader = "res/shaders/base_vs.glsl";
 const char* fragment_shader = "res/shaders/base_fs.glsl";
 
+const char* geo_vs = "res/shaders/geoPass_vs.glsl";
+//Add a gs here
+const char* geo_fs = "res/shaders/geoPass_fs.glsl";
+const char* lgt_vs = "res/shaders/lightPass_vs.glsl";
+const char* lgt_fs = "res/shaders/lightPass_fs.glsl";
+
 int main() {
 
   // SETUP VIEW
   Camera camera(glm::vec3(0.0f, 0.0f, -5.0f));
-  Display display(WINDOW_HEIGHT, WINDOW_WIDTH, "Test terrain class", &camera);
-  Shader shader(vertex_shader, fragment_shader);
-  display.SetShader(&shader);   //Function also fixes uniforms for 3 matrices an a bunch of lights
+
+  std::string disName = "Display heyheyhey";
+  Display display = Display(WINDOW_WIDTH, WINDOW_HEIGHT, disName, &camera);
+
+  //Shader shader(vertex_shader, fragment_shader);
+  //display.SetShader(&shader);   //Function also fixes uniforms for 3 matrices an a bunch of lights
+
+  Shader geoShader(geo_vs, geo_fs);
+  Shader lightShader(lgt_vs, lgt_fs);
+  display.SetDRShaders(&geoShader, &lightShader);
 
   // SETUP MODELS
   Model model1("res/models/nano/nanosuit.obj");
   Model model2("res/models/cube/cube_green_phong_12_tris_QUADS.obj");
-  model2.SetPos(glm::vec3(0.0f, 0.0f, 5.0f));
+  model2.SetPos(glm::vec3(-10.0f, 5.0f, 0.0f));
   model2.SetScale(glm::vec3(10.0f, 10.0f, 10.0f));
 
-  // PACKAGE MODEL DATA
-  ModelData modelData1 = model1.GetModelData();
+  // PACKAGE MODEL DATA TO DISPLAY (STATIC)
+  ModelData modelData1= model1.GetModelData();
   ModelData modelData2 = model2.GetModelData();
+  //ModelData modifiedModeldata1;
 
-  Frustum frustum(camera.GetViewPersMatrixRef());
+  // Frustum culling
+  //glm::mat4 viewPers = camera.GetViewMatrix() * camera.GetPersMatrix();
+  //Frustum frustum(viewPers);
 
   // SETUP lights
   LightHandler lightHandler;
@@ -55,11 +72,11 @@ int main() {
 
   //DRAW LOOP
   while(!display.IsClosed()) {
-    //display.Update();   //FIX FOR DR
+    //display.Update();
     display.UpdateDR();
 
     //display.Draw(modelData1, lPack);
-    //display.Draw(modelData2, lPack);    //FIX FOR DR
+    //display.Draw(modelData2, lPack);
     display.DrawDR(modelData1, lPack);
     //display.DrawDR(modelData2, lPack);
   }
