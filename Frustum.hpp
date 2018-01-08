@@ -48,15 +48,12 @@ public:
   ~Frustum() {}
 
   GLboolean InsideFrustrum(glm::vec3 point) {
-     // for (GLuint i = 0; i < 1; i++) {    // Only need to check left, right, far and near plane
-        // std::cout << " Distance to plane[" << i << "]: " << m_planes[i].DistanceToPlane(point);
-       if (m_planes[0].ClassifyPoint(point) < 0.0f) {
-         std::cout << "CULLED" << '\n';
+    for (GLuint i = 0; i < 4; i++) {    // Only need to check left, right, far and near plane
+       if (m_planes[i].ClassifyPoint(point) < 0.0f) {
          return false;
        }
-    // }
+    }
 
-    // std::cout << '\n';
     return true;
   }
 
@@ -78,12 +75,11 @@ public:
     nodeCorners[3] = glm::vec3(xPos + nodeWidth,      0, zPos);             // BOTTOM_RIGHT
 
     // Cull node corners
-    // for (size_t i = 0; i < 1 && !nodePtr->s_insideFrustum; i++) {
-    	nodePtr->s_insideFrustum = InsideFrustrum(nodeCorners[0]);
-    // }
+    for (size_t i = 0; i < 4 && !nodePtr->s_insideFrustum; i++) {
+      nodePtr->s_insideFrustum = InsideFrustrum(nodeCorners[i]);
+    // std::cout << "Looking at the nodeID: " << nodePtr->s_id << ", inside? "<< nodePtr->s_insideFrustum << '\n';
+    }
 
-    if (nodePtr->s_id == 3)
-      std::cout << "Looking at the nodeID: " << nodePtr->s_id << ", inside? "<< nodePtr->s_insideFrustum << '\n';
 
     // If we are at bottom jump out
     if (nodePtr->s_isLeaf) {
@@ -92,10 +88,10 @@ public:
 
     // Keep doing it until leaf
     if (nodePtr->s_insideFrustum) {
-      // CullNode(nodePtr->s_children[TOP_LEFT]);
-      // CullNode(nodePtr->s_children[TOP_RIGHT]);
+      CullNode(nodePtr->s_children[TOP_LEFT]);
+      CullNode(nodePtr->s_children[TOP_RIGHT]);
       CullNode(nodePtr->s_children[BOTTOM_LEFT]);
-      // CullNode(nodePtr->s_children[BOTTOM_RIGHT]);
+      CullNode(nodePtr->s_children[BOTTOM_RIGHT]);
     }
   }
 

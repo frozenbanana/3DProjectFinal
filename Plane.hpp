@@ -45,22 +45,20 @@ public:
 	  m_d /= length;
   }
 
+  // Make sure planes are normalized! OK
   GLfloat DistanceToPlane(glm::vec3 point) {
-    return abs(m_n.x * point.x + m_n.y * point.y + m_n.z * point.z - m_d);
+    return m_n.x * point.x + m_n.y * point.y + m_n.z * point.z + m_d;
   }
 
-  // Halfspace ClassifyPoint(glm::vec3 point) {
-  GLfloat ClassifyPoint(glm::vec3 point) {
-    GLfloat dot = m_n.x * point.x + m_n.y * point.y + m_n.z * point.z;
-    std::cout << "dot: " << dot << '\n';
-    return dot;
-    // if (dot < 0) {
-    //   return NEGATIVE;
-    // } else if (dot > 0) {
-    //   return POSITIVE;
-    // } else {
-    //   return ON_PLANE;
-    // }
+  Halfspace ClassifyPoint(glm::vec3 point) {
+    GLfloat dot = m_n.x * point.x + m_n.y * point.y + m_n.z * point.z + m_d;
+    if (dot < 0) {
+      return NEGATIVE;
+    } else if (dot > 0) {
+      return POSITIVE;
+    } else {
+      return ON_PLANE;
+    }
   }
 
   std::string ToString() {

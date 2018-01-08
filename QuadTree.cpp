@@ -1,4 +1,6 @@
 #include "QuadTree.hpp"
+#include <glm/gtc/matrix_access.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 QuadTree::QuadTree(GLuint width, GLuint minWidth) {
   m_nodeCounter = 0;
@@ -80,7 +82,7 @@ bool QuadTree::IsPointInNode(glm::vec3 point, Node* nodePtr) {
 void QuadTree::InsertModelInTree(ModelData* modeldata) {
   int correctIndex = -1;
   // Get a point of model
-  glm::vec4 modelPos = modeldata->s_modelMat * glm::vec4(modeldata->s_meshPos[0][0], 1.0);
+  glm::vec4 modelPos = glm::column(modeldata->s_modelMat, 3);
   std::cout << "modelpos: " << modelPos.x << ", "<< modelPos.y << ", " << modelPos.z <<'\n';
 
   // compare model with node pos to determine best locataion for model
@@ -110,18 +112,19 @@ void QuadTree::InsertModelInTree(ModelData* modeldata) {
   }
 }
 
-
 QuadTree::~QuadTree() {
   ReleaseNode(m_rootNode);
 }
 
 void QuadTree::FillModelPack(Node* nodePtr) {
+  // std::cout << "Attempting to fill modelPack with NodeID: " << nodePtr->s_id << "in frustum?, " << nodePtr->s_insideFrustum << '\n';
   if (nodePtr->s_insideFrustum && nodePtr->s_isLeaf) {
     if (nodePtr->s_models.size() != 0) {
+      // std::cout << "Filling modelPack with nodeID: " << nodePtr->s_id << " because it in frustum " << nodePtr->s_insideFrustum << '\n';
       m_modelPack.insert(std::end(m_modelPack), std::begin(nodePtr->s_models), std::end(nodePtr->s_models));
     }
   }
-  if (!nodePtr->s_isLeaf) {
+  else if (nodePtr->s_insideFrustum && !nodePtr->s_isLeaf) {
     FillModelPack(nodePtr->s_children[TOP_LEFT]);
     FillModelPack(nodePtr->s_children[TOP_RIGHT]);
     FillModelPack(nodePtr->s_children[BOTTOM_LEFT]);
