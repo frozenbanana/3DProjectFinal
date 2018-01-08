@@ -50,6 +50,7 @@ public:
     return m_n.x * point.x + m_n.y * point.y + m_n.z * point.z + m_d;
   }
 
+  // Tell if point is inside the positive side of plane
   Halfspace ClassifyPoint(glm::vec3 point) {
     GLfloat dot = m_n.x * point.x + m_n.y * point.y + m_n.z * point.z + m_d;
     if (dot < 0) {
