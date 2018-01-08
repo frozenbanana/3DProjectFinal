@@ -17,7 +17,7 @@ const int WINDOW_WIDTH = 640;
 >>>>>>> Frustum culling working for real
 const GLfloat PI = 3.1415926535f;
 const int QUADTREE_ROOT_WIDTH = 64;
-const int QUADTREE_MIN_WIDTH = 32;
+const int QUADTREE_MIN_WIDTH = 4;
 
 // void PrintMat4(glm::mat4 matrix) {
 //   float *mvp = (float*)glm::value_ptr(matrix);
