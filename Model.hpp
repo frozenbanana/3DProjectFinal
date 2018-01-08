@@ -40,8 +40,8 @@ private:
   ModelData m_modelData;
 public:
   Model();
-  void LoadModel(std::string path);
   Model(std::string path);
+  void LoadModel(std::string path);
   std::vector<Mesh> GetModelMeshes();
   ModelData& GetModelData();
   ~Model();

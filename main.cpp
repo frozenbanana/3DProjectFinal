@@ -1,5 +1,3 @@
-//THIS ONE
-
 #include <GL/glew.h> // include GLEW and new version of GL on Windows
 #include <GLFW/glfw3.h> // GLFW helper library
 #include <stdio.h>
@@ -9,16 +7,16 @@
 #include "Display.hpp"
 #include "Shader.hpp"
 
+#include "Frustum.hpp"
+
 //Model Domain
 #include "Mesh.hpp"
 #include "Vertex.hpp"
 #include "Model.hpp"
-#include "Shader.hpp"
-#include "Frustum.hpp"
+
 #include "LightHandler.hpp"
 #include "Terrain.hpp"
 #include "QuadTree.hpp"
-
 //Trickster Domain
 #include "GLOBALS.hpp"
 #include "PackageStructs.hpp"
@@ -27,6 +25,11 @@ const char* vertex_shader = "res/shaders/base_vs.glsl";
 const char* geometry_shader = "res/shaders/base_gs.glsl";
 const char* fragment_shader = "res/shaders/base_fs.glsl";
 
+const char* geo_vs = "res/shaders/geoPass_vs.glsl";
+//Add a gs here
+const char* geo_fs = "res/shaders/geoPass_fs.glsl";
+const char* lgt_vs = "res/shaders/lightPass_vs.glsl";
+const char* lgt_fs = "res/shaders/lightPass_fs.glsl";
 
 int main() {
 
@@ -43,10 +46,10 @@ int main() {
   QuadTree quadtree(QUADTREE_ROOT_WIDTH, QUADTREE_MIN_WIDTH);
   // quadtree.InsertModelInTree(&modelData1);
   // quadtree.InsertModelInTree(&modelData2);
-
-  Shader geoShader(geo_vs, geo_fs);
-  Shader lightShader(lgt_vs, lgt_fs);
-  display.SetDRShaders(&geoShader, &lightShader);
+  //
+  // Shader geoShader(geo_vs, geo_fs);
+  // Shader lightShader(lgt_vs, lgt_fs);
+  // display.SetDRShaders(&geoShader, &lightShader);
 
   // SETUP MODELS
   Terrain terrain("res/heightmap/example/BMP_example.bmp", 20);
