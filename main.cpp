@@ -1,3 +1,5 @@
+//THIS ONE
+
 #include <GL/glew.h> // include GLEW and new version of GL on Windows
 #include <GLFW/glfw3.h> // GLFW helper library
 #include <stdio.h>
@@ -27,6 +29,7 @@ const char* fragment_shader = "res/shaders/base_fs.glsl";
 
 
 int main() {
+
   // SETUP VIEW
   Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
   Camera camera2(glm::vec3(0.0f, 7.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, -45.0f);
@@ -40,6 +43,10 @@ int main() {
   QuadTree quadtree(QUADTREE_ROOT_WIDTH, QUADTREE_MIN_WIDTH);
   // quadtree.InsertModelInTree(&modelData1);
   // quadtree.InsertModelInTree(&modelData2);
+
+  Shader geoShader(geo_vs, geo_fs);
+  Shader lightShader(lgt_vs, lgt_fs);
+  display.SetDRShaders(&geoShader, &lightShader);
 
   // SETUP MODELS
   Terrain terrain("res/heightmap/example/BMP_example.bmp", 20);
@@ -93,7 +100,7 @@ int main() {
   // //PACKAGE LIGHT DATA TO DISPLAY (STATIC)
   LightPack lPack = lightHandler.GetLightPack();
 
-  // DRAW LOOP
+  //DRAW LOOP
   while(!display.IsClosed()) {
      display.Clear(0.0f, 0.20f, 0.1f, 1.0f);
      frustum.SetFrustum(camera.GetViewPersMatrix());
