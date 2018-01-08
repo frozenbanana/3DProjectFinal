@@ -1,3 +1,5 @@
+//THIS ONE
+
 #include <GL/glew.h> // include GLEW and new version of GL on Windows
 #include <GLFW/glfw3.h> // GLFW helper library
 #include <stdio.h>
@@ -51,6 +53,10 @@ int main() {
   QuadTree quadtree(QUADTREE_ROOT_WIDTH, QUADTREE_MIN_WIDTH);
   // quadtree.InsertModelInTree(&modelData1);
   // quadtree.InsertModelInTree(&modelData2);
+
+  Shader geoShader(geo_vs, geo_fs);
+  Shader lightShader(lgt_vs, lgt_fs);
+  display.SetDRShaders(&geoShader, &lightShader);
 
   // SETUP MODELS
 <<<<<<< HEAD
@@ -138,8 +144,11 @@ int main() {
   // //PACKAGE LIGHT DATA TO DISPLAY (STATIC)
   LightPack lPack = lightHandler.GetLightPack();
 
+<<<<<<< HEAD
   display.Clear(0.0f, 0.20f, 0.1f, 1.0f);
 
+=======
+>>>>>>> commiting test (21 cubes)
   //DRAW LOOP
   while(!display.IsClosed()) {
 <<<<<<< HEAD
