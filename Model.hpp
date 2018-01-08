@@ -42,10 +42,6 @@ private:
   ModelData m_modelData;
 public:
   Model();
-<<<<<<< HEAD
-  void LoadModel(std::string path);
-=======
->>>>>>> feature/terrain
   Model(std::string path);
   void LoadModel(std::string path);
   std::vector<Mesh> GetModelMeshes();

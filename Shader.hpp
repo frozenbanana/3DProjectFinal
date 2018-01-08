@@ -51,15 +51,7 @@ private:
 
   GLuint m_program;
   std::vector<GLint> m_matrixUniforms;
-<<<<<<< HEAD
-<<<<<<< HEAD
   std::vector<GLint> m_textureUniforms;
-=======
-  std::vector<GLint> m_vec3Uniforms;
->>>>>>> Frustum culling working for real
-=======
-  std::vector<GLint> m_vec3Uniforms;
->>>>>>> feature/terrain
   PntLightUniforms m_pnt_lights;
   DirLightUniforms m_dir_lights;
   SptLightUniforms m_spt_lights;
@@ -93,15 +85,7 @@ public:
   void FindUniformSptLightLoc(std::string shader_arr_name, int shader_arr_index);
 
   // void UploadMatrix(const Transform& transform, const glm::mat4 view, const glm::mat4 perspective);
-<<<<<<< HEAD
-<<<<<<< HEAD
   void UploadDirectInt(int i);
-=======
-  void UploadVec3(glm::vec3 vec, GLuint index);
->>>>>>> Frustum culling working for real
-=======
-  void UploadVec3(glm::vec3 vec, GLuint index);
->>>>>>> feature/terrain
   void UploadMatrix(glm::mat4 matrix, GLuint index);
   void UploadTexture(GLuint tex_id, int index);
   void UploadPntLight(PntLight in_light, GLuint index);

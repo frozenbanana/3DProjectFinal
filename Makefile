@@ -2,15 +2,7 @@ LIBS= -lGLEW -lSOIL -lassimp -lGL -lGLU -lglfw -lX11 -lXxf86vm -lXrandr -lpthrea
 CC= g++
 CFLAGS = -g -Wall -std=c++1z
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-make: Display.o Shader.o Model.o Mesh.o Camera.o LightHandler.o Light.o PntLight.o DirLight.o SptLight.o GBuffer.o Terrain.o
-=======
 make: Display.o Shader.o Model.o Mesh.o Camera.o LightHandler.o Light.o PntLight.o DirLight.o SptLight.o Terrain.o QuadTree.o
->>>>>>> It culls not somewhat OK
-=======
-make: Display.o Shader.o Model.o Mesh.o Camera.o LightHandler.o Light.o PntLight.o DirLight.o SptLight.o Terrain.o QuadTree.o
->>>>>>> feature/terrain
 		$(CC) $(CFLAGS) main.cpp -o run $^ $(LIBS)
 
 Display.o: Display.cpp
@@ -43,12 +35,9 @@ DirLight.o: DirLight.cpp
 SptLight.o: SptLight.cpp
 		$(CC) $(CFLAGS) SptLight.cpp -c
 
-<<<<<<< HEAD
 GBuffer.o: GBuffer.cpp
 		$(CC) $(CFLAGS) GBuffer.cpp -c
 
-=======
->>>>>>> feature/terrain
 Terrain.o: Terrain.cpp
 		$(CC) $(CFLAGS) Terrain.cpp -c
 
