@@ -4,6 +4,9 @@
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <glm/gtc/matrix_access.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 GLint TextureFromFile(const char* path, std::string directory);
 
 Model::Model() : Transform() {

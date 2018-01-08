@@ -48,7 +48,7 @@ private:
   void FixTextureUniforms(Shader* shader_ptr, std::string type_str, int n_tex);
   //void UploadTexture(Shader* shader_ptr, GLuint tex_id, int index);
 public:
-  Camera* m_camPtr;
+  Camera* m_camPtr, *m_camPtr2;
   Shader* m_shaderPtr;
   GLfloat m_deltaTime;
   void SetShader(Shader* shaderPtr);
@@ -64,6 +64,8 @@ public:
   void SetDRShaders(Shader* geoS, Shader* lgtS);
 
   bool IsClosed();
+  void ToggleCamera();
+  void SetExtraCamera(Camera* camPtr);
   void Clear(float r, float g, float b, float a);
   ~Display();
 

@@ -51,6 +51,7 @@ private:
   glm::vec3 m_position;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	// Calculates the front vector from the Camera's (updated) Eular Angles
 	void UpdateCameraVectors();
 public:
@@ -69,6 +70,12 @@ public:
 =======
   Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, -5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = 0.0f, GLfloat pitch = 0.0f);
 >>>>>>> Frustum not working yet
+=======
+  // Calculates the front vector from the Camera's (updated) Eular Angles
+public:
+  // Constructor with vectors
+  Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, -5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = 0.0f, GLfloat pitch = 0.0f);
+>>>>>>> feature/terrain
 
   // Returns the view matrix calculated using Eular Angles and the LookAt Matrix
   glm::mat4 GetViewMatrix();
