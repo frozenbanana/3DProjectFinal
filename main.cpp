@@ -30,6 +30,7 @@ const char* geometry_shader = "res/shaders/base_gs.glsl";
 const char* fragment_shader = "res/shaders/base_fs.glsl";
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 const char* geo_vs = "res/shaders/geoPass_vs.glsl";
 //Add a gs here
 const char* geo_fs = "res/shaders/geoPass_fs.glsl";
@@ -37,9 +38,21 @@ const char* lgt_vs = "res/shaders/lightPass_vs.glsl";
 const char* lgt_fs = "res/shaders/lightPass_fs.glsl";
 =======
 >>>>>>> Frustum not working yet
+=======
+// DEFERRED RENDERING SHADERS
+// geo shader
+const char* geo_vs = "res/shaders/geoPass_vs.glsl";
+//Add a gs here
+const char* geo_fs = "res/shaders/geoPass_fs.glsl";
+// light shader
+const char* lgt_vs = "res/shaders/lightPass_vs.glsl";
+const char* lgt_fs = "res/shaders/lightPass_fs.glsl";
+
+// COMPUTE SHADER
+const char* pt_cs = "res/shaders/PTcompute.glsl";
+>>>>>>> comiitng
 
 int main() {
-
   // SETUP VIEW
   Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
   Camera camera2(glm::vec3(0.0f, 7.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, -45.0f);
