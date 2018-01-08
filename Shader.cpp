@@ -157,8 +157,6 @@ GLint Shader::GetUniformArrProp(std::string shader_arr_name, int shader_arr_inde
   return uniLoc;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 void Shader::DirectInt(std::string uniform_name, int value) {
 
   GLint uniform_loc = GetUniform(uniform_name);
@@ -169,9 +167,6 @@ void Shader::DirectInt(std::string uniform_name, int value) {
 
 }
 
-=======
-=======
->>>>>>> feature/terrain
 void Shader::FindUniformVec3Loc(std::string uniformName) {
   GLint uniformLoc = glGetUniformLocation(m_program, uniformName.c_str());
   if(uniformLoc == (GLint)-1) {
@@ -184,10 +179,6 @@ void Shader::FindUniformVec3Loc(std::string uniformName) {
 }
 
 
-<<<<<<< HEAD
->>>>>>> Frustum culling working for real
-=======
->>>>>>> feature/terrain
 void Shader::FindUniformMatrixLoc(std::string uniformName) {
 
   GLint uniformLoc = glGetUniformLocation(m_program, uniformName.c_str());
@@ -195,15 +186,7 @@ void Shader::FindUniformMatrixLoc(std::string uniformName) {
     std::cout << "ERROR::SHADER::" << uniformName << "::UNIFORM_NOT_FOUND" << std::endl;
   }
   else {
-<<<<<<< HEAD
-<<<<<<< HEAD
-    //std::cout << uniformName << "found\n";
-=======
     std::cout << "Uniform " << uniformName << " found\n";
->>>>>>> Frustum culling working for real
-=======
-    std::cout << "Uniform " << uniformName << " found\n";
->>>>>>> feature/terrain
     m_matrixUniforms.push_back(uniformLoc);
     //std::cout << "Pushed " << uniformName << " to index: " << (this->m_matrixUniforms.size() - 1) << '\n';
   }
@@ -319,16 +302,10 @@ void Shader::FindUniformSptLightLoc(std::string shader_arr_name, int shader_arr_
   }
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> feature/terrain
 void Shader::UploadVec3(glm::vec3 vec, GLuint index) {
   glUniformMatrix4fv(m_vec3Uniforms[index], 1, GL_FALSE, glm::value_ptr(vec));
 }
 
->>>>>>> Frustum culling working for real
 void Shader::UploadMatrix(glm::mat4 matrix, GLuint index) {
   glUniformMatrix4fv(m_matrixUniforms[index], 1, GL_FALSE, glm::value_ptr(matrix));
   //std::cout << "Uploaded index: " << index << '\n';

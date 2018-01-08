@@ -50,32 +50,11 @@ private:
   glm::mat4 m_viewPers; // perspective will be passed to shader
   glm::vec3 m_position;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 	// Calculates the front vector from the Camera's (updated) Eular Angles
 	void UpdateCameraVectors();
 public:
 	// Constructor with vectors
 	Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = -90.0f, GLfloat pitch = 0.0f);
-=======
-  // Calculates the front vector from the Camera's (updated) Eular Angles
-public:
-  // Constructor with vectors
-<<<<<<< HEAD
-  Camera(glm::vec3 position = glm::vec3(-0.0f, 0.0f, -5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = 0.0f, GLfloat pitch = 0.0f);
->>>>>>> Frustum culling working for real
-
-  // Constructor with scalar values
-  // Camera(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat upX, GLfloat upY, GLfloat upZ, GLfloat yaw, GLfloat pitch);
-=======
-  Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, -5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = 0.0f, GLfloat pitch = 0.0f);
->>>>>>> Frustum not working yet
-=======
-  // Calculates the front vector from the Camera's (updated) Eular Angles
-public:
-  // Constructor with vectors
-  Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, -5.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), GLfloat yaw = 0.0f, GLfloat pitch = 0.0f);
->>>>>>> feature/terrain
 
   // Returns the view matrix calculated using Eular Angles and the LookAt Matrix
   glm::mat4 GetViewMatrix();
@@ -87,9 +66,6 @@ public:
 
   // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
   void ProcessMouseMovement(GLfloat xOffset, GLfloat yOffset, GLboolean constrainPitch = true);
-
-  // Updates all relevant camera data
-  void UpdateCameraVectors();
 
   // Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
   void ProcessMouseScroll(GLfloat yOffset);

@@ -51,6 +51,7 @@ private:
 
   GLuint m_program;
   std::vector<GLint> m_matrixUniforms;
+  std::vector<GLint> m_vec3Uniforms;
   std::vector<GLint> m_textureUniforms;
   PntLightUniforms m_pnt_lights;
   DirLightUniforms m_dir_lights;
@@ -86,6 +87,7 @@ public:
 
   // void UploadMatrix(const Transform& transform, const glm::mat4 view, const glm::mat4 perspective);
   void UploadDirectInt(int i);
+  void UploadVec3(glm::vec3 vec, GLuint index);
   void UploadMatrix(glm::mat4 matrix, GLuint index);
   void UploadTexture(GLuint tex_id, int index);
   void UploadPntLight(PntLight in_light, GLuint index);

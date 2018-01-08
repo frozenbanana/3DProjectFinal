@@ -167,11 +167,8 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
 
   // tell GL to only draw onto a pixel if the shape is closer to the viewer
   glEnable(GL_DEPTH_TEST); // enable depth-testing
-<<<<<<< HEAD
-<<<<<<< HEAD
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
-<<<<<<< HEAD
-<<<<<<< HEAD
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
   //Now avoid that cute little segmentation fault by initilizing the gbuffer here instead
   this->m_gBuffer.InitGBuffer();
@@ -183,26 +180,11 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
 
 Display::~Display() {
   glfwTerminate();
-=======
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
->>>>>>> Frustum culling working for real
-=======
-  // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
->>>>>>> It culls not somewhat OK
-=======
-=======
->>>>>>> feature/terrain
-  glDepthFunc(GL_LESS);    // depth-testing interprets a smaller value as "closer"
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 
 void Display::SetExtraCamera(Camera* camPtr) {
   m_camPtr2 = camPtr;
-<<<<<<< HEAD
->>>>>>> Frustum not working yet
-=======
->>>>>>> feature/terrain
 }
 
 void Display::Update() {
@@ -225,55 +207,8 @@ void Display::Update() {
   m_shaderPtr->UploadMatrix(modelMatrix, 0);
   m_shaderPtr->UploadMatrix(viewMatrix, 1);
   m_shaderPtr->UploadMatrix(persMatrix, 2);
-  m_shaderPtr->UploadVec3(camPos, 0);
 }
 
-void Display::Draw(ModelData& modelData, LightPack& lPack) {
-  if (modelData.s_insideFrustum) {
-    glUseProgram(m_shaderPtr->GetProgram());
-
-    this->UploadLightPack(m_shaderPtr, lPack);
-
-    m_shaderPtr->UploadMatrix(modelData.s_modelMat, 0);
-    RenderMesh(&modelData);
-  }
-}
-
-void Display::Draw(std::vector<ModelData*> modelPack, LightPack& lPack) {
-    // Modelpack contains all models inside frustum
-    glUseProgram(m_shaderPtr->GetProgram());
-
-    UploadLightPack(lPack);
-    for (GLuint i = 0; i < modelPack.size(); i++) {
-      m_shaderPtr->UploadMatrix(modelPack[i]->s_modelMat, 0);
-      RenderMesh(modelPack[i]);
-    }
-}
-
-// Helper function to Draw funcions
-void Display::RenderMesh(ModelData* modelData) {
-  for (GLuint i = 0; i < modelData->s_meshIndices.size(); i++) {
-    glBindVertexArray(modelData->s_VAOs[i]);
-    glDrawElements(modelData->s_mode, modelData->s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
-<<<<<<< HEAD
-=======
-  }
-}
-
-bool camSwap = false;
-void Display::ToggleCamera() {
-  if (m_camPtr2 != nullptr) {
-    camSwap = !camSwap;
-    std::cout << "=== Switching camera === " << (camSwap ? "2" : "1") << '\n';
-    Camera* temp = m_camPtr;
-    m_camPtr = m_camPtr2;
-    m_camPtr2 = temp;
->>>>>>> feature/terrain
-  }
-}
-
-<<<<<<< HEAD
-<<<<<<< HEAD
 void Display::UpdateDR() {
   //std::cout << "In UpdateDR" << '\n';
 
@@ -292,6 +227,28 @@ void Display::UpdateDR() {
   this->m_view = this->m_camPtr->GetViewMatrix();
   this->m_pers = this->m_camPtr->GetPersMatrix();
 
+}
+
+void Display::Draw(ModelData& modelData, LightPack& lPack) {
+  if (modelData.s_insideFrustum) {
+    glUseProgram(m_shaderPtr->GetProgram());
+
+    this->UploadLightPack(m_shaderPtr, lPack);
+
+    m_shaderPtr->UploadMatrix(modelData.s_modelMat, 0);
+    RenderMesh(&modelData);
+  }
+}
+
+void Display::Draw(std::vector<ModelData*> modelPack, LightPack& lPack) {
+    // Modelpack contains all models inside frustum
+    glUseProgram(m_shaderPtr->GetProgram());
+
+    UploadLightPack(m_shaderPtr, lPack);
+    for (GLuint i = 0; i < modelPack.size(); i++) {
+      m_shaderPtr->UploadMatrix(modelPack[i]->s_modelMat, 0);
+      RenderMesh(modelPack[i]);
+    }
 }
 
 void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
@@ -350,8 +307,15 @@ void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
   //Draw the quad filling the screen
   this->RenderQuad();
 
-=======
-=======
+}
+// Helper function to Draw funcions
+void Display::RenderMesh(ModelData* modelData) {
+  for (GLuint i = 0; i < modelData->s_meshIndices.size(); i++) {
+    glBindVertexArray(modelData->s_VAOs[i]);
+    glDrawElements(modelData->s_mode, modelData->s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
+  }
+}
+
 bool camSwap = false;
 void Display::ToggleCamera() {
   if (m_camPtr2 != nullptr) {
@@ -361,16 +325,6 @@ void Display::ToggleCamera() {
     m_camPtr = m_camPtr2;
     m_camPtr2 = temp;
   }
-}
-
->>>>>>> Frustum not working yet
-void Display::Clear(float r, float g, float b, float a) {
-  glClearColor(r, g, b, a);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-<<<<<<< HEAD
->>>>>>> Terrain working
-=======
->>>>>>> feature/terrain
 }
 
 void Display::SetShader(Shader* shaderPtr) {
@@ -383,12 +337,7 @@ void Display::SetShader(Shader* shaderPtr) {
   m_shaderPtr->FindUniformMatrixLoc("view");
   m_shaderPtr->FindUniformMatrixLoc("perspective");
   m_shaderPtr->FindUniformVec3Loc("camPos");
-<<<<<<< HEAD
 
-=======
->>>>>>> feature/terrain
-
-  //std::cout << "HOH" << '\n';
   //Locate space in shader for lights
   this->FixLightUniforms(m_shaderPtr, "pnt_lights", "dir_lights", "spt_lights", 1, 0, 0);
 }

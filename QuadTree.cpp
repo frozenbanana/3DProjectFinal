@@ -1,8 +1,5 @@
 #include "QuadTree.hpp"
-<<<<<<< HEAD
-=======
 #include "GLOBALS.hpp"
->>>>>>> feature/terrain
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtc/type_ptr.hpp>
 

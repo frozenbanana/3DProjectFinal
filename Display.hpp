@@ -44,6 +44,7 @@ private:
   void CreateQuad();
   void RenderQuad();
   void FixLightUniforms(Shader* shader_ptr, std::string pnt_str, std::string dir_str, std::string spt_str, int n_pnt, int n_dir, int n_spt);
+  void RenderMesh(ModelData* modelData);
   void UploadLightPack(Shader* shader_ptr, LightPack& lPack);
   void FixTextureUniforms(Shader* shader_ptr, std::string type_str, int n_tex);
   //void UploadTexture(Shader* shader_ptr, GLuint tex_id, int index);
@@ -51,31 +52,26 @@ public:
   Camera* m_camPtr, *m_camPtr2;
   Shader* m_shaderPtr;
   GLfloat m_deltaTime;
-  void SetShader(Shader* shaderPtr);
-  void Draw(ModelData& modelData, LightPack& lPack);
-  void Draw(std::vector<ModelData*> models, LightPack& lPack);
-  void Update();
-  void Draw(ModelData& modelData, LightPack& lPack);
 
-  void UpdateDR();
-  void DrawDR(ModelData& modelData, LightPack& lPack);
-
+  Display(int width, int height, const std::string& title, Camera* camPtr);
+  // SHADERS
   void SetShader(Shader* shaderPtr);
   void SetDRShaders(Shader* geoS, Shader* lgtS);
+
+  // DRAWING
+  void Draw(std::vector<ModelData*> models, LightPack& lPack);
+  void Draw(ModelData& modelData, LightPack& lPack);
+  void DrawDR(ModelData& modelData, LightPack& lPack);
+
+  // UPDATE
+  void Update();
+  void UpdateDR();
 
   bool IsClosed();
   void ToggleCamera();
   void SetExtraCamera(Camera* camPtr);
   void Clear(float r, float g, float b, float a);
   ~Display();
-
-private:
-  GLFWwindow* m_window;
-  bool m_isClosed;
-  GLfloat m_lastFrame;
-  void FixLightUniforms(std::string pnt_str, std::string dir_str, std::string spt_str, int n_pnt, int n_dir, int n_spt);
-  void RenderMesh(ModelData* modelData);
-  void UploadLightPack(LightPack& lPack);
 };
 
 #endif
