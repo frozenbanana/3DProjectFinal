@@ -1,8 +1,8 @@
 #version 440
 
-in vec3 v_pos;
-in vec3 v_nor;
-in vec2 v_uvs;
+in vec3 g_pos;
+in vec3 g_nor;
+in vec2 g_uvs;
 
 layout(location = 0) out vec3 gPosition;
 layout(location = 1) out vec3 gNormal;
@@ -14,12 +14,12 @@ layout(binding = 4) uniform sampler2D texture_specular0;
 uniform int n_tex;
 
 void main() {
-  //gPosition = v_pos;
-  gPosition = v_pos;
+  //gPosition = g_pos;
+  gPosition = g_pos;
 
-  gNormal = normalize(v_nor);
+  gNormal = normalize(g_nor);
 
-  gDiffSpec.rgb = texture(texture_diffuse0, v_uvs).rgb;
+  gDiffSpec.rgb = texture(texture_diffuse0, g_uvs).rgb;
 
-  gDiffSpec.a = texture(texture_specular0, v_uvs).r;
+  gDiffSpec.a = texture(texture_specular0, g_uvs).r;
 }

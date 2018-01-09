@@ -308,7 +308,7 @@ void Shader::UploadVec3(glm::vec3 vec, GLuint index) {
 
 void Shader::UploadMatrix(glm::mat4 matrix, GLuint index) {
   glUniformMatrix4fv(m_matrixUniforms[index], 1, GL_FALSE, glm::value_ptr(matrix));
-  //std::cout << "Uploaded index: " << index << '\n';
+  // std::cout << "Uploaded index: " << index << '\n';
 }
 
 void Shader::UploadTexture(GLuint tex_id, int index) {

@@ -141,6 +141,7 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
   // Bind camera to display
   m_camPtr = camPtr;
   m_camPtr2 = nullptr;
+  m_camSwap = false;
 
   //Set the window to capture the mouse and hide it. It's like a cat but digital
   glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -168,7 +169,7 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
   // tell GL to only draw onto a pixel if the shape is closer to the viewer
   glEnable(GL_DEPTH_TEST); // enable depth-testing
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
   //Now avoid that cute little segmentation fault by initilizing the gbuffer here instead
   this->m_gBuffer.InitGBuffer();
@@ -207,6 +208,7 @@ void Display::Update() {
   m_shaderPtr->UploadMatrix(modelMatrix, 0);
   m_shaderPtr->UploadMatrix(viewMatrix, 1);
   m_shaderPtr->UploadMatrix(persMatrix, 2);
+  m_shaderPtr->UploadVec3(camPos, 0); // first index of vec3uniform vector in Shader class
 }
 
 void Display::UpdateDR() {
@@ -252,7 +254,7 @@ void Display::Draw(std::vector<ModelData*> modelPack, LightPack& lPack) {
 }
 
 void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
-  //std::cout << "In DrawDR" << '\n';
+  // std::cout << "In DrawDR" << '\n';
   /*########## GEOMETRY PASS #################################################*/
   //Select program to use and bind framebuffer
   glUseProgram(this->m_geoShaderPtr->GetProgram());
@@ -285,7 +287,7 @@ void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
         //No textures in mesh
         break;
     }
-    this->m_geoShaderPtr->DirectInt("n_tex", n_tex);  //Variable uploaded to shader for checking if the uniform samplers contain anything
+    // this->m_geoShaderPtr->DirectInt("n_tex", n_tex);  //Variable uploaded to shader for checking if the uniform samplers contain anything
 
     // draw points 0-3 from the currently bound VAO with current in-use shader
     glDrawElements(GL_TRIANGLES, modelData.s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
@@ -316,11 +318,10 @@ void Display::RenderMesh(ModelData* modelData) {
   }
 }
 
-bool camSwap = false;
 void Display::ToggleCamera() {
   if (m_camPtr2 != nullptr) {
-    camSwap = !camSwap;
-    std::cout << "=== Switching camera === " << (camSwap ? "2" : "1") << '\n';
+    m_camSwap = !m_camSwap;
+    std::cout << "=== Switching camera === " << (m_camSwap ? "2" : "1") << '\n';
     Camera* temp = m_camPtr;
     m_camPtr = m_camPtr2;
     m_camPtr2 = temp;
@@ -355,6 +356,7 @@ void Display::SetDRShaders(Shader* geoS, Shader* lgtS) {
   this->m_geoShaderPtr->FindUniformMatrixLoc("model");
   this->m_geoShaderPtr->FindUniformMatrixLoc("view");
   this->m_geoShaderPtr->FindUniformMatrixLoc("perspective");
+  m_geoShaderPtr->FindUniformVec3Loc("camPos");
 
   //WIP: Fix model texture uniforms
   this->FixTextureUniforms(this->m_geoShaderPtr, "diffuse", 1);

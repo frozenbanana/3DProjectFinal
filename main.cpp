@@ -26,7 +26,7 @@ const char* geometry_shader = "res/shaders/base_gs.glsl";
 const char* fragment_shader = "res/shaders/base_fs.glsl";
 
 const char* geo_vs = "res/shaders/geoPass_vs.glsl";
-//Add a gs here
+const char* geo_gs = "res/shaders/geoPass_gs.glsl";
 const char* geo_fs = "res/shaders/geoPass_fs.glsl";
 const char* lgt_vs = "res/shaders/lightPass_vs.glsl";
 const char* lgt_fs = "res/shaders/lightPass_fs.glsl";
@@ -47,15 +47,16 @@ int main() {
   // quadtree.InsertModelInTree(&modelData1);
   // quadtree.InsertModelInTree(&modelData2);
   //
-  // Shader geoShader(geo_vs, geo_fs);
-  // Shader lightShader(lgt_vs, lgt_fs);
-  // display.SetDRShaders(&geoShader, &lightShader);
+  // Shader geoShader(geo_vs, geo_gs, geo_fs);
+  Shader geoShader(geo_vs, geo_gs, geo_fs);
+  Shader lightShader(lgt_vs, lgt_fs);
+  display.SetDRShaders(&geoShader, &lightShader);
 
   // SETUP MODELS
   Terrain terrain("res/heightmap/example/BMP_example.bmp", 20);
-  // Model model1("res/models/nano/nanosuit.obj");
-  // model1.SetPos(glm::vec3(0.0f, 0.0f, 6.0f));
-  // model1.SetScale(glm::vec3(.5f, .5f, 0.5f));
+  Model model1("res/models/nano/nanosuit.obj");
+  model1.SetPos(glm::vec3(0.0f, 0.0f, 6.0f));
+  // model1.SetScale(glm::vec3(.2f, .2f, 0.2f));
   // Model model2("res/models/cube/cube_g14.26
 
   glm::vec3 cubePos[21] = {
@@ -92,7 +93,7 @@ int main() {
   }
 
   // PACKAGE MODEL DATA
-  // ModelData modelData1 = model1.GetModelData();
+  ModelData modelData1 = model1.GetModelData();
   // ModelData modelData2 = model2.GetModelData();
   ModelData terrainData = terrain.GetModelData();
 
@@ -103,21 +104,19 @@ int main() {
   // //PACKAGE LIGHT DATA TO DISPLAY (STATIC)
   LightPack lPack = lightHandler.GetLightPack();
 
+  display.Clear(0.0f, 0.20f, 0.1f, 1.0f);
   //DRAW LOOP
   while(!display.IsClosed()) {
-     display.Clear(0.0f, 0.20f, 0.1f, 1.0f);
-     frustum.SetFrustum(camera.GetViewPersMatrix());
+     display.UpdateDR();
+     // frustum.SetFrustum(camera.GetViewPersMatrix());
      // frustum.CullMeshes(&modelData2);        // recursivly cull every node in QuadTree
-     frustum.CullNode(quadtree.GetRootNode());        // recursivly cull every node in QuadTree
-     quadtree.FillModelPack(quadtree.GetRootNode());  // recursivly fill modelPackage in QuadTree
-     // if (quadtree.GetModelPack().size() > 0)
-     //   std::cout << quadtree.GetModelPack()[0]->s_insideFrustum << std::endl;
-     display.Draw(quadtree.GetModelPack(), lPack);   // Draw  culled models
-     // display.Draw(modelData2, lPack);
+     // frustum.CullNode(quadtree.GetRootNode());        // recursivly cull every node in QuadTree
+     // quadtree.FillModelPack(quadtree.GetRootNode());  // recursivly fill modelPackage in QuadTree
+     // display.Draw(quadtree.GetModelPack(), lPack);   // Draw  culled models
+     display.DrawDR(modelData1, lPack);
      // display.Draw(terrainData, lPack);
 
-     display.Update();
-     quadtree.ClearModelPack();                      // reset modelpack for new culling
+     // quadtree.ClearModelPack();                      // reset modelpack for new culling
   }
 
   return 0;

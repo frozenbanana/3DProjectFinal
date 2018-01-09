@@ -50,6 +50,7 @@ private:
   //void UploadTexture(Shader* shader_ptr, GLuint tex_id, int index);
 public:
   Camera* m_camPtr, *m_camPtr2;
+  bool m_camSwap;
   Shader* m_shaderPtr;
   GLfloat m_deltaTime;
 
@@ -61,6 +62,7 @@ public:
   // DRAWING
   void Draw(std::vector<ModelData*> models, LightPack& lPack);
   void Draw(ModelData& modelData, LightPack& lPack);
+  // void DrawDR(ModelData& modelData, LightPack& lPack);
   void DrawDR(ModelData& modelData, LightPack& lPack);
 
   // UPDATE
