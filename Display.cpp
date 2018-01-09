@@ -183,7 +183,6 @@ Display::~Display() {
   glfwTerminate();
 }
 
-
 void Display::SetExtraCamera(Camera* camPtr) {
   m_camPtr2 = camPtr;
 }
