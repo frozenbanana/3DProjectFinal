@@ -151,3 +151,7 @@ void GBuffer::UploadUniformSamplers() {
   glUniform1i(this->m_uni_gNormal, NOR_TEX);
   glUniform1i(this->m_uni_gDiffSpec, DIFFSPEC_TEX);
 }
+
+GLuint GBuffer::GetColTextureId() {
+  return this->m_gDiffSpec;
+}

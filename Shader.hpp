@@ -89,11 +89,12 @@ public:
   void UploadDirectInt(int i);
   void UploadVec3(glm::vec3 vec, GLuint index);
   void UploadMatrix(glm::mat4 matrix, GLuint index);
-  void UploadTexture(GLuint tex_id, int index);
+  //void UploadTexture(GLuint tex_id, int index);
   void UploadPntLight(PntLight in_light, GLuint index);
   void UploadDirLight(DirLight in_light, GLuint index);
   void UploadSptLight(SptLight in_light, GLuint index);
 
+  //void BindTexture(int index, TextureEnums target_unit); //Faulty? [uni-id not same as tex-id]
 };
 
 

@@ -28,6 +28,9 @@ const char* fragment_shader = "res/shaders/base_fs.glsl";
 const char* geo_vs = "res/shaders/geoPass_vs.glsl";
 const char* geo_gs = "res/shaders/geoPass_gs.glsl";
 const char* geo_fs = "res/shaders/geoPass_fs.glsl";
+
+const char* pt_cs = "res/shaders/PTcompute.glsl";
+
 const char* lgt_vs = "res/shaders/lightPass_vs.glsl";
 const char* lgt_fs = "res/shaders/lightPass_fs.glsl";
 
@@ -36,7 +39,8 @@ int main() {
   // SETUP VIEW
   Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
   Camera camera2(glm::vec3(0.0f, 7.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, -45.0f);
-  Display display(WINDOW_WIDTH, WINDOW_HEIGHT, "Integrating frustum and DR", &camera);
+
+  Display display(WINDOW_WIDTH, WINDOW_HEIGHT, "Window.exe", &camera);
   display.SetExtraCamera(&camera2);
   Shader shader(vertex_shader, geometry_shader, fragment_shader);
   display.SetShader(&shader);   // Function also fixes uniforms for 3 matrices an a bunch of lights
@@ -49,6 +53,10 @@ int main() {
   Shader geoShader(geo_vs, geo_gs, geo_fs);
   Shader lightShader(lgt_vs, lgt_fs);
   display.SetDRShaders(&geoShader, &lightShader);
+
+  // SETUP COMPUTE SHADER
+  Shader comShader(pt_cs);
+  display.SetComputeShader(&comShader, &lightShader);
 
   // SETUP MODELS
   // terrain

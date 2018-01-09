@@ -128,6 +128,10 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+  //Set width and height
+  this->m_width = width;
+  this->m_height = height;
+
   // Create a window
   m_window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
   if (!m_window) {
@@ -329,11 +333,17 @@ void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  /*########## COMPUTE PASS ##################################################*/
+  glUseProgram(this->m_comShaderPtr->GetProgram());
+
+  this->m_ppBuffer.DoPingPong(10, this->m_gBuffer.GetColTextureId());
+
   /*########## LIGHT PASS ####################################################*/
   //Select the program to use and load up the gBuffer textures
   glUseProgram(this->m_lgtShaderPtr->GetProgram());
 
   this->m_gBuffer.PrepLightPass();
+  this->m_ppBuffer.BindResult();
 
   //Upload all lights in the LightPack
   this->UploadLightPack(this->m_lgtShaderPtr, lPack);
@@ -436,6 +446,28 @@ void Display::SetDRShaders(Shader* geoS, Shader* lgtS) {
   //Locate space in shader for lights
   this->FixLightUniforms(this->m_lgtShaderPtr, "pnt_lights", "dir_lights", "spt_lights", 1, 0, 0);
 
+}
+
+void Display::SetComputeShader(Shader* comS, Shader* tarS) {
+  //NTS: Function specific for this program
+  GLint uni_loc;
+
+  //Set the pointer to the compute shader
+  this->m_comShaderPtr = comS;
+
+  //USE COMPUTE-SHADER
+  glUseProgram(this->m_comShaderPtr->GetProgram());
+
+  uni_loc = this->m_comShaderPtr->GetUniform("xORy");
+  this->FixTextureUniforms(this->m_comShaderPtr, "source", 1);
+  this->FixTextureUniforms(this->m_comShaderPtr, "target", 1);
+
+  //Initialize the PingPongBuffer
+  this->m_ppBuffer.InitPingPongBuffer(this->m_width, this->m_height, uni_loc);
+
+  //Set the uniform that the result should be sent to
+  glUseProgram(tarS->GetProgram());
+  this->FixTextureUniforms(tarS, "computed", 1);
 }
 
 bool Display::IsClosed() {

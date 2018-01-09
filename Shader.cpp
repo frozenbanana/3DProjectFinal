@@ -47,6 +47,9 @@ void Shader::MakeShader(GLuint id, const char* path) {
         case GL_FRAGMENT_SHADER:
           type_name = "FRAGMENT";
           break;
+        case GL_COMPUTE_SHADER:
+          type_name = "COMPUTE";
+          break;
         default:
           type_name = "UNKNOWN";
           break;
@@ -58,6 +61,7 @@ void Shader::MakeShader(GLuint id, const char* path) {
 }
 
 void Shader::LinkProgram() {
+
   glLinkProgram(this->m_program);
 
   int  success;
@@ -72,7 +76,15 @@ void Shader::LinkProgram() {
 
 //Public
 Shader::Shader(const char* cs_path) {
-  //WIP
+
+
+  GLuint cs_id = glCreateShader(GL_COMPUTE_SHADER);
+  this->MakeShader(cs_id, cs_path);
+
+  this->m_program = glCreateProgram();
+  glAttachShader(this->m_program, cs_id);
+
+  this->LinkProgram();
 }
 
 Shader::Shader(const char* vs_path, const char* fs_path) {
@@ -311,15 +323,15 @@ void Shader::UploadMatrix(glm::mat4 matrix, GLuint index) {
   // std::cout << "Uploaded index: " << index << '\n';
 }
 
-void Shader::UploadTexture(GLuint tex_id, int index) {
-
-  if (this->m_textureUniforms.size() <= (unsigned int)index) {
-    std::cout << "ERROR::SHADER::TEXTURE_UNIFORMS::INDEX_OUT_OF_BOUNDS" << '\n';
-  }
-  else {
-    glUniform1i(this->m_textureUniforms[index], tex_id);
-  }
-}
+//void Shader::UploadTexture(GLuint tex_id, int index) {
+//
+//  if (this->m_textureUniforms.size() <= (unsigned int)index) {
+//    std::cout << "ERROR::SHADER::TEXTURE_UNIFORMS::INDEX_OUT_OF_BOUNDS" << '\n';
+//  }
+//  else {
+//    glUniform1i(this->m_textureUniforms[index], tex_id);
+//  }
+//}
 
 void Shader::UploadPntLight(PntLight in_light, GLuint index) {
   //NTS: glUniformXfv takes an uniform id, a number and a vecX pointer
@@ -361,3 +373,14 @@ void Shader::UploadSptLight(SptLight in_light, GLuint index) {
 
   //MATRIX
 }
+
+//void Shader::BindTexture(int index, TextureEnums target_unit) {
+//
+//  if (this->m_textureUniforms.size() <= (unsigned int)index) {
+//    std::cout << "ERROR::SHADER::TEXTURE_UNIFORMS::INDEX_OUT_OF_BOUNDS" << '\n';
+//  }
+//  else {
+//    Bind2DTextureTo(this.>m_textureUniforms[index], target_unit);
+//  }
+//
+//}
