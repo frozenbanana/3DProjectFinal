@@ -21,5 +21,5 @@ void main() {
 
   gDiffSpec.rgb = texture(texture_diffuse0, v_uvs).rgb;
 
-  gDiffSpec.a = texture(texture_specular0, v_uvs).r;
+  gDiffSpec.a = texture(texture_specular0, v_uvs).r + 0.01 * n_tex;
 }

@@ -28,6 +28,9 @@ const char* fragment_shader = "res/shaders/base_fs.glsl";
 const char* geo_vs = "res/shaders/geoPass_vs.glsl";
 //Add a gs here
 const char* geo_fs = "res/shaders/geoPass_fs.glsl";
+
+const char* pt_cs = "res/shaders/PTcompute.glsl";
+
 const char* lgt_vs = "res/shaders/lightPass_vs.glsl";
 const char* lgt_fs = "res/shaders/lightPass_fs.glsl";
 
@@ -43,8 +46,11 @@ int main() {
   //display.SetShader(&shader);   //Function also fixes uniforms for 3 matrices an a bunch of lights
 
   Shader geoShader(geo_vs, geo_fs);
-  Shader lightShader(lgt_vs, lgt_fs);
-  display.SetDRShaders(&geoShader, &lightShader);
+  Shader quadShader(lgt_vs, lgt_fs);
+  display.SetDRShaders(&geoShader, &quadShader);
+
+  Shader comShader(pt_cs);
+  display.SetComputeShader(&comShader, &quadShader);
 
   // SETUP MODELS
   Model model1("res/models/nano/nanosuit.obj");

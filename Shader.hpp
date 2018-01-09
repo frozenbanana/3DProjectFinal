@@ -84,13 +84,13 @@ public:
   void FindUniformSptLightLoc(std::string shader_arr_name, int shader_arr_index);
 
   // void UploadMatrix(const Transform& transform, const glm::mat4 view, const glm::mat4 perspective);
-  void UploadDirectInt(int i);
   void UploadMatrix(glm::mat4 matrix, GLuint index);
-  void UploadTexture(GLuint tex_id, int index);
+  //void UploadTexture(GLuint tex_id, int index);
   void UploadPntLight(PntLight in_light, GLuint index);
   void UploadDirLight(DirLight in_light, GLuint index);
   void UploadSptLight(SptLight in_light, GLuint index);
 
+  //void BindTexture(int index, TextureEnums target_unit); //Faulty? [uni-id not same as tex-id]
 };
 
 

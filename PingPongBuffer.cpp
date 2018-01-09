@@ -1,14 +1,16 @@
 #include "PingPongBuffer.hpp"
 
+#include "texturefunctions.hpp"
+
 //Private
-void createBuffer(GLuint* buffer_id) {
-  glBindTexture(GL_TEXTURE_2D, *buffer);
+void PingPongBuffer::createBuffer(GLuint buffer_id) {
+  glBindTexture(GL_TEXTURE_2D, buffer_id);
 	glTexImage2D(
 		GL_TEXTURE_2D,
 		0,				          //Mipmaps
 		GL_RGBA,		        //Internal format		//GL_RGB16F
-		this->width,
-		this->height,
+    this->m_texture_width,
+    this->m_texture_height,
 		0,				          //Frontier stuff
 		GL_RGBA,		        //Format read			//GL_RGB
 		GL_UNSIGNED_BYTE,		//Type of values in read format		//GL_FLOAT
@@ -21,10 +23,10 @@ void createBuffer(GLuint* buffer_id) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	//Set wrapping to clamp to edge
 }
 
-void bindAndCompute(GLuint source_buffer, GLuint target_buffer) {
+void PingPongBuffer::bindAndCompute(GLuint source_buffer, GLuint target_buffer) {
   glBindImageTexture(
     0,                  //Always bind to slot 0
-    sourceBuffer,
+    source_buffer,
     0,
     GL_FALSE,
     0,
@@ -34,7 +36,7 @@ void bindAndCompute(GLuint source_buffer, GLuint target_buffer) {
 
   glBindImageTexture(
     1,                  //Always bind to slot 1
-    targetBuffer,
+    target_buffer,
     0,
     GL_FALSE,
     0,
@@ -42,8 +44,9 @@ void bindAndCompute(GLuint source_buffer, GLuint target_buffer) {
     GL_RGBA8						//GL_RGB16F
   );
 
-  glDispatchCompute(1, this->height, 1);			//Call upon shader 
-  //glDispatchCompute(this->width, 1, 1);
+  //glDispatchCompute(this->m_texture_width / 16, this->m_texture_height / 16, 1);
+  glDispatchCompute(1, this->m_texture_height, 1);			//Call upon shader
+  //glDispatchCompute(this->m_texture_width, 1, 1);
 
   glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
@@ -51,19 +54,55 @@ void bindAndCompute(GLuint source_buffer, GLuint target_buffer) {
 
 
 //Public
-PingPongBuffer::PingPongBuffer(int texture_width, int texture_height) {
-  this->m_texture_width = texture_width;
-  this->m_texture_height = texture_height;
+PingPongBuffer::PingPongBuffer() {
+
 }
 
 PingPongBuffer::~PingPongBuffer() {
 
 }
 
-PingPongBuffer::InitPingPongBuffer() {
+void PingPongBuffer::InitPingPongBuffer(int texture_width, int texture_height, GLint xy_uniform_id) {
+  this->m_texture_width = texture_width;
+  this->m_texture_height = texture_height;
+
+  this->m_xy_uniLoc = xy_uniform_id;
+
   glGenTextures(2, this->m_buffers);
 
-  this->createBuffer(&(this->buffers[0]));
-  this->createBuffer(&(this->buffers[1]));
+  this->createBuffer(this->m_buffers[0]);
+  this->createBuffer(this->m_buffers[1]);
 
+}
+
+void PingPongBuffer::DoPingPong(int n_passes, GLuint src_buffer) {
+
+  int n = n_passes * 2;			//Each iteration of the blur includes both x and y axis
+                                //Also ensures that pingpongBuffer[0] is allways written to last
+  int x = 1;
+  int y = 0;
+  int t;		                    //Holder variable
+
+  //Do a first pass if there are supposed to be passes at all
+  if(n_passes > 0){
+    this->bindAndCompute(src_buffer, this->m_buffers[1]);
+  }
+
+  for (int i = 1; i < n; i++) {								                                  //Loop starts at 1 as the first pass has been done
+
+    glUniform2i(this->m_xy_uniLoc, x, y);		                                    //Update uniform vector
+
+    this->bindAndCompute(this->m_buffers[x], this->m_buffers[y]);	              //Send in alternating buffers
+
+    //Swap so x = 0 or 1
+    //and y = 1 or 0
+    t = x;
+    x = y;
+    y = t;
+
+  }
+}
+
+void PingPongBuffer::BindResult() {
+  Bind2DTextureTo(this->m_buffers[0], COMPUTE_TEX);
 }

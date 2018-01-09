@@ -25,6 +25,8 @@ public:
 
   void FindUniformSamplerLocs(GLuint shader_program_id);
   void UploadUniformSamplers();
+
+  GLuint GetColTextureId();
 };
 
 #endif

@@ -8,6 +8,7 @@
 #include "Camera.hpp"
 #include "Shader.hpp"
 #include "GBuffer.hpp"
+#include "PingPongBuffer.hpp"
 #include "GLOBALS.hpp"
 #include "PackageStructs.hpp"
 
@@ -30,16 +31,22 @@ private:
   bool m_isClosed;
   GLfloat m_lastFrame;
 
+  int m_width;
+  int m_height;
+
   GLuint m_quadVAO;
   GLuint m_quadVBO;
 
   GBuffer m_gBuffer;
-
-  glm::mat4 m_view;
-  glm::mat4 m_pers;
+  PingPongBuffer m_ppBuffer;
 
   Shader* m_geoShaderPtr;
   Shader* m_lgtShaderPtr;
+
+  Shader* m_comShaderPtr;
+
+  glm::mat4 m_view;
+  glm::mat4 m_pers;
 
   void CreateQuad();
   void RenderQuad();
@@ -63,6 +70,7 @@ public:
 
   void SetShader(Shader* shaderPtr);
   void SetDRShaders(Shader* geoS, Shader* lgtS);
+  void SetComputeShader(Shader* comS, Shader* tarS);
 
   bool IsClosed();
   void Clear(float r, float g, float b, float a);

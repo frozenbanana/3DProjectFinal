@@ -13,18 +13,20 @@ private:
   //? GLuint quadVBO;
   // GLuint ...
   // GLuint ...
+  GLint m_xy_uniLoc;
 
-  void createBuffer(GLuint* buffer_id);
+  void createBuffer(GLuint buffer_id);
   void bindAndCompute(GLuint source_buffer, GLuint target_buffer);
 public:
-  PingPongBuffer(int texture_width, int texture_height);
+  PingPongBuffer();
   ~PingPongBuffer();
 
-  void InitPingPongBuffer();
+  void InitPingPongBuffer(int texture_width, int texture_height, GLint xy_uniform_id);
 
-  //OLD STUFF
-  //void pingpongRender(JMshader* shaderPtr, int numOfPasses, GLuint sourceBuffer);
-	//
+  void DoPingPong(int n_passes, GLuint src_buffer);
+
+  void BindResult();
+  //OLD STUFF//
 	//void getUniformSamplerLocation(JMshader* shaderPtr);
 	//void uploadUniformSampler(JMshader* shaderPtr);
 	//
