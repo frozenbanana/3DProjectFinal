@@ -37,10 +37,9 @@ const char* lgt_fs = "res/shaders/lightPass_fs.glsl";
 int main() {
 
   // SETUP VIEW
-  Camera camera(glm::vec3(0.0f, 0.0f, 0.0f));
-  Camera camera2(glm::vec3(0.0f, 7.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, -45.0f);
-
-  Display display(WINDOW_WIDTH, WINDOW_HEIGHT, "Window.exe", &camera);
+  Camera camera(glm::vec3(0.0f, 3.0f, 0.0f));
+  Camera camera2(glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, -45.0f);
+  Display display(WINDOW_WIDTH, WINDOW_HEIGHT, "Integrating frustum and DR", &camera);
   display.SetExtraCamera(&camera2);
   Shader shader(vertex_shader, geometry_shader, fragment_shader);
   display.SetShader(&shader);   // Function also fixes uniforms for 3 matrices an a bunch of lights
@@ -61,34 +60,35 @@ int main() {
   // SETUP MODELS
   // terrain
   Terrain terrain("res/heightmap/example/BMP_example.bmp", 20);
+  display.SetTerrain(&terrain);
   // quadtree.InsertModelInTree(&terrain.GetModelData());
 
   // cubes
   Model cubes[21];
   glm::vec3 cubesPos[21] = {
-        glm::vec3(  2.0f,  0.0f,  2.0f), // bottom left
-        glm::vec3(  2.0f,  0.0f,  6.0f),
-        glm::vec3(  2.0f,  0.0f,  10.0f),
-        glm::vec3(  2.0f,  0.0f,  14.0f),
-        glm::vec3(  2.0f,  0.0f,  18.0f),
-        glm::vec3(  2.0f,  0.0f,  22.0f),
-        glm::vec3(  2.0f,  0.0f,  26.0f),
+        glm::vec3(  2.0f,  2.0f,  2.0f), // bottom left
+        glm::vec3(  2.0f,  2.0f,  6.0f),
+        glm::vec3(  2.0f,  2.0f,  10.0f),
+        glm::vec3(  2.0f,  2.0f,  14.0f),
+        glm::vec3(  2.0f,  2.0f,  18.0f),
+        glm::vec3(  2.0f,  2.0f,  22.0f),
+        glm::vec3(  2.0f,  2.0f,  26.0f),
 
-        glm::vec3(  7.0f,  0.0f,  4.0f), // almost bottom left
-        glm::vec3(  7.0f,  0.0f,  6.0f),
-        glm::vec3(  7.0f,  0.0f,  10.0f),
-        glm::vec3(  7.0f,  0.0f,  14.0f),
-        glm::vec3(  7.0f,  0.0f,  18.0f),
-        glm::vec3(  7.0f,  0.0f,  22.0f),
-        glm::vec3(  7.0f,  0.0f,  26.0f),
+        glm::vec3(  7.0f,  2.0f,  4.0f), // almost bottom left
+        glm::vec3(  7.0f,  2.0f,  6.0f),
+        glm::vec3(  7.0f,  2.0f,  10.0f),
+        glm::vec3(  7.0f,  3.0f,  14.0f),
+        glm::vec3(  7.0f,  3.0f,  18.0f),
+        glm::vec3(  7.0f,  3.0f,  22.0f),
+        glm::vec3(  7.0f,  3.0f,  26.0f),
 
-        glm::vec3(  11.0f,  0.0f,  4.0f), // almost bottom left
-        glm::vec3(  11.0f,  0.0f,  6.0f),
-        glm::vec3(  11.0f,  0.0f,  10.0f),
-        glm::vec3(  11.0f,  0.0f,  14.0f),
-        glm::vec3(  11.0f,  0.0f,  18.0f),
-        glm::vec3(  11.0f,  0.0f,  22.0f),
-        glm::vec3(  11.0f,  0.0f,  26.0f),
+        glm::vec3(  11.0f,  4.0f,  4.0f), // almost bottom left
+        glm::vec3(  11.0f,  4.0f,  6.0f),
+        glm::vec3(  11.0f,  4.0f,  10.0f),
+        glm::vec3(  11.0f,  4.0f,  14.0f),
+        glm::vec3(  11.0f,  4.0f,  18.0f),
+        glm::vec3(  11.0f,  4.0f,  22.0f),
+        glm::vec3(  11.0f,  4.0f,  26.0f),
   };
   quadtree.InsertModelInTree(&cubes[0].GetModelData());
   for (size_t i = 0; i < 21; i++) {
@@ -100,10 +100,11 @@ int main() {
   // Nano dude
   Model nanoDudes[3];
   glm::vec3 nanoDudesPos[3] = {
-    glm::vec3(  30.0f,  0.0f,  30.0f), // bottom left
-    glm::vec3(  40.0f,  0.0f,  10.0f),
-    glm::vec3(  10.0f,  0.0f,  40.0f),
+    glm::vec3(  25.0f,  4.0f,  25.0f), // bottom left
+    glm::vec3(  30.0f,  4.0f,  10.0f),
+    glm::vec3(  10.0f,  0.0f,  30.0f),
   };
+
   for (size_t i = 0; i < 3; i++) {
     nanoDudes[i].LoadModel("res/models/nano/nanosuit.obj");
     nanoDudes[i].SetPos(nanoDudesPos[i]);

@@ -7,6 +7,7 @@
 #include <iostream>
 #include "Camera.hpp"
 #include "Shader.hpp"
+#include "Terrain.hpp"
 #include "GBuffer.hpp"
 #include "PingPongBuffer.hpp"
 #include "GLOBALS.hpp"
@@ -35,6 +36,7 @@ private:
   int m_height;
 
   Camera* m_camPtr2;
+  glm::vec3 m_camPos;
   bool m_camSwap;
 
   GLuint m_quadVAO;
@@ -47,6 +49,7 @@ private:
   Shader* m_geoShaderPtr;
   Shader* m_lgtShaderPtr;
 
+  Terrain* m_terrain;
   Shader* m_comShaderPtr;
 
   glm::mat4 m_view;
@@ -64,11 +67,12 @@ public:
   Camera* m_camPtr;
   GLfloat m_deltaTime;
 
-  Display(int width, int height, const std::string& title, Camera* camPtr);
+  Display(int width, int height, const std::string& title, Camera* camPtr, Terrain* terrainPtr = nullptr);
   ~Display();
 
   bool IsClosed();
   void SetExtraCamera(Camera* camPtr);
+  void SetTerrain(Terrain* terrainPtr);
   void ToggleCamera();
   void Clear(float r, float g, float b, float a);
 

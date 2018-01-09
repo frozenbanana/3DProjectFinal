@@ -13,11 +13,12 @@ struct BMPData {
   unsigned char* data;
   bool good;
 };
-  
+
 class Terrain {
 public:
   Terrain(std::string fileName, GLuint maxHeight = 10);
   ModelData& GetModelData();
+  GLfloat GetHeight(GLfloat xPos, GLfloat zPos);
   ~Terrain();
 private:
   BMPData m_BMPData;
