@@ -8,7 +8,7 @@ QuadTree::QuadTree(GLuint width, GLuint minWidth) {
   MIN_QUAD_SIZE = minWidth;
   m_rootNode = new Node();
   GenerateTree(nullptr, m_rootNode, 0, 0, width);
-  std::cout << "\nTree generation finished." << '\n';
+  //std::cout << "\nTree generation finished." << '\n';
 }
 
 //  Input a node*, init node and connect 4 new nodes until highest resolution is met
@@ -39,7 +39,7 @@ void QuadTree::GenerateTree(Node* parentNode, Node* nodePtr, GLuint xPos, GLuint
     return;
   }
   else {
-    std::cout << '\n';
+    //std::cout << '\n';
     GLuint widthChild = nodePtr->s_width / 2;
     for (size_t i = 0; i < NUM_OF_NODES; i++) {
       nodePtr->s_children[i] = new Node();
@@ -109,7 +109,7 @@ void QuadTree::InsertModelInTree(ModelData* modeldata) {
 
   // finally insert model in correct leafnode
   currentNodePtr->s_models.push_back(modeldata);
-  std::cout << "Inserting model into NodeID: " << currentNodePtr->s_id << ", InsideFrustrum: "<< currentNodePtr->s_insideFrustum << ", modelsCount: "<< currentNodePtr->s_models.size() << '\n';
+  //std::cout << "Inserting model into NodeID: " << currentNodePtr->s_id << ", InsideFrustrum: "<< currentNodePtr->s_insideFrustum << ", modelsCount: "<< currentNodePtr->s_models.size() << '\n';
   }
 }
 

@@ -34,12 +34,16 @@ private:
   int m_width;
   int m_height;
 
+  Camera* m_camPtr2;
+  bool m_camSwap;
+
   GLuint m_quadVAO;
   GLuint m_quadVBO;
 
   GBuffer m_gBuffer;
   PingPongBuffer m_ppBuffer;
 
+  Shader* m_shaderPtr;
   Shader* m_geoShaderPtr;
   Shader* m_lgtShaderPtr;
 
@@ -57,34 +61,30 @@ private:
   void FixTextureUniforms(Shader* shader_ptr, std::string type_str, int n_tex);
   //void UploadTexture(Shader* shader_ptr, GLuint tex_id, int index);
 public:
-  Camera* m_camPtr, *m_camPtr2;
-  bool m_camSwap;
-  Shader* m_shaderPtr;
+  Camera* m_camPtr;
   GLfloat m_deltaTime;
 
   Display(int width, int height, const std::string& title, Camera* camPtr);
-  // SHADERS
-  void SetShader(Shader* shaderPtr);
-  void SetDRShaders(Shader* geoS, Shader* lgtS);
-  void SetComputeShader(Shader* comS, Shader* tarS);
-
-  // DRAWING
-  void Draw(std::vector<ModelData*> modelPack, LightPack& lPack);
-  void Draw(ModelData& modelData, LightPack& lPack);
-
-  // Both GEO and LIGHT pass in same
-  void DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack);
-  void DrawDR(ModelData& modelData, LightPack& lPack);
-
-  // UPDATE
-  void Update();
-  void UpdateDR();
+  ~Display();
 
   bool IsClosed();
-  void ToggleCamera();
   void SetExtraCamera(Camera* camPtr);
+  void ToggleCamera();
   void Clear(float r, float g, float b, float a);
-  ~Display();
+
+  // SIMPLE
+  void SetShader(Shader* shaderPtr);
+  void Update();
+  void Draw(ModelData& modelData, LightPack& lPack);
+  void Draw(std::vector<ModelData*> modelPack, LightPack& lPack);
+
+  // ADVANCED
+  void SetDRShaders(Shader* geoS, Shader* lgtS);
+  void SetComputeShader(Shader* comS, Shader* tarS);
+  void UpdateDR();
+  void DrawDR(ModelData& modelData, LightPack& lPack);
+  void DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack);
+
 };
 
 #endif

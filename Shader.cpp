@@ -185,7 +185,6 @@ void Shader::FindUniformVec3Loc(std::string uniformName) {
     std::cout << "ERROR::SHADER::" << uniformName << "::UNIFORM_NOT_FOUND" << std::endl;
   }
   else {
-    std::cout << "Uniform "<< uniformName << " found\n";
     m_vec3Uniforms.push_back(uniformLoc);
   }
 }
@@ -198,7 +197,6 @@ void Shader::FindUniformMatrixLoc(std::string uniformName) {
     std::cout << "ERROR::SHADER::" << uniformName << "::UNIFORM_NOT_FOUND" << std::endl;
   }
   else {
-    std::cout << "Uniform " << uniformName << " found\n";
     m_matrixUniforms.push_back(uniformLoc);
     //std::cout << "Pushed " << uniformName << " to index: " << (this->m_matrixUniforms.size() - 1) << '\n';
   }

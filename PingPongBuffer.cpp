@@ -44,8 +44,8 @@ void PingPongBuffer::bindAndCompute(GLuint source_buffer, GLuint target_buffer) 
     GL_RGBA8						//GL_RGB16F
   );
 
-  //glDispatchCompute(this->m_texture_width / 16, this->m_texture_height / 16, 1);
-  glDispatchCompute(1, this->m_texture_height, 1);			//Call upon shader
+  glDispatchCompute(this->m_texture_width / 10, this->m_texture_height / 10, 1);
+  //glDispatchCompute(1, this->m_texture_height, 1);			//Call upon shader
   //glDispatchCompute(this->m_texture_width, 1, 1);
 
   glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);

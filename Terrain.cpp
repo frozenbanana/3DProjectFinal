@@ -66,12 +66,12 @@ void Terrain::LoadBMPData(std::string fileName) {
 
   m_BMPData.good = true;
 
-  std::cout << "-- Height map loading --" << std::endl;
-  std::cout << "Name: " << fileName << std::endl;
-  std::cout << "Width: " << m_BMPData.width << std::endl;
-  std::cout << "Height: " << m_BMPData.height << std::endl;
-  std::cout << "The pos where image data begins: " << m_BMPData.dataPos << std::endl;
-  std::cout << "-- Height map loading complete --" << std::endl;
+  //std::cout << "-- Height map loading --" << std::endl;
+  //std::cout << "Name: " << fileName << std::endl;
+  //std::cout << "Width: " << m_BMPData.width << std::endl;
+  //std::cout << "Height: " << m_BMPData.height << std::endl;
+  //std::cout << "The pos where image data begins: " << m_BMPData.dataPos << std::endl;
+  //std::cout << "-- Height map loading complete --" << std::endl;
 
   fclose(file);
 }

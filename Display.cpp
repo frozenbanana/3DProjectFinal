@@ -187,8 +187,42 @@ Display::~Display() {
   glfwTerminate();
 }
 
+bool Display::IsClosed() {
+  return this->m_isClosed;
+}
+
 void Display::SetExtraCamera(Camera* camPtr) {
   m_camPtr2 = camPtr;
+}
+
+void Display::ToggleCamera() {
+  if (m_camPtr2 != nullptr) {
+    m_camSwap = !m_camSwap;
+    std::cout << "=== Switching camera === " << (m_camSwap ? "2" : "1") << '\n';
+    Camera* temp = m_camPtr;
+    m_camPtr = m_camPtr2;
+    m_camPtr2 = temp;
+  }
+}
+
+void Display::Clear(float r, float g, float b, float a) {
+	glClearColor(r, g, b, a);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void Display::SetShader(Shader* shaderPtr) {
+  //NTS: Function specific for this program
+
+  m_shaderPtr = shaderPtr;
+
+  //Locate space in shader for matrices
+  m_shaderPtr->FindUniformMatrixLoc("model");
+  m_shaderPtr->FindUniformMatrixLoc("view");
+  m_shaderPtr->FindUniformMatrixLoc("perspective");
+  m_shaderPtr->FindUniformVec3Loc("camPos");
+
+  //Locate space in shader for lights
+  this->FixLightUniforms(m_shaderPtr, "pnt_lights", "dir_lights", "spt_lights", 1, 0, 0);
 }
 
 void Display::Update() {
@@ -214,26 +248,6 @@ void Display::Update() {
   m_shaderPtr->UploadVec3(camPos, 0); // first index of vec3uniform vector in Shader class
 }
 
-void Display::UpdateDR() {
-  //std::cout << "In UpdateDR" << '\n';
-
-  glfwSwapBuffers(this->m_window);
-  glfwPollEvents();
-
-  // Set frame time
-  GLfloat currentFrame = glfwGetTime();
-  this->m_deltaTime = currentFrame - this->m_lastFrame;
-  this->m_lastFrame = currentFrame;
-
-  if (glfwGetKey(this->m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-    this->m_isClosed = true;
-  }
-
-  this->m_view = this->m_camPtr->GetViewMatrix();
-  this->m_pers = this->m_camPtr->GetPersMatrix();
-
-}
-
 void Display::Draw(ModelData& modelData, LightPack& lPack) {
   if (modelData.s_insideFrustum) {
     glUseProgram(m_shaderPtr->GetProgram());
@@ -256,35 +270,84 @@ void Display::Draw(std::vector<ModelData*> modelPack, LightPack& lPack) {
     }
 }
 
-void Display::DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack) {
-  // std::cout << "In DrawDR" << '\n';
-  /*########## GEOMETRY PASS #################################################*/
-  //Select program to use and bind framebuffer
-  glUseProgram(this->m_geoShaderPtr->GetProgram());
-  this->m_gBuffer.PrepGeoPass();
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  //Upload the model matrix for the model and loop through all meshes
-  this->m_geoShaderPtr->UploadMatrix(this->m_view, 1);
-  this->m_geoShaderPtr->UploadMatrix(this->m_pers, 2);
-  for (GLuint i = 0; i < modelPack.size(); i++) {
-      RenderMeshDR(modelPack[i]);
+void Display::RenderMesh(ModelData* modelData) {
+  for (GLuint i = 0; i < modelData->s_meshIndices.size(); i++) {
+    glBindVertexArray(modelData->s_VAOs[i]);
+    glDrawElements(modelData->s_mode, modelData->s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
   }
+}
 
-  //Unbind framebuffer after render
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+void Display::SetDRShaders(Shader* geoS, Shader* lgtS) {
+  //NTS: Fuction specific for this program
 
-  /*########## LIGHT PASS ####################################################*/
-  //Select the program to use and load up the gBuffer textures
+  this->m_geoShaderPtr = geoS;
+  this->m_lgtShaderPtr = lgtS;
+
+  //USE GEO-SHADER
+  glUseProgram(this->m_geoShaderPtr->GetProgram());
+
+  //Locate space in shader for matrices
+  this->m_geoShaderPtr->FindUniformMatrixLoc("model");
+  this->m_geoShaderPtr->FindUniformMatrixLoc("view");
+  this->m_geoShaderPtr->FindUniformMatrixLoc("perspective");
+  m_geoShaderPtr->FindUniformVec3Loc("camPos");
+
+  //WIP: Fix model texture uniforms
+  this->FixTextureUniforms(this->m_geoShaderPtr, "diffuse", 1);
+  this->FixTextureUniforms(this->m_geoShaderPtr, "specular", 1);
+
+  //USE LIGHT-SHADER
   glUseProgram(this->m_lgtShaderPtr->GetProgram());
 
-  this->m_gBuffer.PrepLightPass();
+  //Locate space in shader for textures
+  this->m_gBuffer.FindUniformSamplerLocs(this->m_lgtShaderPtr->GetProgram());
+  this->m_gBuffer.UploadUniformSamplers();
 
-  //Upload all lights in the LightPack
-  this->UploadLightPack(this->m_lgtShaderPtr, lPack);
+  //Locate space in shader for lights
+  this->FixLightUniforms(this->m_lgtShaderPtr, "pnt_lights", "dir_lights", "spt_lights", 1, 0, 0);
 
-  //Draw the quad filling the screen
-  this->RenderQuad();
+}
+
+void Display::SetComputeShader(Shader* comS, Shader* tarS) {
+  //NTS: Function specific for this program
+  GLint uni_loc;
+
+  //Set the pointer to the compute shader
+  this->m_comShaderPtr = comS;
+
+  //USE COMPUTE-SHADER
+  glUseProgram(this->m_comShaderPtr->GetProgram());
+
+  uni_loc = this->m_comShaderPtr->GetUniform("xORy");
+  this->FixTextureUniforms(this->m_comShaderPtr, "source", 1);
+  this->FixTextureUniforms(this->m_comShaderPtr, "target", 1);
+
+  //Initialize the PingPongBuffer
+  this->m_ppBuffer.InitPingPongBuffer(this->m_width, this->m_height, uni_loc);
+
+  //Set the uniform that the result should be sent to
+  glUseProgram(tarS->GetProgram());
+  this->FixTextureUniforms(tarS, "computed", 1);
+}
+
+void Display::UpdateDR() {
+  //std::cout << "In UpdateDR" << '\n';
+
+  glfwSwapBuffers(this->m_window);
+  glfwPollEvents();
+
+  // Set frame time
+  GLfloat currentFrame = glfwGetTime();
+  this->m_deltaTime = currentFrame - this->m_lastFrame;
+  this->m_lastFrame = currentFrame;
+
+  if (glfwGetKey(this->m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    this->m_isClosed = true;
+  }
+
+  this->m_view = this->m_camPtr->GetViewMatrix();
+  this->m_pers = this->m_camPtr->GetPersMatrix();
+
 }
 
 void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
@@ -352,12 +415,42 @@ void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
   this->RenderQuad();
 
 }
-// Helper function to Draw funcions
-void Display::RenderMesh(ModelData* modelData) {
-  for (GLuint i = 0; i < modelData->s_meshIndices.size(); i++) {
-    glBindVertexArray(modelData->s_VAOs[i]);
-    glDrawElements(modelData->s_mode, modelData->s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
+
+void Display::DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack) {
+  // std::cout << "In DrawDR" << '\n';
+  /*########## GEOMETRY PASS #################################################*/
+  //Select program to use and bind framebuffer
+  glUseProgram(this->m_geoShaderPtr->GetProgram());
+  this->m_gBuffer.PrepGeoPass();
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  //Upload the model matrix for the model and loop through all meshes
+  this->m_geoShaderPtr->UploadMatrix(this->m_view, 1);
+  this->m_geoShaderPtr->UploadMatrix(this->m_pers, 2);
+  for (GLuint i = 0; i < modelPack.size(); i++) {
+      RenderMeshDR(modelPack[i]);
   }
+
+  //Unbind framebuffer after render
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  /*########## COMPUTE PASS ##################################################*/
+  glUseProgram(this->m_comShaderPtr->GetProgram());
+
+  this->m_ppBuffer.DoPingPong(10, this->m_gBuffer.GetColTextureId());
+
+  /*########## LIGHT PASS ####################################################*/
+  //Select the program to use and load up the gBuffer textures
+  glUseProgram(this->m_lgtShaderPtr->GetProgram());
+
+  this->m_gBuffer.PrepLightPass();
+  this->m_ppBuffer.BindResult();
+
+  //Upload all lights in the LightPack
+  this->UploadLightPack(this->m_lgtShaderPtr, lPack);
+
+  //Draw the quad filling the screen
+  this->RenderQuad();
 }
 
 void Display::RenderMeshDR(ModelData* modelData) {
@@ -392,92 +485,6 @@ void Display::RenderMeshDR(ModelData* modelData) {
   }
 }
 
-void Display::ToggleCamera() {
-  if (m_camPtr2 != nullptr) {
-    m_camSwap = !m_camSwap;
-    std::cout << "=== Switching camera === " << (m_camSwap ? "2" : "1") << '\n';
-    Camera* temp = m_camPtr;
-    m_camPtr = m_camPtr2;
-    m_camPtr2 = temp;
-  }
-}
-
-void Display::SetShader(Shader* shaderPtr) {
-  //NTS: Function specific for this program
-
-  m_shaderPtr = shaderPtr;
-
-  //Locate space in shader for matrices
-  m_shaderPtr->FindUniformMatrixLoc("model");
-  m_shaderPtr->FindUniformMatrixLoc("view");
-  m_shaderPtr->FindUniformMatrixLoc("perspective");
-  m_shaderPtr->FindUniformVec3Loc("camPos");
-
-  //Locate space in shader for lights
-  this->FixLightUniforms(m_shaderPtr, "pnt_lights", "dir_lights", "spt_lights", 1, 0, 0);
-}
-
-void Display::SetDRShaders(Shader* geoS, Shader* lgtS) {
-  //NTS: Fuction specific for this program
-
-  this->m_geoShaderPtr = geoS;
-  this->m_lgtShaderPtr = lgtS;
-
-  //USE GEO-SHADER
-  glUseProgram(this->m_geoShaderPtr->GetProgram());
-
-  //Locate space in shader for matrices
-  this->m_geoShaderPtr->FindUniformMatrixLoc("model");
-  this->m_geoShaderPtr->FindUniformMatrixLoc("view");
-  this->m_geoShaderPtr->FindUniformMatrixLoc("perspective");
-  m_geoShaderPtr->FindUniformVec3Loc("camPos");
-
-  //WIP: Fix model texture uniforms
-  this->FixTextureUniforms(this->m_geoShaderPtr, "diffuse", 1);
-  this->FixTextureUniforms(this->m_geoShaderPtr, "specular", 1);
-
-  //USE LIGHT-SHADER
-  glUseProgram(this->m_lgtShaderPtr->GetProgram());
-
-  //Locate space in shader for textures
-  this->m_gBuffer.FindUniformSamplerLocs(this->m_lgtShaderPtr->GetProgram());
-  this->m_gBuffer.UploadUniformSamplers();
-
-  //Locate space in shader for lights
-  this->FixLightUniforms(this->m_lgtShaderPtr, "pnt_lights", "dir_lights", "spt_lights", 1, 0, 0);
-
-}
-
-void Display::SetComputeShader(Shader* comS, Shader* tarS) {
-  //NTS: Function specific for this program
-  GLint uni_loc;
-
-  //Set the pointer to the compute shader
-  this->m_comShaderPtr = comS;
-
-  //USE COMPUTE-SHADER
-  glUseProgram(this->m_comShaderPtr->GetProgram());
-
-  uni_loc = this->m_comShaderPtr->GetUniform("xORy");
-  this->FixTextureUniforms(this->m_comShaderPtr, "source", 1);
-  this->FixTextureUniforms(this->m_comShaderPtr, "target", 1);
-
-  //Initialize the PingPongBuffer
-  this->m_ppBuffer.InitPingPongBuffer(this->m_width, this->m_height, uni_loc);
-
-  //Set the uniform that the result should be sent to
-  glUseProgram(tarS->GetProgram());
-  this->FixTextureUniforms(tarS, "computed", 1);
-}
-
-bool Display::IsClosed() {
-  return this->m_isClosed;
-}
-
-void Display::Clear(float r, float g, float b, float a) {
-	glClearColor(r, g, b, a);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
 
 //GLOBAL------------------------------------------------------------------------
 
