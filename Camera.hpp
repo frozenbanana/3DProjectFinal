@@ -40,6 +40,7 @@ private:
   GLfloat m_movementSpeed;
   GLfloat m_mouseSensitivity;
   GLfloat m_zoom;
+  GLfloat m_heightOffset;
 
   // Perspective attributes
   GLfloat m_fov;
@@ -70,10 +71,15 @@ public:
   // Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
   void ProcessMouseScroll(GLfloat yOffset);
   GLfloat GetZoom();
+  GLfloat GetPosX();
+  GLfloat GetPosZ();
   glm::vec3 GetPosition();
   glm::vec3 GetFront();
   glm::mat4 GetCamView();
   glm::mat4 GetCamPers();
+
+  // Make camera walk on Terrain
+  void ApplyGravity(GLfloat heightLimit, GLfloat delaTime);
 
   // Get Mouse data
   void MouseCallback(double xPos, double yPos);

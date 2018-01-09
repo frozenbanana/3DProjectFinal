@@ -116,7 +116,7 @@ void Display::FixTextureUniforms(Shader* shader_ptr, std::string type_str, int n
 
 //Public------------------------------------------------------------------------
 
-Display::Display(int width, int height, const std::string& title, Camera* camPtr) {
+Display::Display(int width, int height, const std::string& title, Camera* camPtr, Terrain* terrainPtr) {
 
   // start GL context and O/S window using the GLFW helper library
   if (!glfwInit()) {
@@ -142,6 +142,9 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
   m_camPtr = camPtr;
   m_camPtr2 = nullptr;
   m_camSwap = false;
+
+  // Bind terrain
+  m_terrain = terrainPtr;
 
   //Set the window to capture the mouse and hide it. It's like a cat but digital
   glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -226,9 +229,15 @@ void Display::UpdateDR() {
     this->m_isClosed = true;
   }
 
+  this->m_camPos = m_camPtr->GetPosition();
+
+  if (m_camPos.x > 0 && m_camPos.z > 0 && m_terrain != nullptr) {
+    GLfloat heightLimit = m_terrain->GetHeight(m_camPos.x, m_camPos.z);
+    m_camPtr->ApplyGravity(heightLimit, m_deltaTime);
+  }
+
   this->m_view = this->m_camPtr->GetViewMatrix();
   this->m_pers = this->m_camPtr->GetPersMatrix();
-
 }
 
 void Display::Draw(ModelData& modelData, LightPack& lPack) {
@@ -261,6 +270,7 @@ void Display::DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack) {
   this->m_gBuffer.PrepGeoPass();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   //Upload the model matrix for the model and loop through all meshes
+  this->m_geoShaderPtr->UploadVec3(this->m_camPos, 0);
   this->m_geoShaderPtr->UploadMatrix(this->m_view, 1);
   this->m_geoShaderPtr->UploadMatrix(this->m_pers, 2);
   for (GLuint i = 0; i < modelPack.size(); i++) {
@@ -391,6 +401,10 @@ void Display::ToggleCamera() {
     m_camPtr = m_camPtr2;
     m_camPtr2 = temp;
   }
+}
+
+void Display::SetTerrain(Terrain *terrainPtr) {
+  m_terrain = terrainPtr;
 }
 
 void Display::SetShader(Shader* shaderPtr) {

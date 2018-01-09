@@ -7,6 +7,7 @@
 #include <iostream>
 #include "Camera.hpp"
 #include "Shader.hpp"
+#include "Terrain.hpp"
 #include "GBuffer.hpp"
 #include "GLOBALS.hpp"
 #include "PackageStructs.hpp"
@@ -35,12 +36,14 @@ private:
 
   GBuffer m_gBuffer;
 
+  glm::vec3 m_camPos;
   glm::mat4 m_view;
   glm::mat4 m_pers;
 
   Shader* m_geoShaderPtr;
   Shader* m_lgtShaderPtr;
 
+  Terrain* m_terrain;
   void CreateQuad();
   void RenderQuad();
   void FixLightUniforms(Shader* shader_ptr, std::string pnt_str, std::string dir_str, std::string spt_str, int n_pnt, int n_dir, int n_spt);
@@ -55,7 +58,8 @@ public:
   Shader* m_shaderPtr;
   GLfloat m_deltaTime;
 
-  Display(int width, int height, const std::string& title, Camera* camPtr);
+  Display(int width, int height, const std::string& title, Camera* camPtr, Terrain* terrainPtr = nullptr);
+  void SetTerrain(Terrain* terrainPtr);
   // SHADERS
   void SetShader(Shader* shaderPtr);
   void SetDRShaders(Shader* geoS, Shader* lgtS);

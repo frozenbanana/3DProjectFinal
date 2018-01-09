@@ -97,19 +97,17 @@ void Terrain::ComputeIndices() {
 }
 
 void Terrain::ComputePos() {
-  for (GLuint h = 0; h < m_height; h++)
-    {
-      for (GLuint w = 0; w < m_width; w++)
-	{
-	  // only need one color value to calc height, multiply by 3
-          GLfloat color = (GLfloat)m_BMPData.data[3 * (h * m_width + w)];
-
-	  // convert to 0-1 float and half range
-          GLfloat currentHeightPerPixel = MAX_HEIGHT *((color / 255.0f) - 0.5f);
-          // set height
-	  SetHeight(h, w, currentHeightPerPixel);
-	}
-    }
+  for (GLuint h = 0; h < m_height; h++) {
+      for (GLuint w = 0; w < m_width; w++) {
+    	  // only need one color value to calc height, multiply by 3
+        GLfloat color = (GLfloat)m_BMPData.data[3 * (h * m_width + w)];
+    	  // convert to 0-1 float and half range
+        // GLfloat currentHeightPerPixel = MAX_HEIGHT *((color / 255.0f) - 0.5f);
+        GLfloat currentHeightPerPixel = MAX_HEIGHT *((color / 255.0f));
+        // set height
+	      SetHeight(h, w, currentHeightPerPixel);
+	    }
+  }
 }
 
 void Terrain::ComputeNormals() {
@@ -212,6 +210,10 @@ void Terrain::SetHeight(GLuint zPos, GLuint xPos, GLfloat height) {
   glm::vec3 pos = glm::vec3((GLfloat)xPos, height, (GLfloat)zPos);
   m_vertices[zPos*m_width + xPos].SetPos(pos);
   computedNormals = false;
+}
+
+GLfloat Terrain::GetHeight(GLfloat xPos, GLfloat zPos) {
+  return m_vertices[(int)zPos*m_width + (int)xPos].GetPos().y;
 }
 
 ModelData& Terrain::GetModelData() {

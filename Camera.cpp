@@ -14,6 +14,8 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch)
   m_aspect = ((GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT);
   m_nearPlane = 0.1f;
   m_farPlane = 100.0f;
+
+  m_heightOffset = 5.0f;
   // make camera perspective matrix
   m_pers = glm::perspective(m_fov, m_aspect, m_nearPlane, m_farPlane);
 
@@ -26,7 +28,6 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch)
 // Constructor with vectors
 void Camera::UpdateCameraVectors()
 {
-
   // Calculate the new Front vector
   glm::vec3 front;
   front.x = cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
@@ -41,10 +42,18 @@ void Camera::UpdateCameraVectors()
   // Update view matrix
   m_view = glm::lookAt(m_position, m_position + m_front, m_up); // might me m_up instead
 
-  // for frustum
+  // For frustum
   m_viewPers = m_pers * m_view;
+}
 
-  //std::cout << "x: "<< m_position.x << ", y: " << m_position.y << ", z: " << m_position.z << std::endl;
+void Camera::ApplyGravity(GLfloat heightLimit, GLfloat deltaTime) {
+  GLfloat realHeightLimit = m_heightOffset + heightLimit;
+  if (m_position.y > realHeightLimit)
+    m_position.y -= m_up.y * deltaTime;
+  else
+    m_position.y = realHeightLimit;
+
+  UpdateCameraVectors();
 }
 
 // Returns the view matrix calculated using Eular Angles and the LookAt Matrix
@@ -84,6 +93,7 @@ void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime)
   if (direction == UP) {
     m_position += m_up * velocity;
   }
+
   UpdateCameraVectors();
 }
 
@@ -112,6 +122,14 @@ void Camera::ProcessMouseMovement(GLfloat xOffset, GLfloat yOffset, GLboolean co
 
 GLfloat Camera::GetZoom() {
   return m_zoom;
+}
+
+GLfloat Camera::GetPosX() {
+  return m_position.x;
+}
+
+GLfloat Camera::GetPosZ() {
+  return m_position.z;
 }
 
 glm::vec3 Camera::GetPosition() {
