@@ -27,11 +27,6 @@ public:
 
   void SetFrustum(glm::mat4 matrix) {
     float *vp = (float*)glm::value_ptr(matrix);
-    // std::cout << "this is the frustum matrix: " << '\n';
-    // std::cout << mvp[0] << ", " << mvp[1] << ", " << mvp[2] << ", " << mvp[3] << '\n';
-    // std::cout << mvp[4] << ", " << mvp[5] << ", " << mvp[6] << ", " << mvp[7] << '\n';
-    // std::cout << mvp[8] << ", " << mvp[9] << ", " << mvp[10] << ", " << mvp[11] << '\n';
-    // std::cout << mvp[12] << ", " << mvp[13] << ", " << mvp[14] << ", " << mvp[15] << '\n';
 		m_planes[RIGHTP].Set(  vp[3] - vp[0], vp[7] - vp[4], vp[11] - vp[8],  vp[15] - vp[12] ); // Right clipping plane.
 		m_planes[LEFTP].Set(   vp[3] + vp[0], vp[7] + vp[4], vp[11] + vp[8],  vp[15] + vp[12] ); // Left clipping plane.
 		m_planes[NEARP].Set(   vp[3] + vp[2], vp[7] + vp[6], vp[11] + vp[10], vp[15] + vp[14] ); // Near clipping plane.

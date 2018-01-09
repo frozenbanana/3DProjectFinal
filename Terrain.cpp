@@ -66,7 +66,7 @@ void Terrain::LoadBMPData(std::string fileName) {
 
   m_BMPData.good = true;
 
-  std::cout << "Height map loading " << std::endl;
+  std::cout << "-- Height map loading --" << std::endl;
   std::cout << "Name: " << fileName << std::endl;
   std::cout << "Width: " << m_BMPData.width << std::endl;
   std::cout << "Height: " << m_BMPData.height << std::endl;
@@ -86,12 +86,12 @@ void Terrain::ComputeIndices() {
 	  GLuint offset = (h * m_width + w);
           // quad
           m_indices[i++] = offset;
-          m_indices[i++] = offset + 1;
           m_indices[i++] = offset + m_width;
+          m_indices[i++] = offset + 1;
 
           m_indices[i++] = offset + m_width + 1;
-          m_indices[i++] = offset + m_width;
           m_indices[i++] = offset + 1;
+          m_indices[i++] = offset + m_width;
 	 }
     }
 }
@@ -228,6 +228,8 @@ ModelData& Terrain::GetModelData() {
   m_modelData.s_mode = GL_TRIANGLES;
   m_modelData.s_VAOs = terrainVAO;
   m_modelData.s_meshIndices = terrainIndice;
+  // std::vector<std::vector<Texture> > vec2DTex(0, std::vector<Texture>(0));
+  m_modelData.s_meshTextures.clear();
   m_modelData.s_meshPos = terrainPos;
   m_modelData.s_modelMat = glm::mat4(1.0f);
 

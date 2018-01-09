@@ -253,6 +253,37 @@ void Display::Draw(std::vector<ModelData*> modelPack, LightPack& lPack) {
     }
 }
 
+void Display::DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack) {
+  // std::cout << "In DrawDR" << '\n';
+  /*########## GEOMETRY PASS #################################################*/
+  //Select program to use and bind framebuffer
+  glUseProgram(this->m_geoShaderPtr->GetProgram());
+  this->m_gBuffer.PrepGeoPass();
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  //Upload the model matrix for the model and loop through all meshes
+  this->m_geoShaderPtr->UploadMatrix(this->m_view, 1);
+  this->m_geoShaderPtr->UploadMatrix(this->m_pers, 2);
+  for (GLuint i = 0; i < modelPack.size(); i++) {
+      RenderMeshDR(modelPack[i]);
+  }
+
+  //Unbind framebuffer after render
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  /*########## LIGHT PASS ####################################################*/
+  //Select the program to use and load up the gBuffer textures
+  glUseProgram(this->m_lgtShaderPtr->GetProgram());
+
+  this->m_gBuffer.PrepLightPass();
+
+  //Upload all lights in the LightPack
+  this->UploadLightPack(this->m_lgtShaderPtr, lPack);
+
+  //Draw the quad filling the screen
+  this->RenderQuad();
+}
+
 void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
   // std::cout << "In DrawDR" << '\n';
   /*########## GEOMETRY PASS #################################################*/
@@ -271,21 +302,23 @@ void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
 
     //Upload mesh textures
     int n_tex = 0;        //Varable tracking how many textures were found
-    switch (modelData.s_meshTextures[i].size()) {
-      case 2:
-        //NTS:  The below line SHOULD NOT BE USED. The uniform is linked to a binding from where it gets its values
-        //      Uploading to this uniform messes with how it is read. Line (And function) left for future reference.
-        //this->UploadTexture(this->m_geoShaderPtr, modelData.s_meshTextures[i][1].id, 1);    //Specular
-        Bind2DTextureTo(modelData.s_meshTextures[i][1].id, MESHSPEC_TEX);
-        n_tex++;
-      case 1:
-        //this->UploadTexture(this->m_geoShaderPtr, modelData.s_meshTextures[i][0].id, 0);    //Diffuse
-        Bind2DTextureTo(modelData.s_meshTextures[i][0].id, MESHDIFF_TEX);
-        n_tex++;
-        break;
-      default:
-        //No textures in mesh
-        break;
+    if (modelData.s_meshTextures.size() > 0) {
+      switch (modelData.s_meshTextures[i].size()) {
+        case 2:
+          //NTS:  The below line SHOULD NOT BE USED. The uniform is linked to a binding from where it gets its values
+          //      Uploading to this uniform messes with how it is read. Line (And function) left for future reference.
+          //this->UploadTexture(this->m_geoShaderPtr, modelData.s_meshTextures[i][1].id, 1);    //Specular
+          Bind2DTextureTo(modelData.s_meshTextures[i][1].id, MESHSPEC_TEX);
+          n_tex++;
+        case 1:
+          //this->UploadTexture(this->m_geoShaderPtr, modelData.s_meshTextures[i][0].id, 0);    //Diffuse
+          Bind2DTextureTo(modelData.s_meshTextures[i][0].id, MESHDIFF_TEX);
+          n_tex++;
+          break;
+        default:
+          //No textures in mesh
+          break;
+      }
     }
     // this->m_geoShaderPtr->DirectInt("n_tex", n_tex);  //Variable uploaded to shader for checking if the uniform samplers contain anything
 
@@ -315,6 +348,38 @@ void Display::RenderMesh(ModelData* modelData) {
   for (GLuint i = 0; i < modelData->s_meshIndices.size(); i++) {
     glBindVertexArray(modelData->s_VAOs[i]);
     glDrawElements(modelData->s_mode, modelData->s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
+  }
+}
+
+void Display::RenderMeshDR(ModelData* modelData) {
+  this->m_geoShaderPtr->UploadMatrix(modelData->s_modelMat, 0);
+  for (GLuint i = 0; i < modelData->s_meshIndices.size(); i++) {
+    glBindVertexArray(modelData->s_VAOs[i]);
+
+    //Upload mesh textures
+    int n_tex = 0;        //Varable tracking how many textures were found
+    if (modelData->s_meshTextures.size() > 0) {
+      switch (modelData->s_meshTextures[i].size()) {
+        case 2:
+          //NTS:  The below line SHOULD NOT BE USED. The uniform is linked to a binding from where it gets its values
+          //      Uploading to this uniform messes with how it is read. Line (And function) left for future reference.
+          //this->UploadTexture(this->m_geoShaderPtr, modelData->s_meshTextures[i][1].id, 1);    //Specular
+          Bind2DTextureTo(modelData->s_meshTextures[i][1].id, MESHSPEC_TEX);
+          n_tex++;
+        case 1:
+          //this->UploadTexture(this->m_geoShaderPtr, modelData->s_meshTextures[i][0].id, 0);    //Diffuse
+          Bind2DTextureTo(modelData->s_meshTextures[i][0].id, MESHDIFF_TEX);
+          n_tex++;
+          break;
+        default:
+          //No textures in mesh
+          break;
+      }
+    }
+    // this->m_geoShaderPtr->DirectInt("n_tex", n_tex);  //Variable uploaded to shader for checking if the uniform samplers contain anything
+
+    // draw points 0-3 from the currently bound VAO with current in-use shader
+    glDrawElements(GL_TRIANGLES, modelData->s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
   }
 }
 

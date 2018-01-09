@@ -45,6 +45,7 @@ private:
   void RenderQuad();
   void FixLightUniforms(Shader* shader_ptr, std::string pnt_str, std::string dir_str, std::string spt_str, int n_pnt, int n_dir, int n_spt);
   void RenderMesh(ModelData* modelData);
+  void RenderMeshDR(ModelData* modelData);
   void UploadLightPack(Shader* shader_ptr, LightPack& lPack);
   void FixTextureUniforms(Shader* shader_ptr, std::string type_str, int n_tex);
   //void UploadTexture(Shader* shader_ptr, GLuint tex_id, int index);
@@ -60,9 +61,11 @@ public:
   void SetDRShaders(Shader* geoS, Shader* lgtS);
 
   // DRAWING
-  void Draw(std::vector<ModelData*> models, LightPack& lPack);
+  void Draw(std::vector<ModelData*> modelPack, LightPack& lPack);
   void Draw(ModelData& modelData, LightPack& lPack);
-  // void DrawDR(ModelData& modelData, LightPack& lPack);
+
+  // Both GEO and LIGHT pass in same
+  void DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack);
   void DrawDR(ModelData& modelData, LightPack& lPack);
 
   // UPDATE

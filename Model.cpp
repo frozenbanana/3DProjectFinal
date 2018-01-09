@@ -245,13 +245,6 @@ ModelData& Model::GetModelData() {
   m_modelData.s_meshTextures = GetMeshTextures();
   m_modelData.s_modelMat = GetModelMatrix();
 
-  float *mvp = (float*)glm::value_ptr(m_modelData.s_modelMat);
-  std::cout << "this is the modelMatrix matrix: " << '\n';
-  std::cout << mvp[0] << ", " << mvp[1] << ", " << mvp[2] << ", " << mvp[3] << '\n';
-  std::cout << mvp[4] << ", " << mvp[5] << ", " << mvp[6] << ", " << mvp[7] << '\n';
-  std::cout << mvp[8] << ", " << mvp[9] << ", " << mvp[10] << ", " << mvp[11] << '\n';
-  std::cout << mvp[12] << ", " << mvp[13] << ", " << mvp[14] << ", " << mvp[15] << '\n';
-
   return m_modelData;
 }
 

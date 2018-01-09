@@ -22,14 +22,14 @@ void QuadTree::GenerateTree(Node* parentNode, Node* nodePtr, GLuint xPos, GLuint
   nodePtr->s_isLeaf = false;
   nodePtr->s_insideFrustum = true;
 
-  if (nodePtr->s_parent != nullptr)
-   std::cout << "New node, id: " << nodePtr->s_id << " with parent, id: " << nodePtr->s_parent->s_id <<'\n';
+  // if (nodePtr->s_parent != nullptr)
+   // std::cout << "New node, id: " << nodePtr->s_id << " with parent, id: " << nodePtr->s_parent->s_id <<'\n';
 
   // check if it has reached highest resolution
   if (width <= MIN_QUAD_SIZE) {
     nodePtr->s_isLeaf = true;
 
-    std::cout << "nodeID: " << nodePtr->s_id << " is a leaf" << '\n';
+    // std::cout << "nodeID: " << nodePtr->s_id << " is a leaf" << '\n';
 
     // Make children nullptr
     for (size_t i = 0; i < NUM_OF_NODES; i++) {
@@ -66,16 +66,16 @@ void QuadTree::ReleaseNode(Node* currentNode) {
 bool QuadTree::IsPointInNode(glm::vec3 point, Node* nodePtr) {
   glm::vec3 nodePos((float)nodePtr->s_x, 0, (float)nodePtr->s_z);
   float nodeWidth = (float)nodePtr->s_width;
-  std::cout << "IsPointInNode: " << point.x << ", "<< point.y << ", " << point.z;
+  // std::cout << "IsPointInNode: " << point.x << ", "<< point.y << ", " << point.z;
   if (point.x <= (nodePos.x + nodeWidth) &&
       point.x >= nodePos.x &&
       point.z <= (nodePos.z + nodeWidth) &&
       point.z >= nodePos.z) {
-      std::cout << " Is in nodeID: " << nodePtr->s_id << '\n';
+      // std::cout << " Is in nodeID: " << nodePtr->s_id << '\n';
           return true;
   }
   else {
-  std::cout << " Is NOT in nodeID: " << nodePtr->s_id << '\n';
+  // std::cout << " Is NOT in nodeID: " << nodePtr->s_id << '\n';
   return false;
   }
 }
@@ -84,7 +84,7 @@ void QuadTree::InsertModelInTree(ModelData* modeldata) {
   int correctIndex = -1;
   // Get a point of model
   glm::vec4 modelPos = glm::column(modeldata->s_modelMat, 3);
-  std::cout << "modelpos: " << modelPos.x << ", "<< modelPos.y << ", " << modelPos.z <<'\n';
+  // std::cout << "modelpos: " << modelPos.x << ", "<< modelPos.y << ", " << modelPos.z <<'\n';
 
   // compare model with node pos to determine best locataion for model
   Node* currentNodePtr = m_rootNode;
