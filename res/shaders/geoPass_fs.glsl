@@ -7,6 +7,7 @@ in vec2 g_uvs;
 layout(location = 0) out vec3 gPosition;
 layout(location = 1) out vec3 gNormal;
 layout(location = 2) out vec4 gDiffSpec;
+// layout(location = 2) out vec4 gDiffSpec;
 
 layout(binding = 3) uniform sampler2D texture_diffuse0;
 layout(binding = 4) uniform sampler2D texture_specular0;

@@ -35,7 +35,6 @@ const char* lgt_vs = "res/shaders/lightPass_vs.glsl";
 const char* lgt_fs = "res/shaders/lightPass_fs.glsl";
 
 int main() {
-
   // SETUP VIEW
   Camera camera(glm::vec3(0.0f, 3.0f, 0.0f));
   Camera camera2(glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, -45.0f);
@@ -57,12 +56,15 @@ int main() {
   Shader comShader(pt_cs);
   display.SetComputeShader(&comShader, &lightShader);
 
+  std::cout << "A" << '\n';
   // SETUP MODELS
   // terrain
   Terrain terrain("res/heightmap/example/BMP_example.bmp", 20);
+  terrain.AddTextureFromFile("normalmap/normal1.jpg", "texture_normal");
   display.SetTerrain(&terrain);
   // quadtree.InsertModelInTree(&terrain.GetModelData());
 
+  std::cout << "B" << '\n';
   // cubes
   Model cubes[21];
   glm::vec3 cubesPos[21] = {
@@ -123,6 +125,7 @@ int main() {
   display.Clear(0.0f, 0.20f, 0.1f, 1.0f);
   //DRAW LOOP
   while(!display.IsClosed()) {
+    std::cout << "C" << '\n';
      display.UpdateDR();
      frustum.SetFrustum(camera.GetViewPersMatrix());
      frustum.CullNode(quadtree.GetRootNode());        // recursivly cull every node in QuadTree

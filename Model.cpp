@@ -113,26 +113,22 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
 
 std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName) {
   std::vector<Texture> textures;
-  for (GLuint i = 0; i < material->GetTextureCount(type); i++)
-    {
+  for (GLuint i = 0; i < material->GetTextureCount(type); i++) {
       aiString str;
       material->GetTexture(type, i, &str);
 
       // Check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
       bool skip = false;
 
-      for (GLuint j = 0; j < m_textures_loaded.size(); j++)
-	{
-          if(m_textures_loaded[j].path == str)
-	    {
+      for (GLuint j = 0; j < m_textures_loaded.size(); j++) {
+          if(m_textures_loaded[j].path == str) {
               textures.push_back(m_textures_loaded[j]);
               skip = true; // A texture with the same filepath has already been loaded, continue to next one. (optimization)
               break;
-	    }
-	}
+	        }
+	   }
 
-      if(!skip)
-	{   // If texture hasn't been loaded already, load it
+      if(!skip) {   // If texture hasn't been loaded already, load it
           Texture texture;
           texture.id = TextureFromFile(str.C_Str(), m_directory, typeName);
           texture.type = typeName;
@@ -140,8 +136,8 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *material, aiTexture
           textures.push_back(texture);
 
           m_textures_loaded.push_back(texture);  // Store it as texture loaded for entire model, to ensure we won't unnecesery load duplicate textures.
-	}
-    }
+    	}
+  }
 
   return textures;
 }
@@ -157,16 +153,12 @@ GLint Model::TextureFromFile(const char *path, std::string directory, std::strin
   unsigned char *image = SOIL_load_image(filename.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
 
   // Assign texture to ID
-
-  //glBindTexture(GL_TEXTURE_2D, textureID);
-  //TEST:
   if (typeName == "texture_diffuse") {
     Bind2DTextureTo(textureID, MESHDIFF_TEX);
   }
   else if (typeName == "texture_specular") {
     Bind2DTextureTo(textureID, MESHSPEC_TEX);
   }
-  //TEST;
 
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
   glGenerateMipmap(GL_TEXTURE_2D);
@@ -183,6 +175,7 @@ GLint Model::TextureFromFile(const char *path, std::string directory, std::strin
 
   return textureID;
 }
+
 
 std::vector<GLuint> Model::GetVAOs() {
   for (GLuint i = 0; i < m_meshes.size(); i++) {
@@ -245,4 +238,4 @@ ModelData& Model::GetModelData() {
   return m_modelData;
 }
 
-Model::~Model() {}
+Model::~Model() { }

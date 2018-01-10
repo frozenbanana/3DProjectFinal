@@ -76,6 +76,11 @@ void Terrain::LoadBMPData(std::string fileName) {
   fclose(file);
 }
 
+void Terrain::SetTextureData(std::string fileName, std::string type) {
+  m_texturePath = fileName;
+  m_textureType = type;
+}
+
 void Terrain::ComputeIndices() {
   int i = 0;
   for (GLuint h = 0; h < m_height - 1; h++)// needs to be height - 1 to avoid make triangle when the last in row is finished
@@ -212,6 +217,48 @@ void Terrain::SetHeight(GLuint zPos, GLuint xPos, GLfloat height) {
   computedNormals = false;
 }
 
+Texture Terrain::TextureFromFile(const char *path, std::string typeName) {
+  //Generate texture ID and load texture data
+  std::string fileName = std::string(path);
+  GLuint textureID;
+  glGenTextures(1, &textureID);
+  int width, height;
+
+  unsigned char *image = SOIL_load_image(fileName.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
+
+  // Assign texture to ID
+  if (typeName == "texture_diffuse") {
+    Bind2DTextureTo(textureID, MESHDIFF_TEX);
+  }
+  else if (typeName == "texture_specular") {
+    Bind2DTextureTo(textureID, MESHSPEC_TEX);
+  }
+  else if (typeName == "texture_normal") {
+    Bind2DTextureTo(textureID, NORMAL_TEX);
+  }
+
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+  glGenerateMipmap(GL_TEXTURE_2D);
+
+  // Parameters
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  //Unbind and free
+  glBindTexture(GL_TEXTURE_2D, 0);
+  SOIL_free_image_data(image);
+
+  // Prep texture
+  Texture texture;
+  texture.id = textureID;
+  texture.type = typeName;
+  texture.path = fileName;
+
+  return texture;
+ }
+
 GLfloat Terrain::GetHeight(GLfloat xPos, GLfloat zPos) {
   return m_vertices[(int)zPos*m_width + (int)xPos].GetPos().y;
 }
@@ -231,7 +278,7 @@ ModelData& Terrain::GetModelData() {
   m_modelData.s_VAOs = terrainVAO;
   m_modelData.s_meshIndices = terrainIndice;
   // std::vector<std::vector<Texture> > vec2DTex(0, std::vector<Texture>(0));
-  m_modelData.s_meshTextures.clear();
+  m_modelData.s_meshTextures[0].push_back(TextureFromFile(m_texturePath.c_str(), m_textureType));
   m_modelData.s_meshPos = terrainPos;
   m_modelData.s_modelMat = glm::mat4(1.0f);
 
