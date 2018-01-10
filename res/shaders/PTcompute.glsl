@@ -19,9 +19,9 @@ uniform float weight[5] = float[] (0.24477, 0.06136, 0.38774, 0.06136, 0.24477);
 void main() {
   ivec2 txlPos;		//A variable keeping track of where on the texture current texel is from
   vec4 result = vec4(0.0, 0.0, 0.0, 0.0);		//A variable to store color
-  vec2 offset;		//A vector to tell where new values should be gotten from
-  ivec2 plus_offset;
-  ivec2 minus_offset;
+  //vec2 offset;		//A vector to tell where new values should be gotten from
+  //ivec2 plus_offset;
+  //ivec2 minus_offset;
   //float weight[] = {0.0f, 0.0f, 0.0f, 1.0f, 1.0f};
 
   txlPos = ivec2(gl_GlobalInvocationID.xy);		//Get txl-pos
