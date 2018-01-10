@@ -278,7 +278,7 @@ ModelData& Terrain::GetModelData() {
   m_modelData.s_VAOs = terrainVAO;
   m_modelData.s_meshIndices = terrainIndice;
   // std::vector<std::vector<Texture> > vec2DTex(0, std::vector<Texture>(0));
-  m_modelData.s_meshTextures[0].push_back(TextureFromFile(m_texturePath.c_str(), m_textureType));
+  m_modelData.s_meshTextures.clear();
   m_modelData.s_meshPos = terrainPos;
   m_modelData.s_modelMat = glm::mat4(1.0f);
 

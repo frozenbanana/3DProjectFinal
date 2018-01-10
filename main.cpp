@@ -60,7 +60,6 @@ int main() {
   // SETUP MODELS
   // terrain
   Terrain terrain("res/heightmap/example/BMP_example.bmp", 20);
-  terrain.AddTextureFromFile("normalmap/normal1.jpg", "texture_normal");
   display.SetTerrain(&terrain);
   // quadtree.InsertModelInTree(&terrain.GetModelData());
 
@@ -125,7 +124,6 @@ int main() {
   display.Clear(0.0f, 0.20f, 0.1f, 1.0f);
   //DRAW LOOP
   while(!display.IsClosed()) {
-    std::cout << "C" << '\n';
      display.UpdateDR();
      frustum.SetFrustum(camera.GetViewPersMatrix());
      frustum.CullNode(quadtree.GetRootNode());        // recursivly cull every node in QuadTree
