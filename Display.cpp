@@ -470,12 +470,17 @@ void Display::RenderMeshDR(ModelData* modelData) {
   this->m_geoShaderPtr->UploadMatrix(modelData->s_modelMat, 0);
   for (GLuint i = 0; i < modelData->s_meshIndices.size(); i++) {
     glBindVertexArray(modelData->s_VAOs[i]);
-
+//
     //Upload mesh textures
     int n_tex = 0;        //Varable tracking how many textures were found
     // if (modelData->s_normalMap.id != 0) {
     //     Bind2DTextureTo(modelData->s_normalMap.id, NORMALMAP_TEX);
+    //     this->m_geoShaderPtr->DirectVec2("hasNormalMap", glm::vec2(1.0f, 0.0f));  //Variable uploaded to shader for checking if the uniform samplers contain anything
     // }
+    // else {
+    //     this->m_geoShaderPtr->DirectVec2("hasNormalMap", glm::vec2(0.0f, 1.0f));  //Variable uploaded to shader for checking if the uniform samplers contain anything
+    // }
+
     if (modelData->s_meshTextures.size() > 0) {
       switch (modelData->s_meshTextures[i].size()) {
         case 2:

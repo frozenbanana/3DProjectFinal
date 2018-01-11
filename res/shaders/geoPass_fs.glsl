@@ -10,13 +10,19 @@ layout(location = 2) out vec4 gDiffSpec;
 
 layout(binding = 3) uniform sampler2D texture_diffuse0;
 layout(binding = 4) uniform sampler2D texture_specular0;
+// layout(binding = 6) uniform sampler2D texture_normal0;
 
-uniform int n_tex;
+// smart trick to avoid if statement
+// if vec2 = (1, 0) ->  0 + normalize(texture(texture_normal0, g_uvs).rgb) ... has a normal map
+// if vec2 = (0, 1) ->  normalize(g_nor) * 1 + 0
+// uniform vec2 hasNormalMap;
+// uniform int n_tex;
 
 void main() {
-  //gPosition = g_pos;
   gPosition = g_pos;
 
+  // gNormal = normalize(texture(texture_normal0, g_uvs).rgb * 2.0 - 1.0) * hasNormalMap.x + normalize(g_nor) * hasNormalMap.y;
+  // gNormal = normalize(texture(texture_normal0, g_uvs).rgb * 2.0 - 1.0);
   gNormal = normalize(g_nor);
 
   gDiffSpec.rgb = texture(texture_diffuse0, g_uvs).rgb;

@@ -226,7 +226,7 @@ void Terrain::ComputeNormals() {
 	sum = glm::vec3(0.0f, 1.0f, 0.0f);
       }
 
-      m_vertices[z*m_width + x].GetNormal() = glm::normalize(sum);
+      m_vertices[z*m_width + x].SetNormal(glm::normalize(sum));
     }
   }
 
@@ -241,10 +241,10 @@ void Terrain::ComputeNormals() {
 void Terrain::ComputeTexCoords() {
   for (GLuint h = 0; h < m_height; h++) {
       for (GLuint w = 0; w < m_width; w++) {
-	glm::vec2 texCoord;
-	texCoord.x = (GLfloat)w / ((GLfloat)m_width - 1);
-	texCoord.y = (GLfloat)h / ((GLfloat)m_height - 1);
-	m_vertices[h * m_width + w].SetTexCoord(texCoord);
+      	glm::vec2 texCoord;
+      	texCoord.x = (GLfloat)w / ((GLfloat)m_width - 1);
+      	texCoord.y = (GLfloat)h / ((GLfloat)m_height - 1);
+      	m_vertices[h * m_width + w].SetTexCoord(texCoord);
       }
   }
 }

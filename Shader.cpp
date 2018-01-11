@@ -179,6 +179,15 @@ void Shader::DirectInt(std::string uniform_name, int value) {
 
 }
 
+void Shader::DirectVec2(std::string uniform_name, glm::vec2 value) {
+
+  GLint uniform_loc = GetUniform(uniform_name);
+
+  if(uniform_loc != (GLint)-1) {
+    glUniform2f(uniform_loc, value.x, value.y);
+  }
+}
+
 void Shader::FindUniformVec3Loc(std::string uniformName) {
   GLint uniformLoc = glGetUniformLocation(m_program, uniformName.c_str());
   if(uniformLoc == (GLint)-1) {

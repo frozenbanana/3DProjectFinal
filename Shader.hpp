@@ -75,6 +75,7 @@ public:
   //Direct functions take a uniform name and instantly tries to upload the value
   //to the shader
   void DirectInt(std::string uniform_name, int value);
+  void DirectVec2(std::string uniform_name, glm::vec2 value);
 
   //Find functions check if the is a uniform variable and if there is saves it to
   //a variable in shader
