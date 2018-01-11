@@ -11,7 +11,15 @@ layout(location = 2) out vec4 gDiffSpec;
 layout(binding = 3) uniform sampler2D texture_diffuse0;
 layout(binding = 4) uniform sampler2D texture_specular0;
 <<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
 layout(binding = 6) uniform sampler2D texture_normal0;
+=======
+// layout(binding = 6) uniform sampler2D texture_normal0;
+>>>>>>> parent of 88b96a8... something intresting is happening with normal map texture
+=======
+// layout(binding = 6) uniform sampler2D texture_normal0;
+>>>>>>> parent of 88b96a8... something intresting is happening with normal map texture
 =======
 // layout(binding = 6) uniform sampler2D texture_normal0;
 >>>>>>> parent of 88b96a8... something intresting is happening with normal map texture
@@ -26,7 +34,15 @@ void main() {
   gPosition = g_pos;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
   // gNormal = normalize(texture(texture_normal0, g_uvs).rbg * 2.0 - 1.0) * hasNormalMap.x + normalize(g_nor) * hasNormalMap.y;
+=======
+  // gNormal = normalize(texture(texture_normal0, g_uvs).rgb * 2.0 - 1.0) * hasNormalMap.x + normalize(g_nor) * hasNormalMap.y;
+>>>>>>> parent of 88b96a8... something intresting is happening with normal map texture
+=======
+  // gNormal = normalize(texture(texture_normal0, g_uvs).rgb * 2.0 - 1.0) * hasNormalMap.x + normalize(g_nor) * hasNormalMap.y;
+>>>>>>> parent of 88b96a8... something intresting is happening with normal map texture
 =======
   // gNormal = normalize(texture(texture_normal0, g_uvs).rgb * 2.0 - 1.0) * hasNormalMap.x + normalize(g_nor) * hasNormalMap.y;
 >>>>>>> parent of 88b96a8... something intresting is happening with normal map texture
