@@ -13,7 +13,7 @@ const int WINDOW_WIDTH = 640;
 const int SHADOW_HEIGHT = 1024;
 const int SHADOW_WIDTH = 1024;
 const GLfloat PI = 3.1415926535f;
-const int QUADTREE_ROOT_WIDTH = 64;
+const int QUADTREE_ROOT_WIDTH = 512;
 const int QUADTREE_MIN_WIDTH = 4;
 
 // void PrintMat4(glm::mat4 matrix) {

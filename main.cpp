@@ -70,52 +70,56 @@ int main() {
   // quadtree.InsertModelInTree(&terrain.GetModelData());
 
   // cubes
-  Model cubes[21];
-  glm::vec3 cubesPos[21] = {
-        glm::vec3(  2.0f,  2.0f,  2.0f), // bottom left
-        glm::vec3(  2.0f,  2.0f,  6.0f),
-        glm::vec3(  2.0f,  2.0f,  10.0f),
-        glm::vec3(  2.0f,  2.0f,  14.0f),
-        glm::vec3(  2.0f,  2.0f,  18.0f),
-        glm::vec3(  2.0f,  2.0f,  22.0f),
-        glm::vec3(  2.0f,  2.0f,  26.0f),
+  Model cubes[23];
+  glm::vec3 cubesPos[23] = {
+        glm::vec3(  2.0f,     15.0f,  2.0f), // Spread
+        glm::vec3(  76.0f,    13.0f,  50.0f),
+        glm::vec3(  145.0f,   19.0f,  85.0f),
+        glm::vec3(  203.0f,   15.0f,  133.0f),
+        glm::vec3(  289.0f,   14.0f,  169.0f),
+        glm::vec3(  349.0f,   12.0f,  142.0f),
+        glm::vec3(  410.0f,   13.0f,  63.0f),
 
-        glm::vec3(  7.0f,  2.0f,  4.0f), // almost bottom left
-        glm::vec3(  7.0f,  2.0f,  6.0f),
-        glm::vec3(  7.0f,  2.0f,  10.0f),
-        glm::vec3(  7.0f,  3.0f,  14.0f),
-        glm::vec3(  7.0f,  3.0f,  18.0f),
-        glm::vec3(  7.0f,  3.0f,  22.0f),
-        glm::vec3(  7.0f,  3.0f,  26.0f),
+        glm::vec3(  175.0f,   19.0f,  322.0f), // Spread
+        glm::vec3(  62.0f,    13.0f,  212.0f),
+        glm::vec3(  245.0f,   19.0f,  181.0f),
+        glm::vec3(  101.0f,   16.0f,  249.0f),
+        glm::vec3(  465.0f,   15.0f,  199.0f),
+        glm::vec3(  372.0f,   12.0f,  333.0f),
+        glm::vec3(  9.0f,     18.0f,  326.0f),
 
-        glm::vec3(  11.0f,  4.0f,  4.0f), // almost bottom left
-        glm::vec3(  11.0f,  4.0f,  6.0f),
-        glm::vec3(  11.0f,  4.0f,  10.0f),
-        glm::vec3(  11.0f,  4.0f,  14.0f),
-        glm::vec3(  11.0f,  4.0f,  18.0f),
-        glm::vec3(  11.0f,  4.0f,  22.0f),
-        glm::vec3(  11.0f,  4.0f,  26.0f),
+        glm::vec3(  9.0f,   10.0f,  9.0f), // Corner square
+        glm::vec3(  9.0f,   10.0f,  18.0f),
+        glm::vec3(  9.0f,   10.0f,  27.0f),
+
+        glm::vec3(  18.0f,  10.0f,  9.0f),
+        glm::vec3(  18.0f,  10.0f,  18.0f),
+        glm::vec3(  18.0f,  10.0f,  27.0f),
+
+        glm::vec3(  27.0f,  10.0f,  9.0f),
+        glm::vec3(  27.0f,  10.0f,  18.0f),
+        glm::vec3(  27.0f,  10.0f,  27.0f),
   };
   quadtree.InsertModelInTree(&cubes[0].GetModelData());
-  for (size_t i = 0; i < 21; i++) {
+  for (size_t i = 0; i < 23; i++) {
     cubes[i].LoadModel("res/models/cube/cube_green_phong_12_tris_QUADS.obj");
     cubes[i].SetPos(cubesPos[i]);
     quadtree.InsertModelInTree(&cubes[i].GetModelData());
   }
 
   // Nano dude
-  //Model nanoDudes[3];
-  //glm::vec3 nanoDudesPos[3] = {
-  //  glm::vec3(  25.0f,  4.0f,  25.0f), // bottom left
-  //  glm::vec3(  30.0f,  4.0f,  10.0f),
-  //  glm::vec3(  10.0f,  0.0f,  30.0f),
-  //};
+  Model nanoDudes[3];
+  glm::vec3 nanoDudesPos[3] = {
+    glm::vec3(  85.0f,    4.0f,   85.0f), // bottom left
+    glm::vec3(  155.0f,   4.0f,   155.0f),
+    glm::vec3(  425.0f,   0.0f,   425.0f),
+  };
 
-  //for (size_t i = 0; i < 1; i++) {
-  //  nanoDudes[i].LoadModel("res/models/nano/nanosuit.obj");
-  //  nanoDudes[i].SetPos(nanoDudesPos[i]);
-  //  quadtree.InsertModelInTree(&nanoDudes[i].GetModelData());
-  //}
+  for (size_t i = 0; i < 1; i++) {
+    nanoDudes[i].LoadModel("res/models/nano/nanosuit.obj");
+    nanoDudes[i].SetPos(nanoDudesPos[i]);
+    quadtree.InsertModelInTree(&nanoDudes[i].GetModelData());
+  }
 
   // SETUP lights
   LightHandler lightHandler;

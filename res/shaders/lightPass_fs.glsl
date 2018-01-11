@@ -69,7 +69,7 @@ void main() {
 */
 
   float shadVal = pcf_shadCalc(texture(gLgtPos, v_uvs), texture(gNormal, v_uvs), pnt_lights[0].pos);
-  out_col = texture(gPosition, v_uvs) * (1.0f - shadVal);
+  out_col = texture(gDiffSpec, v_uvs) * (1.0f - shadVal);
 
   out_col += pnt_lights[0].dif * 0.01 + spt_lights[0].dif * 0.01; //All uploads must be used or we get a segmentation error
 }
