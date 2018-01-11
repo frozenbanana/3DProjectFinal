@@ -11,11 +11,13 @@
 //For Models
 struct ModelData {
   bool s_insideFrustum;
+  // bool s_hasNormalMap = false;
   GLenum s_mode;
   std::vector<GLuint> s_VAOs;
   std::vector< std::vector<GLuint> > s_meshIndices;
-  std::vector<std::vector<glm::vec3> > s_meshPos;
+  std::vector< std::vector<glm::vec3> > s_meshPos;
   std::vector< std::vector<Texture> > s_meshTextures;
+  Texture s_normalMap;
   glm::mat4 s_modelMat;
 };
 

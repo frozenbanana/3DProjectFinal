@@ -10,6 +10,49 @@ Terrain::Terrain(std::string fileName, unsigned int maxHeight) {
   }
 }
 
+void Terrain::SetTerrainTexture(std::string path, std::string textureType) {
+    Texture terrainTexture;
+    aiString aiPath = (aiString)path;
+    terrainTexture.id = TextureFromFile(path.c_str(), textureType);
+    terrainTexture.type = textureType;
+    terrainTexture.path = aiPath;
+    m_modelData.s_normalMap = terrainTexture;
+}
+
+GLint Terrain::TextureFromFile(const char *path, std::string typeName) {
+  //Generate texture ID and load texture data
+  std::string filename = std::string(path);
+  GLuint textureID;
+  glGenTextures(1, &textureID);
+  int width, height;
+
+  unsigned char *image = SOIL_load_image(filename.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
+
+  // Assign texture to ID
+
+  //glBindTexture(GL_TEXTURE_2D, textureID);
+  //TEST:
+  if (typeName == "texture_normal") {
+    Bind2DTextureTo(textureID, NORMALMAP_TEX);
+  }
+  //TEST;
+
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+  glGenerateMipmap(GL_TEXTURE_2D);
+
+  // Parameters
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  //Unbind and free
+  glBindTexture(GL_TEXTURE_2D, 0);
+  SOIL_free_image_data(image);
+
+  return textureID;
+}
+
 void Terrain::SetMeshData(BMPData BMPData) {
   if (BMPData.good)
     {

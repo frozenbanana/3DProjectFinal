@@ -14,9 +14,9 @@
 
 struct Texture
 {
-  GLuint id;
-  std::string type;
-  aiString path;
+  GLuint id = -1;
+  std::string type = "unknown_type";
+  aiString path = aiString();
 };
 
 class Mesh

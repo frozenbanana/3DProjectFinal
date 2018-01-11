@@ -4,6 +4,9 @@
 #include <vector>
 #include "Mesh.hpp"
 #include "PackageStructs.hpp"
+#include "texturefunctions.hpp"
+#include <SOIL/SOIL.h>
+#include <assimp/Importer.hpp>
 
 struct BMPData {
   unsigned char header[52];
@@ -18,6 +21,7 @@ class Terrain {
 public:
   Terrain(std::string fileName, GLuint maxHeight = 10);
   ModelData& GetModelData();
+  void SetTerrainTexture(std::string path, std::string textureType);
   GLfloat GetHeight(GLfloat xPos, GLfloat zPos);
   ~Terrain();
 private:
@@ -36,6 +40,7 @@ private:
 
   void LoadBMPData(std::string fileName);
   void SetMeshData(BMPData BMPData);
+  GLint TextureFromFile(const char* path, std::string typeName);
   void SetHeight(unsigned zPos, unsigned xPos, float height);
   void ComputePos();
   void ComputeNormals();
