@@ -62,7 +62,7 @@ private:
   void RenderMeshDR(ModelData* modelData);
   void UploadLightPack(Shader* shader_ptr, LightPack& lPack);
   void FixTextureUniforms(Shader* shader_ptr, std::string type_str, int n_tex);
-  //void UploadTexture(Shader* shader_ptr, GLuint tex_id, int index);
+  void UploadTexture(Shader* shader_ptr, GLuint tex_id, int index);
 public:
   Camera* m_camPtr;
   GLfloat m_deltaTime;

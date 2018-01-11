@@ -40,7 +40,7 @@ private:
 
   void LoadBMPData(std::string fileName);
   void SetMeshData(BMPData BMPData);
-  GLint TextureFromFile(const char* path, std::string typeName);
+  GLint TextureFromFile(const char *path, std::string directory, std::string typeName);
   void SetHeight(unsigned zPos, unsigned xPos, float height);
   void ComputePos();
   void ComputeNormals();

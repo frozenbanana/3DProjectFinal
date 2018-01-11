@@ -27,6 +27,7 @@ void Model::LoadModel(std::string path) {
     std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
     return;
   }
+
   // Retrieve the directory path of filepath
   m_directory = path.substr(0, path.find_last_of('/'));
   // Process assimps root node recursively
@@ -118,6 +119,7 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *material, aiTexture
       aiString str;
       material->GetTexture(type, i, &str);
 
+      std::cout << "what is str: " << str.C_Str() << '\n';
       // Check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
       bool skip = false;
 

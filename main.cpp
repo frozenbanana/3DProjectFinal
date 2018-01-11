@@ -60,7 +60,7 @@ int main() {
   // SETUP MODELS
   // terrain
   Terrain terrain("res/heightmap/example/BMP_example.bmp", 20);
-  terrain.SetTerrainTexture("normalmap/normal2.png", "texture_normal");
+  terrain.SetTerrainTexture("res/normalmap/normal2.png", "texture_normal");
   display.SetTerrain(&terrain); // For gravity check
 
   // cubes
@@ -108,7 +108,7 @@ int main() {
   for (size_t i = 0; i < 3; i++) {
     nanoDudes[i].LoadModel("res/models/nano/nanosuit.obj");
     nanoDudes[i].SetPos(nanoDudesPos[i]);
-    // quadtree.InsertModelInTree(&nanoDudes[i].GetModelData());
+    quadtree.InsertModelInTree(&nanoDudes[i].GetModelData());
   }
 
   // SETUP lights

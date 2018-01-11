@@ -12,25 +12,27 @@ Terrain::Terrain(std::string fileName, unsigned int maxHeight) {
 
 void Terrain::SetTerrainTexture(std::string path, std::string textureType) {
     Texture terrainTexture;
-    aiString aiPath = (aiString)path;
-    terrainTexture.id = TextureFromFile(path.c_str(), textureType);
+    std::string directory = path.substr(0, path.find_last_of('/'));
+    terrainTexture.id = TextureFromFile(path.c_str(), directory, textureType);
     terrainTexture.type = textureType;
-    terrainTexture.path = aiPath;
+    terrainTexture.path = aiString(path);
     m_modelData.s_normalMap = terrainTexture;
 }
 
-GLint Terrain::TextureFromFile(const char *path, std::string typeName) {
+// GLint Terrain::TextureFromFile(const char *path, std::string typeName) {
+GLint Terrain::TextureFromFile(const char *path, std::string directory, std::string typeName) {
   //Generate texture ID and load texture data
   std::string filename = std::string(path);
+  filename = directory + '/' + filename;
   GLuint textureID;
   glGenTextures(1, &textureID);
   int width, height;
-
   unsigned char *image = SOIL_load_image(filename.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
 
+  std::cout << image << std::endl;
   // Assign texture to ID
 
-  //glBindTexture(GL_TEXTURE_2D, textureID);
+  glBindTexture(GL_TEXTURE_2D, textureID);
   //TEST:
   if (typeName == "texture_normal") {
     Bind2DTextureTo(textureID, NORMALMAP_TEX);
@@ -54,8 +56,7 @@ GLint Terrain::TextureFromFile(const char *path, std::string typeName) {
 }
 
 void Terrain::SetMeshData(BMPData BMPData) {
-  if (BMPData.good)
-    {
+  if (BMPData.good) {
       m_width = BMPData.width;
       m_height = BMPData.height;
       m_vertices.resize(m_width * m_height);

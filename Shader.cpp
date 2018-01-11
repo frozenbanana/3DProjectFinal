@@ -334,15 +334,14 @@ void Shader::UploadMatrix(glm::mat4 matrix, GLuint index) {
   // std::cout << "Uploaded index: " << index << '\n';
 }
 
-//void Shader::UploadTexture(GLuint tex_id, int index) {
-//
-//  if (this->m_textureUniforms.size() <= (unsigned int)index) {
-//    std::cout << "ERROR::SHADER::TEXTURE_UNIFORMS::INDEX_OUT_OF_BOUNDS" << '\n';
-//  }
-//  else {
-//    glUniform1i(this->m_textureUniforms[index], tex_id);
-//  }
-//}
+void Shader::UploadTexture(GLuint tex_id, int index) {
+ if (this->m_textureUniforms.size() <= (unsigned int)index) {
+   std::cout << "ERROR::SHADER::TEXTURE_UNIFORMS::INDEX_OUT_OF_BOUNDS" << '\n';
+ }
+ else {
+   glUniform1i(this->m_textureUniforms[index], tex_id);
+ }
+}
 
 void Shader::UploadPntLight(PntLight in_light, GLuint index) {
   //NTS: glUniformXfv takes an uniform id, a number and a vecX pointer

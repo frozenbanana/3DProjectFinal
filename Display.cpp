@@ -110,9 +110,9 @@ void Display::FixTextureUniforms(Shader* shader_ptr, std::string type_str, int n
   }
 }
 
-//void Display::UploadTexture(Shader* shader_ptr, GLuint tex_id, int index) {
-//  shader_ptr->UploadTexture(tex_id, index);
-//}
+void Display::UploadTexture(Shader* shader_ptr, GLuint tex_id, int index) {
+  shader_ptr->UploadTexture(tex_id, index);
+}
 
 //Public------------------------------------------------------------------------
 
@@ -382,6 +382,14 @@ void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
 
     //Upload mesh textures
     int n_tex = 0;        //Varable tracking how many textures were found
+    if (modelData.s_normalMap.id != 0) {
+      Bind2DTextureTo(modelData.s_normalMap.id, NORMALMAP_TEX);
+      m_geoShaderPtr->DirectVec2("hasNormalMap", glm::vec2(1.0f, 0.0f));
+      UploadTexture(m_geoShaderPtr, modelData.s_normalMap.id, 2); // 2 beacuse it is the 3 texture being uploaded
+    }
+    else {
+      m_geoShaderPtr->DirectVec2("hasNormalMap", glm::vec2(0.0f, 1.0f));
+    }
     if (modelData.s_meshTextures.size() > 0) {
       switch (modelData.s_meshTextures[i].size()) {
         case 2:
