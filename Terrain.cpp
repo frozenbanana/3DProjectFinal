@@ -50,6 +50,7 @@ GLint Terrain::TextureFromFile(const char *path, std::string typeName) {
   glBindTexture(GL_TEXTURE_2D, 0);
   SOIL_free_image_data(image);
 
+  std::cout << "Terrain texture has ID: " << textureID << '\n';
   return textureID;
 }
 
