@@ -61,8 +61,7 @@ int main() {
   // terrain
   Terrain terrain("res/heightmap/example/BMP_example.bmp", 20);
   terrain.SetTerrainTexture("normalmap/normal2.png", "texture_normal");
-  display.SetTerrain(&terrain);
-  // quadtree.InsertModelInTree(&terrain.GetModelData());
+  display.SetTerrain(&terrain); // For gravity check
 
   // cubes
   Model cubes[21];
@@ -95,7 +94,7 @@ int main() {
   for (size_t i = 0; i < 21; i++) {
     cubes[i].LoadModel("res/models/cube/cube_green_phong_12_tris_QUADS.obj");
     cubes[i].SetPos(cubesPos[i]);
-    quadtree.InsertModelInTree(&cubes[i].GetModelData());
+    // quadtree.InsertModelInTree(&cubes[i].GetModelData());
   }
 
   // Nano dude
@@ -109,7 +108,7 @@ int main() {
   for (size_t i = 0; i < 3; i++) {
     nanoDudes[i].LoadModel("res/models/nano/nanosuit.obj");
     nanoDudes[i].SetPos(nanoDudesPos[i]);
-    quadtree.InsertModelInTree(&nanoDudes[i].GetModelData());
+    // quadtree.InsertModelInTree(&nanoDudes[i].GetModelData());
   }
 
   // SETUP lights

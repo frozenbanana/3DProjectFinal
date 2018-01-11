@@ -302,6 +302,7 @@ void Display::SetDRShaders(Shader* geoS, Shader* lgtS) {
   //WIP: Fix model texture uniforms
   this->FixTextureUniforms(this->m_geoShaderPtr, "diffuse", 1);
   this->FixTextureUniforms(this->m_geoShaderPtr, "specular", 1);
+  this->FixTextureUniforms(this->m_geoShaderPtr, "normal", 1);
 
   //USE LIGHT-SHADER
   glUseProgram(this->m_lgtShaderPtr->GetProgram());
@@ -334,7 +335,7 @@ void Display::SetComputeShader(Shader* comS, Shader* tarS) {
 
   //Set the uniform that the result should be sent to
   glUseProgram(tarS->GetProgram());
-  this->FixTextureUniforms(tarS, "computed", 1);
+  this->FixTextureUniforms(tarS, "compute", 1);
 }
 
 void Display::UpdateDR() {
@@ -470,8 +471,8 @@ void Display::RenderMeshDR(ModelData* modelData) {
   this->m_geoShaderPtr->UploadMatrix(modelData->s_modelMat, 0);
   for (GLuint i = 0; i < modelData->s_meshIndices.size(); i++) {
     glBindVertexArray(modelData->s_VAOs[i]);
-//
-    //Upload mesh textures
+
+   //Upload mesh textures
     int n_tex = 0;        //Varable tracking how many textures were found
     if (modelData->s_normalMap.id != 0) {
         Bind2DTextureTo(modelData->s_normalMap.id, NORMALMAP_TEX);

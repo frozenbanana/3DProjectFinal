@@ -37,7 +37,7 @@ uniform SptLight spt_lights[NR_OF_SPTLIGHTS];
 layout (binding=0) uniform sampler2D gPosition;
 layout (binding=1) uniform sampler2D gNormal;
 layout (binding=2) uniform sampler2D gDiffSpec;
-layout (binding=5) uniform sampler2D texture_computed0;
+layout (binding=5) uniform sampler2D texture_compute0;
 
 void main() {
 	//out_col = texture(gPosition, v_uvs);
@@ -58,7 +58,7 @@ void main() {
       out_col = texture(gDiffSpec, v_uvs);
     }
     else {                //Upper Right
-      out_col = texture(texture_computed0, v_uvs);
+      out_col = texture(texture_compute0, v_uvs);
     }
   }
 

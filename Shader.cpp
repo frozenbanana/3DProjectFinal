@@ -219,7 +219,11 @@ void Shader::FindUniformTextureLoc(std::string texture_type, int texture_num) {
   GLint uniform_loc = GetUniform(uniform_name);
 
   if(uniform_loc != (GLint)-1) {
+    std::cout << "Uniform found: " << uniform_name << " with uniform location: " << uniform_loc << '\n';
     this->m_textureUniforms.push_back(uniform_loc);
+  }
+  else {
+    std::cout << "ERROR::SHADER::" << uniform_name << "::UNIFORM_NOT_FOUND" << std::endl;
   }
 }
 
