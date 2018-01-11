@@ -10,6 +10,7 @@
 #include "Terrain.hpp"
 #include "GBuffer.hpp"
 #include "PingPongBuffer.hpp"
+#include "LBuffer.hpp"
 #include "GLOBALS.hpp"
 #include "PackageStructs.hpp"
 
@@ -44,6 +45,7 @@ private:
 
   GBuffer m_gBuffer;
   PingPongBuffer m_ppBuffer;
+  LBuffer m_lBuffer;
 
   Shader* m_shaderPtr;
   Shader* m_geoShaderPtr;
@@ -51,6 +53,7 @@ private:
 
   Terrain* m_terrain;
   Shader* m_comShaderPtr;
+  Shader* m_shaShaderPtr;
 
   glm::mat4 m_view;
   glm::mat4 m_pers;
@@ -85,6 +88,7 @@ public:
   // ADVANCED
   void SetDRShaders(Shader* geoS, Shader* lgtS);
   void SetComputeShader(Shader* comS, Shader* tarS);
+  void SetShadowShader(Shader* shaS);
   void UpdateDR();
   void DrawDR(ModelData& modelData, LightPack& lPack);
   void DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack);

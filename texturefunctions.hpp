@@ -4,13 +4,14 @@
 #include <GL/glew.h>
 
 enum TextureEnums {
-  POS_TEX,      //0
-  NOR_TEX,      //1
-  DIFFSPEC_TEX, //2
-  MESHDIFF_TEX, //3
-  MESHSPEC_TEX, //4
-  COMPUTE_TEX,  //5
-  //COMPOUT_TEX,
+  POS_TEX,        //0
+  NOR_TEX,        //1
+  DIFFSPEC_TEX,   //2
+  LGTPOS_TEX,     //3
+  MESHDIFF_TEX,   //4
+  MESHSPEC_TEX,   //5
+  COMPUTE_TEX,    //6
+  DEPTH_TEX,      //7
   NUM_OF_TEX
 };
 

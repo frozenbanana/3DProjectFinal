@@ -292,8 +292,8 @@ void Shader::FindUniformSptLightLoc(std::string shader_arr_name, int shader_arr_
   //Check .spe ,spt
   uniLocs[3] = GetUniformArrProp(shader_arr_name, shader_arr_index, "spe");
 
-
   //MATRIX
+  //uniLocs[4] = GetUniformArrProp(shader_arr_name, shader_arr_index, "mat");
 
   //eIA is true, if any of the statements it is AND:ed with is false it will
   //turn false and this all remaining statements also become false
@@ -307,8 +307,8 @@ void Shader::FindUniformSptLightLoc(std::string shader_arr_name, int shader_arr_
     this->m_spt_lights.s_uni_amb.push_back(uniLocs[1]);
     this->m_spt_lights.s_uni_dif.push_back(uniLocs[2]);
     this->m_spt_lights.s_uni_spe.push_back(uniLocs[3]);
-
     //MATRIX
+    //this->m_spt_lights.s_uni_mat.push_back(uniLocs[4]);
   }
 }
 
@@ -318,7 +318,7 @@ void Shader::UploadVec3(glm::vec3 vec, GLuint index) {
 
 void Shader::UploadMatrix(glm::mat4 matrix, GLuint index) {
   glUniformMatrix4fv(m_matrixUniforms[index], 1, GL_FALSE, glm::value_ptr(matrix));
-  // std::cout << "Uploaded index: " << index << '\n';
+  //std::cout << "Uploaded index: " << index << '\n';
 }
 
 //void Shader::UploadTexture(GLuint tex_id, int index) {
@@ -370,6 +370,7 @@ void Shader::UploadSptLight(SptLight in_light, GLuint index) {
   glUniform4fv(this->m_spt_lights.s_uni_spe[index], 1, glm::value_ptr(in_light.getSpe()));
 
   //MATRIX
+  //glUniformMatrix4fv(this->m_spt_lights.s_uni_mat[index], 1, GL_FALSE, glm::value_ptr(in_light.getLightMat()));
 }
 
 //void Shader::BindTexture(int index, TextureEnums target_unit) {

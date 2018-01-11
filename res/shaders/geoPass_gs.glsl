@@ -10,10 +10,12 @@ in vec3 v_camPos[];
 in vec3 v_pos[];
 in vec3 v_nor[];
 in vec2 v_uvs[];
+in vec4 v_lgtpos[];
 
 out vec3 g_pos;
 out vec3 g_nor;
 out vec2 g_uvs;
+out vec4 g_lgtpos;
 
 void processPrimitive();
 bool cullPrimitive();
@@ -31,6 +33,7 @@ void processPrimitive(){
     g_pos = v_pos[i];
     g_nor = v_nor[i];
     g_uvs = v_uvs[i];
+    g_lgtpos = v_lgtpos[i];
     EmitVertex();
   }
   EndPrimitive();

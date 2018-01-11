@@ -28,11 +28,13 @@ const char* fragment_shader = "res/shaders/base_fs.glsl";
 const char* geo_vs = "res/shaders/geoPass_vs.glsl";
 const char* geo_gs = "res/shaders/geoPass_gs.glsl";
 const char* geo_fs = "res/shaders/geoPass_fs.glsl";
-
-const char* pt_cs = "res/shaders/PTcompute.glsl";
-
 const char* lgt_vs = "res/shaders/lightPass_vs.glsl";
 const char* lgt_fs = "res/shaders/lightPass_fs.glsl";
+
+const char* gau_cs = "res/shaders/PTcompute.glsl";
+
+const char* sha_vs = "res/shaders/shadowPass_vs.glsl";
+const char* sha_fs = "res/shaders/shadowPass_fs.glsl";
 
 int main() {
 
@@ -41,8 +43,8 @@ int main() {
   Camera camera2(glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, -45.0f);
   Display display(WINDOW_WIDTH, WINDOW_HEIGHT, "Integrating frustum and DR", &camera);
   display.SetExtraCamera(&camera2);
-  Shader shader(vertex_shader, geometry_shader, fragment_shader);
-  display.SetShader(&shader);   // Function also fixes uniforms for 3 matrices an a bunch of lights
+  //Shader shader(vertex_shader, geometry_shader, fragment_shader);
+  //display.SetShader(&shader);   // Function also fixes uniforms for 3 matrices an a bunch of lights
 
   // SETUP QUADTREE AND FRUSTUM WITH MODELS
   Frustum frustum(camera.GetViewPersMatrix());
@@ -54,8 +56,12 @@ int main() {
   display.SetDRShaders(&geoShader, &lightShader);
 
   // SETUP COMPUTE SHADER
-  Shader comShader(pt_cs);
+  Shader comShader(gau_cs);
   display.SetComputeShader(&comShader, &lightShader);
+
+  // SETUP SHADOW SHADER
+  Shader shaShader(sha_vs, sha_fs);
+  display.SetShadowShader(&shaShader);
 
   // SETUP MODELS
   // terrain
@@ -98,22 +104,31 @@ int main() {
   }
 
   // Nano dude
-  Model nanoDudes[3];
-  glm::vec3 nanoDudesPos[3] = {
-    glm::vec3(  25.0f,  4.0f,  25.0f), // bottom left
-    glm::vec3(  30.0f,  4.0f,  10.0f),
-    glm::vec3(  10.0f,  0.0f,  30.0f),
-  };
+  //Model nanoDudes[3];
+  //glm::vec3 nanoDudesPos[3] = {
+  //  glm::vec3(  25.0f,  4.0f,  25.0f), // bottom left
+  //  glm::vec3(  30.0f,  4.0f,  10.0f),
+  //  glm::vec3(  10.0f,  0.0f,  30.0f),
+  //};
 
-  for (size_t i = 0; i < 3; i++) {
-    nanoDudes[i].LoadModel("res/models/nano/nanosuit.obj");
-    nanoDudes[i].SetPos(nanoDudesPos[i]);
-    quadtree.InsertModelInTree(&nanoDudes[i].GetModelData());
-  }
+  //for (size_t i = 0; i < 1; i++) {
+  //  nanoDudes[i].LoadModel("res/models/nano/nanosuit.obj");
+  //  nanoDudes[i].SetPos(nanoDudesPos[i]);
+  //  quadtree.InsertModelInTree(&nanoDudes[i].GetModelData());
+  //}
 
   // SETUP lights
   LightHandler lightHandler;
   lightHandler.AddPntLight(glm::vec3(0.0f, 10.0f, 0.0f), COLOR_BLUE, COLOR_CYAN, COLOR_WHITE);
+  lightHandler.AddSptLight(
+    glm::vec3(20.0f, 100.0f, 20.0f),
+    glm::vec3(10.0f, 0.0f, 10.0f),
+    0.1f,
+    120.0f,
+    COLOR_RED,
+    COLOR_WHITE,
+    COLOR_RED
+  );
 
   // Vector to draw
   std::vector<ModelData*> modelsToDraw;

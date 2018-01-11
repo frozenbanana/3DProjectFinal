@@ -36,7 +36,7 @@ private:
     std::vector<GLuint> s_uni_dif;
     std::vector<GLuint> s_uni_spe;
 
-    //MATRIX UNIFORM?
+    //std::vector<GLuint> s_uni_mat;
   };
 
   /*

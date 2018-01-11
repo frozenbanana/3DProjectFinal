@@ -1,5 +1,3 @@
-//THIS ONE
-
 #include "GBuffer.hpp"
 
 #include "GLOBALS.hpp"
@@ -75,13 +73,23 @@ void GBuffer::InitGBuffer() {
     this->CreateTexture(this->m_gDiffSpec, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
     this->AttachTexture(this->m_gDiffSpec, GL_COLOR_ATTACHMENT2);
 
+    /*############### SHADOW MAPPING #########################################*/
+
+    //Create and attach texture for positions in light space (NTS: for shadow mapping)
+    glGenTextures(1, &(this->m_gLgtPos));
+    this->CreateTexture(this->m_gLgtPos, GL_RGBA16F, GL_RGBA, GL_FLOAT);
+    this->AttachTexture(this->m_gLgtPos, GL_COLOR_ATTACHMENT3);
+    // [NTS: This makes shadow mapping work on one single PntLight, to make it
+    // work on several a separate LBuffer could work. Keep this in mind]
+
     //Tell which attachments in the framebuffer that are relevant
-    GLuint att_arr[3] = {
+    GLuint att_arr[4] = {
       GL_COLOR_ATTACHMENT0,
       GL_COLOR_ATTACHMENT1,
-      GL_COLOR_ATTACHMENT2
+      GL_COLOR_ATTACHMENT2,
+      GL_COLOR_ATTACHMENT3
     };
-    glDrawBuffers(3, att_arr);
+    glDrawBuffers(4, att_arr);
 
     //Create a depth buffer and bind it
     glGenRenderbuffers(1, &(this->m_rbo_depth));
@@ -114,15 +122,14 @@ void GBuffer::PrepGeoPass() {
 }
 
 void GBuffer::PrepLightPass() {
-
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
   //NTS: Bind2DTextureTo() lies in texturefunctions.hpp
   Bind2DTextureTo(this->m_gPosition, POS_TEX);
 
   Bind2DTextureTo(this->m_gNormal, NOR_TEX);
 
   Bind2DTextureTo(this->m_gDiffSpec, DIFFSPEC_TEX);
+
+  Bind2DTextureTo(this->m_gLgtPos, LGTPOS_TEX);
 }
 
 void GBuffer::FindUniformSamplerLocs(GLuint shader_program_id) {
@@ -142,6 +149,11 @@ void GBuffer::FindUniformSamplerLocs(GLuint shader_program_id) {
     //Error
     std::cout << "ERROR::GBUFFER::SAMPLER_UNIFORM::gDiffSpec_NOT_FOUND" << '\n';
   }
+  this->m_uni_gLgtPos = glGetUniformLocation(shader_program_id, "gLgtPos" );
+  if (this->m_uni_gLgtPos == (GLuint)-1){
+    //Error
+    std::cout << "ERROR::GBUFFER::SAMPLER_UNIFORM::gLgtPos_NOT_FOUND" << '\n';
+  }
 }
 
 void GBuffer::UploadUniformSamplers() {
@@ -150,6 +162,7 @@ void GBuffer::UploadUniformSamplers() {
   glUniform1i(this->m_uni_gPosition, POS_TEX);
   glUniform1i(this->m_uni_gNormal, NOR_TEX);
   glUniform1i(this->m_uni_gDiffSpec, DIFFSPEC_TEX);
+  glUniform1i(this->m_uni_gLgtPos, LGTPOS_TEX);
 }
 
 GLuint GBuffer::GetColTextureId() {

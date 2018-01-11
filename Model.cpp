@@ -108,6 +108,8 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
   }
 
+  //std::cout << "Textures size: " << textures.size() << '\n';
+
   return Mesh(vertices, indices, textures);
 };
 

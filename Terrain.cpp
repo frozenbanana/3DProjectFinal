@@ -13,6 +13,7 @@ Terrain::Terrain(std::string fileName, unsigned int maxHeight) {
 void Terrain::SetMeshData(BMPData BMPData) {
   if (BMPData.good)
     {
+      //std::cout << "TERRAIN SIZE: " << BMPData.width << "x" << BMPData.height << '\n';
       m_width = BMPData.width;
       m_height = BMPData.height;
       m_vertices.resize(m_width * m_height);
