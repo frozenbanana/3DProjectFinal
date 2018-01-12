@@ -21,8 +21,8 @@ void main() {
 
   gNormal = normalize(g_nor);
 
-  gDiffSpec.rgb = texture(texture_diffuse0, g_uvs).rgb;
-  //gDiffSpec = vec4(g_pos, 1.0);
+  //gDiffSpec.rgb = texture(texture_diffuse0, g_uvs).rgb;
+  gDiffSpec = vec4(1.0);
 
   gDiffSpec.a = texture(texture_specular0, g_uvs).r;
 

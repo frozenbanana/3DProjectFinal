@@ -142,10 +142,10 @@ int main() {
     COLOR_GREEN
   );
   lightHandler.AddSptLight(
-    glm::vec3(10.0f, 50.0f, 10.0f),
-    glm::vec3(20.0f, 0.0f, 5.0f),
+    glm::vec3(1.0f, 30.0f, 1.0f),
+    glm::vec3(30.0f, 1.0f, 30.0f),
     0.1f,
-    120.0f,
+    60.0f,
     COLOR_WHITE,
     COLOR_RED,
     COLOR_RED

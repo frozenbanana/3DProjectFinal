@@ -76,12 +76,17 @@ void main() {
 
   //SHADOW MAPPING--------------------------------------------------------------
 
-  float shadVal = shadCalc(fragment_l_pos, fragment_w_nor, spt_lights[0].pos);
+  float shadVal = shadCalc(fragment_l_pos, fragment_w_nor, pnt_lights[0].pos);
   shadVal = 1.0f - shadVal; //Invert
+
+  // float shadVal = pcf_shadCalc(texture(gLgtPos, v_uvs), texture(gNormal, v_uvs), pnt_lights[0].pos);
+  // out_col = texture(gPosition, v_uvs) * (1.0f - shadVal);
+
 
   //out_col = vec4( vec3(fragment_col) * fin_lgt * shadVal, 1.0 );
   //out_col = fragment_col * (vec4(amb_lgt, 1.0) + vec4( dif_lgt, 1.0 ) + vec4(spe_lgt, 1.0));
-  out_col = fragment_col * vec4(fin_lgt, 1.0) * shadVal;
+  out_col = fragment_col /* vec4(fin_lgt, 1.0)*/ * shadVal;
+  out_col = normalize(out_col);
 
   out_col += pnt_lights[0].dif * 0.01 + dir_lights[0].dif * 0.01 + spt_lights[0].dif * 0.01; //All uploads must be used or we get a segmentation error
 
