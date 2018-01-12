@@ -184,7 +184,8 @@ void Terrain::ComputeNormals() {
 	sum = glm::vec3(0.0f, 1.0f, 0.0f);
       }
 
-      m_vertices[z*m_width + x].GetNormal() = glm::normalize(sum);
+      //m_vertices[z*m_width + x].GetNormal() = glm::normalize(sum);
+      m_vertices[z*m_width + x].SetNormal(glm::normalize(sum));
     }
   }
 

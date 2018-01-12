@@ -88,17 +88,17 @@ int main() {
         glm::vec3(  372.0f,   12.0f,  333.0f),
         glm::vec3(  9.0f,     18.0f,  326.0f),
 
-        glm::vec3(  9.0f,   10.0f,  9.0f), // Corner square
-        glm::vec3(  9.0f,   10.0f,  18.0f),
-        glm::vec3(  9.0f,   10.0f,  27.0f),
+        glm::vec3(  9.0f,   5.0f,  9.0f), // Corner square
+        glm::vec3(  9.0f,   5.0f,  18.0f),
+        glm::vec3(  9.0f,   5.0f,  27.0f),
 
-        glm::vec3(  18.0f,  10.0f,  9.0f),
-        glm::vec3(  18.0f,  10.0f,  18.0f),
-        glm::vec3(  18.0f,  10.0f,  27.0f),
+        glm::vec3(  18.0f,  5.0f,  9.0f),
+        glm::vec3(  18.0f,  5.0f,  18.0f),
+        glm::vec3(  18.0f,  5.0f,  27.0f),
 
-        glm::vec3(  27.0f,  10.0f,  9.0f),
-        glm::vec3(  27.0f,  10.0f,  18.0f),
-        glm::vec3(  27.0f,  10.0f,  27.0f),
+        glm::vec3(  27.0f,  5.0f,  9.0f),
+        glm::vec3(  27.0f,  5.0f,  18.0f),
+        glm::vec3(  27.0f,  5.0f,  27.0f),
   };
   quadtree.InsertModelInTree(&cubes[0].GetModelData());
   for (size_t i = 0; i < 23; i++) {
@@ -123,14 +123,31 @@ int main() {
 
   // SETUP lights
   LightHandler lightHandler;
-  lightHandler.AddPntLight(glm::vec3(0.0f, 10.0f, 0.0f), COLOR_BLUE, COLOR_CYAN, COLOR_WHITE);
+  lightHandler.AddPntLight(
+    glm::vec3(30.0f, 30.0f, 30.0f),
+    COLOR_WHITE,
+    COLOR_BLUE,
+    COLOR_BLUE
+  );
+  Model pnt_light_cube("res/models/cube/cube_green_phong_12_tris_QUADS.obj");
+  pnt_light_cube.SetPos(glm::vec3(30.0, 30.0, 30.0));
+  pnt_light_cube.SetPos(glm::vec3(0.5, 0.5, 0.5));
+
+  quadtree.InsertModelInTree(&pnt_light_cube.GetModelData());
+
+  lightHandler.AddDirLight(
+    glm::vec3(-1.0, -1.0, 1.0),
+    COLOR_WHITE,
+    COLOR_GREEN,
+    COLOR_GREEN
+  );
   lightHandler.AddSptLight(
-    glm::vec3(20.0f, 100.0f, 20.0f),
-    glm::vec3(10.0f, 0.0f, 10.0f),
+    glm::vec3(10.0f, 50.0f, 10.0f),
+    glm::vec3(20.0f, 0.0f, 5.0f),
     0.1f,
     120.0f,
-    COLOR_RED,
     COLOR_WHITE,
+    COLOR_RED,
     COLOR_RED
   );
 

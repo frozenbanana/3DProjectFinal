@@ -298,10 +298,7 @@ void Display::SetDRShaders(Shader* geoS, Shader* lgtS) {
   this->m_geoShaderPtr->FindUniformMatrixLoc("view");
   this->m_geoShaderPtr->FindUniformMatrixLoc("perspective");
   this->m_geoShaderPtr->FindUniformMatrixLoc("light_mat");
-  m_geoShaderPtr->FindUniformVec3Loc("camPos");
-
-  //WIP: Fix location for sptLights and their matrix
-  //this->m_geoShaderPtr->FindUniformSptLightLoc("spt_lights", 0); //<- NTS only upload first one
+  this->m_geoShaderPtr->FindUniformVec3Loc("camPos");
 
   //Locate space for the texures of models
   this->FixTextureUniforms(this->m_geoShaderPtr, "diffuse", 1);
@@ -309,6 +306,9 @@ void Display::SetDRShaders(Shader* geoS, Shader* lgtS) {
 
   //USE LIGHT-SHADER------------------------------------------------------------
   glUseProgram(this->m_lgtShaderPtr->GetProgram());
+
+  //Locate space for camera position
+  this->m_lgtShaderPtr->FindUniformVec3Loc("camPos");
 
   //Locate space in shader for textures
   this->m_gBuffer.FindUniformSamplerLocs(this->m_lgtShaderPtr->GetProgram());
@@ -319,7 +319,7 @@ void Display::SetDRShaders(Shader* geoS, Shader* lgtS) {
   this->m_lBuffer.UploadUniformSamplers();
 
   //Locate space in shader for lights
-  this->FixLightUniforms(this->m_lgtShaderPtr, "pnt_lights", "dir_lights", "spt_lights", 1, 0, 1);
+  this->FixLightUniforms(this->m_lgtShaderPtr, "pnt_lights", "dir_lights", "spt_lights", 1, 1, 1);
 
 }
 
@@ -491,6 +491,9 @@ void Display::DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack) {
   this->m_geoShaderPtr->UploadMatrix(this->m_view, 1);
   this->m_geoShaderPtr->UploadMatrix(this->m_pers, 2);
 
+  //Upload camera position
+  this->m_geoShaderPtr->UploadVec3(this->m_camPos, 0);
+
   //Upload the light matrix
   this->m_geoShaderPtr->UploadMatrix( lPack.s_spt_lights[0].getLightMat(), 3);
 
@@ -514,7 +517,10 @@ void Display::DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack) {
 
   this->m_gBuffer.PrepLightPass();
   this->m_ppBuffer.BindResult();
-  this->m_lBuffer.PrepLightPass();      //ENDED HERE. NEXT: Fix with shader and uniforms.
+  this->m_lBuffer.PrepLightPass();
+
+  //Upload camera position
+  this->m_geoShaderPtr->UploadVec3(this->m_camPos, 0);
 
   //Upload all lights in the LightPack
   this->UploadLightPack(this->m_lgtShaderPtr, lPack);

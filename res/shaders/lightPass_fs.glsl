@@ -30,6 +30,8 @@ in vec2 v_uvs;
 
 out vec4 out_col;
 
+uniform vec3 camPos;
+
 uniform PntLight pnt_lights[NR_OF_PNTLIGHTS];
 uniform DirLight dir_lights[NR_OF_DIRLIGHTS];
 uniform SptLight spt_lights[NR_OF_SPTLIGHTS];
@@ -41,40 +43,89 @@ layout (binding=3) uniform sampler2D gLgtPos;
 layout (binding=6) uniform sampler2D texture_computed0;
 layout (binding=7) uniform sampler2D lDepth;
 
-float shadCalc(vec4 fragPos, vec4 fragNor, vec3 lightPos);
-float pcf_shadCalc(vec4 fragPos, vec4 fragNor, vec3 lightPos);
+//Functions for light types
+
+//Functions for light colors
+vec3 ambCalc(vec4 light_col, float amb_coe);
+vec3 difCalc(vec3 light_pos, vec3 frag_pos, vec3 frag_nor, vec4 light_col);
+vec3 bp_speCalc(vec3 light_pos, vec3 frag_pos, vec3 view_dir, vec3 frag_nor, vec4 light_col);
+
+
+//Functions for shadow mapping
+float shadCalc(vec4 fragPos, vec3 fragNor, vec3 lightPos);
+float pcf_shadCalc(vec4 fragPos, vec3 fragNor, vec3 lightPos);
 
 void main() {
-	//out_col = texture(gPosition, v_uvs);
-  //out_col = texture(gNormal, v_uvs);
-  //out_col = texture(gDiffSpec, v_uvs);
-  //out_col = vec4(v_uvs, 0.0, 1.0);
-/*
-  if (v_uvs.y < 0.5) {    //Lower
-    if (v_uvs.x < 0.5) {  //Lower Left
-      out_col = texture(gPosition, v_uvs);
-    }
-    else {                //Lower Right
-      out_col = texture(gNormal, v_uvs);
-    }
-  }
-  else {                  //Upper
-    if (v_uvs.x < 0.5) {  //Upper Left
-      out_col = texture(gDiffSpec, v_uvs);
-    }
-    else {                //Upper Right
-      out_col = texture(gLgtPos, v_uvs);
-    }
-  }
-*/
+  //GATHER DATA AND CALCULATE SOME STUFF----------------------------------------
+  vec3 fragment_w_pos = texture(gPosition, v_uvs).rgb;
+  vec3 fragment_w_nor = texture(gNormal, v_uvs).rgb;
+  vec4 fragment_col   = texture(gDiffSpec, v_uvs);
+  vec4 fragment_l_pos = texture(gLgtPos, v_uvs);
 
-  float shadVal = pcf_shadCalc(texture(gLgtPos, v_uvs), texture(gNormal, v_uvs), pnt_lights[0].pos);
-  out_col = texture(gDiffSpec, v_uvs) * (1.0f - shadVal);
+  vec3 view_dir = normalize(camPos - fragment_w_pos);
 
-  out_col += pnt_lights[0].dif * 0.01 + spt_lights[0].dif * 0.01; //All uploads must be used or we get a segmentation error
+  //CALCULATE COLORS------------------------------------------------------------
+  vec3 amb_lgt = ambCalc(pnt_lights[0].dif, 1.0);
+
+  vec3 dif_lgt = difCalc (pnt_lights[0].pos, fragment_w_pos, vec3(fragment_w_nor), pnt_lights[0].dif);
+
+  vec3 spe_lgt = bp_speCalc(pnt_lights[0].pos, fragment_w_pos, view_dir, vec3(fragment_w_nor), pnt_lights[0].spe);
+
+  vec3 fin_lgt = amb_lgt + dif_lgt + spe_lgt;
+  fin_lgt = normalize(fin_lgt);
+
+  //SHADOW MAPPING--------------------------------------------------------------
+
+  float shadVal = shadCalc(fragment_l_pos, fragment_w_nor, spt_lights[0].pos);
+  shadVal = 1.0f - shadVal; //Invert
+
+  //out_col = vec4( vec3(fragment_col) * fin_lgt * shadVal, 1.0 );
+  //out_col = fragment_col * (vec4(amb_lgt, 1.0) + vec4( dif_lgt, 1.0 ) + vec4(spe_lgt, 1.0));
+  out_col = fragment_col * vec4(fin_lgt, 1.0) * shadVal;
+
+  out_col += pnt_lights[0].dif * 0.01 + dir_lights[0].dif * 0.01 + spt_lights[0].dif * 0.01; //All uploads must be used or we get a segmentation error
+
 }
 
-float shadCalc(vec4 fragPos, vec4 fragNor, vec3 lightPos) {
+vec3 ambCalc(vec4 light_col, float amb_coe){
+	return  vec3(light_col * amb_coe);
+}
+
+vec3 difCalc(vec3 light_pos, vec3 frag_pos, vec3 frag_nor, vec4 light_col) {
+  vec3 light_dir = normalize(light_pos - frag_pos);
+  float coe = max( dot(frag_nor, light_dir), 0 );
+  return light_col * coe;
+}
+
+//vec4 speCalc(vec3 worldPos, vec3 normal, vec3 lightDir, float coe){
+//	float fragSpe = texture(gDiffSpec, vTex).a;
+//
+//	vec3 lightSpe = vec3(0.8f);		//MAKE UNIFORM
+//
+//	vec3 viewDir = normalize(camPos - worldPos);
+//
+//	vec3 refDir = normalize(reflect(-lightDir, normal));
+//
+//	float coe_B = max(dot(viewDir, refDir), 0.0f);
+//
+//	if(coe_B >= 0.0f){
+//		coe_B = pow(coe_B, 32);
+//	}
+//
+//	vec3 lightSpe_B = coe * coe_B * lightSpe;
+//
+//	return vec4(lightSpe_B * fragSpe, 0.0f);
+//
+//}
+
+vec3 bp_speCalc(vec3 light_pos, vec3 frag_pos, vec3 view_dir, vec3 frag_nor, vec4 light_col) {
+  vec3 light_dir = normalize(light_pos - frag_pos);
+  vec3 half_dir = normalize(light_dir + view_dir);
+  float coe = pow( max( dot(frag_nor, half_dir), 0.0 ), 0.5 );
+  return light_col * coe;
+}
+
+float shadCalc(vec4 fragPos, vec3 fragNor, vec3 lightPos) {
 	vec3 projPos;
 	float lightDepth;
 	float fragDepth;
@@ -89,7 +140,7 @@ float shadCalc(vec4 fragPos, vec4 fragNor, vec3 lightPos) {
 
 	fragDepth = projPos.z;    								// Get the depth "we" see from our current pos
 
-	bias = max(0.05 * dot(vec3(fragNor), lightPos), 0.005);	// Calculate a bias value
+	bias = max(0.05 * dot(fragNor, lightPos), 0.005);	// Calculate a bias value
 
 	if(lightDepth < (fragDepth - bias)){
 		// If  lightDepth is smaller the fragment lies in shadow
@@ -99,7 +150,7 @@ float shadCalc(vec4 fragPos, vec4 fragNor, vec3 lightPos) {
 	return shadow;
 }
 
-float pcf_shadCalc(vec4 fragPos, vec4 fragNor, vec3 lightPos) {
+float pcf_shadCalc(vec4 fragPos, vec3 fragNor, vec3 lightPos) {
 
 	vec3 projPos;
 	vec2 texelSize;
@@ -110,7 +161,7 @@ float pcf_shadCalc(vec4 fragPos, vec4 fragNor, vec3 lightPos) {
 	projPos = fragPos.xyz / fragPos.w;
 	projPos = (projPos * 0.5) + 0.5;
 
-	bias = max(0.05 * dot(vec3(fragNor), lightPos), 0.005);
+	bias = max(0.05 * dot(fragNor, lightPos), 0.005);
 
 	texelSize = 1.0/textureSize(lDepth, 0);			//One texel equals the size of 1 divided by the size of the texture map
 														//the 0 here means that the map is at mipmap level 0
