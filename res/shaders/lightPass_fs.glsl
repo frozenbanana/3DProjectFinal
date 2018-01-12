@@ -6,6 +6,9 @@ struct PntLight {
   vec4 amb;
   vec4 dif;
   vec4 spe;
+  float con;
+  float lin;
+  float qua;
 };
 
 #define NR_OF_DIRLIGHTS 1
@@ -43,13 +46,9 @@ layout (binding=3) uniform sampler2D gLgtPos;
 layout (binding=6) uniform sampler2D texture_computed0;
 layout (binding=7) uniform sampler2D lDepth;
 
-//Functions for light types
-
-//Functions for light colors
-vec3 ambCalc(vec4 light_col, float amb_coe);
-vec3 difCalc(vec3 light_pos, vec3 frag_pos, vec3 frag_nor, vec4 light_col);
-vec3 bp_speCalc(vec3 light_pos, vec3 frag_pos, vec3 view_dir, vec3 frag_nor, vec4 light_col);
-
+//Functions for lights
+vec3 pntLightCalc(PntLight lgt, vec3 frag_pos, vec3 frag_nor, vec3 view_dir, vec4 frag_col);
+vec3 dirLightCalc(DirLight lgt, vec3 frag_nor, vec3 view_dir, vec4 frag_col);
 
 //Functions for shadow mapping
 float shadCalc(vec4 fragPos, vec3 fragNor, vec3 lightPos);
@@ -58,6 +57,7 @@ float pcf_shadCalc(vec4 fragPos, vec3 fragNor, vec3 lightPos);
 void main() {
   //GATHER DATA AND CALCULATE SOME STUFF----------------------------------------
   vec3 fragment_w_pos = texture(gPosition, v_uvs).rgb;
+  // vec3 fragment_w_nor = texture(gNormal, v_uvs).rgb;
   vec3 fragment_w_nor = texture(gNormal, v_uvs).rgb;
   vec4 fragment_col   = texture(gDiffSpec, v_uvs);
   vec4 fragment_l_pos = texture(gLgtPos, v_uvs);
@@ -65,18 +65,22 @@ void main() {
   vec3 view_dir = normalize(camPos - fragment_w_pos);
 
   //CALCULATE COLORS------------------------------------------------------------
-  vec3 amb_lgt = ambCalc(pnt_lights[0].dif, 1.0);
+  vec3 fin_col = vec3(0.0, 0.0, 0.0);
 
-  vec3 dif_lgt = difCalc (pnt_lights[0].pos, fragment_w_pos, vec3(fragment_w_nor), pnt_lights[0].dif);
+  for(int i = 0; i < NR_OF_PNTLIGHTS; i++) {
+    fin_col += pntLightCalc(pnt_lights[0], fragment_w_pos, fragment_w_nor, view_dir, fragment_col);
+  }
 
-  vec3 spe_lgt = bp_speCalc(pnt_lights[0].pos, fragment_w_pos, view_dir, vec3(fragment_w_nor), pnt_lights[0].spe);
+  for(int i = 0; i < NR_OF_DIRLIGHTS; i++) {
+    fin_col += dirLightCalc(dir_lights[0], fragment_w_nor, view_dir, fragment_col);
+  }
 
-  vec3 fin_lgt = amb_lgt + dif_lgt + spe_lgt;
-  fin_lgt = normalize(fin_lgt);
+
+  fin_col = fin_col / (NR_OF_PNTLIGHTS + NR_OF_PNTLIGHTS);
 
   //SHADOW MAPPING--------------------------------------------------------------
 
-  float shadVal = shadCalc(fragment_l_pos, fragment_w_nor, pnt_lights[0].pos);
+  float shadVal = shadCalc(fragment_l_pos, fragment_w_nor, spt_lights[0].pos);
   shadVal = 1.0f - shadVal; //Invert
 
   // float shadVal = pcf_shadCalc(texture(gLgtPos, v_uvs), texture(gNormal, v_uvs), pnt_lights[0].pos);
@@ -85,50 +89,47 @@ void main() {
 
   //out_col = vec4( vec3(fragment_col) * fin_lgt * shadVal, 1.0 );
   //out_col = fragment_col * (vec4(amb_lgt, 1.0) + vec4( dif_lgt, 1.0 ) + vec4(spe_lgt, 1.0));
-  out_col = fragment_col /* vec4(fin_lgt, 1.0)*/ * shadVal;
+  out_col = vec4(fin_col, 1.0); // * shadVal;
   out_col = normalize(out_col);
 
   out_col += pnt_lights[0].dif * 0.01 + dir_lights[0].dif * 0.01 + spt_lights[0].dif * 0.01; //All uploads must be used or we get a segmentation error
 
-}
+}//Main
 
-vec3 ambCalc(vec4 light_col, float amb_coe){
-	return  vec3(light_col * amb_coe);
-}
-
-vec3 difCalc(vec3 light_pos, vec3 frag_pos, vec3 frag_nor, vec4 light_col) {
-  vec3 light_dir = normalize(light_pos - frag_pos);
-  float coe = max( dot(frag_nor, light_dir), 0 );
-  return light_col * coe;
-}
-
-//vec4 speCalc(vec3 worldPos, vec3 normal, vec3 lightDir, float coe){
-//	float fragSpe = texture(gDiffSpec, vTex).a;
-//
-//	vec3 lightSpe = vec3(0.8f);		//MAKE UNIFORM
-//
-//	vec3 viewDir = normalize(camPos - worldPos);
-//
-//	vec3 refDir = normalize(reflect(-lightDir, normal));
-//
-//	float coe_B = max(dot(viewDir, refDir), 0.0f);
-//
-//	if(coe_B >= 0.0f){
-//		coe_B = pow(coe_B, 32);
-//	}
-//
-//	vec3 lightSpe_B = coe * coe_B * lightSpe;
-//
-//	return vec4(lightSpe_B * fragSpe, 0.0f);
-//
-//}
-
-vec3 bp_speCalc(vec3 light_pos, vec3 frag_pos, vec3 view_dir, vec3 frag_nor, vec4 light_col) {
-  vec3 light_dir = normalize(light_pos - frag_pos);
+vec3 pntLightCalc(PntLight lgt, vec3 frag_pos, vec3 frag_nor, vec3 view_dir, vec4 frag_col) {
+  vec3 light_dir = normalize(lgt.pos - frag_pos);
   vec3 half_dir = normalize(light_dir + view_dir);
-  float coe = pow( max( dot(frag_nor, half_dir), 0.0 ), 0.5 );
-  return light_col * coe;
+
+  //vec3 amb_lgt = vec3(light_col * amb_coe);
+
+  float dif_coe = max( dot(frag_nor, light_dir), 0 );
+
+  float spe_coe = pow( max( dot(frag_nor, half_dir), 0.0 ), 1.0 /*M?*/ );
+
+  vec3 amb_col = vec3(lgt.amb) * frag_col.rgb;
+  vec3 dif_col = vec3(lgt.dif) * dif_coe * frag_col.rgb;
+  vec3 spe_col = vec3(lgt.spe) * spe_coe * frag_col.a;
+
+  float dis = length(lgt.pos - frag_pos);
+  float att = 1.0 / (lgt.con + lgt.lin * dis + lgt.qua * dis * dis);
+
+  return (amb_col + dif_col + spe_col) * att;
 }
+
+vec3 dirLightCalc(DirLight lgt, vec3 frag_nor, vec3 view_dir, vec4 frag_col) {
+  vec3 light_dir = normalize(-lgt.dir);
+  vec3 ref_dir = reflect(light_dir, frag_nor);
+
+  float dif_coe = max(dot(frag_nor, light_dir), 0.0);
+  float spe_coe = pow( max( dot(view_dir, ref_dir), 0.0 ),  1.0 /*M?*/);
+
+  vec3 amb_col = vec3(lgt.amb) * frag_col.rgb;
+  vec3 dif_col = vec3(lgt.dif) * dif_coe * frag_col.rgb;
+  vec3 spe_col = vec3(lgt.spe) * spe_coe * frag_col.a;
+
+  return amb_col + dif_col + spe_col;
+}
+
 
 float shadCalc(vec4 fragPos, vec3 fragNor, vec3 lightPos) {
 	vec3 projPos;

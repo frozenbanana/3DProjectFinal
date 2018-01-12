@@ -21,6 +21,9 @@ private:
     std::vector<GLuint> s_uni_amb;
     std::vector<GLuint> s_uni_dif;
     std::vector<GLuint> s_uni_spe;
+    std::vector<GLuint> s_uni_con;
+    std::vector<GLuint> s_uni_lin;
+    std::vector<GLuint> s_uni_qua;
   };
 
   struct DirLightUniforms {

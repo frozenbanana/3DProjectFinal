@@ -11,8 +11,11 @@ LightHandler::~LightHandler() {
 void LightHandler::AddPntLight(glm::vec3 pos,
   glm::vec4 col_amb,
   glm::vec4 col_dif,
-  glm::vec4 col_spe) {
-    this->m_light_pack.s_pnt_lights.push_back(PntLight(pos, col_amb, col_dif, col_spe));
+  glm::vec4 col_spe,
+  float c,
+  float l,
+  float q) {
+    this->m_light_pack.s_pnt_lights.push_back(PntLight(pos, col_amb, col_dif, col_spe, c, l, q));
 }
 
 void LightHandler::AddDirLight(glm::vec3 dir,

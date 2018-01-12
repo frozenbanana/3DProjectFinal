@@ -115,7 +115,7 @@ int main() {
     glm::vec3(  425.0f,   0.0f,   425.0f),
   };
 
-  for (size_t i = 0; i < 1; i++) {
+  for (size_t i = 0; i < 3; i++) {
     nanoDudes[i].LoadModel("res/models/nano/nanosuit.obj");
     nanoDudes[i].SetPos(nanoDudesPos[i]);
     quadtree.InsertModelInTree(&nanoDudes[i].GetModelData());
@@ -126,9 +126,13 @@ int main() {
   lightHandler.AddPntLight(
     glm::vec3(30.0f, 30.0f, 30.0f),
     COLOR_WHITE,
-    COLOR_BLUE,
-    COLOR_BLUE
+    COLOR_WHITE,
+    COLOR_WHITE,
+    1,
+    0.5,
+    0.25
   );
+
   Model pnt_light_cube("res/models/cube/cube_green_phong_12_tris_QUADS.obj");
   pnt_light_cube.SetPos(glm::vec3(30.0, 30.0, 30.0));
   pnt_light_cube.SetPos(glm::vec3(0.5, 0.5, 0.5));
@@ -141,15 +145,22 @@ int main() {
     COLOR_GREEN,
     COLOR_GREEN
   );
+
   lightHandler.AddSptLight(
-    glm::vec3(1.0f, 30.0f, 1.0f),
-    glm::vec3(30.0f, 1.0f, 30.0f),
+    glm::vec3(120.0f, 100.0f, 120.0f),
+    glm::vec3(85.0f, 4.0f, 85.0f),
     0.1f,
-    60.0f,
+    150.0f,
     COLOR_WHITE,
     COLOR_RED,
     COLOR_RED
   );
+
+//std::cout << "Before" << '\n';
+//
+//std::cout << "IN main: " << lightHandler.GetLightPack().s_pnt_lights[0].getConstant() << '\n';
+//
+//std::cout << "After" << '\n';
 
   // Vector to draw
   std::vector<ModelData*> modelsToDraw;

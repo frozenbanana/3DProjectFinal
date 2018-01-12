@@ -381,7 +381,7 @@ void Display::UpdateDR() {
 
   if (m_camPos.x > 0 && m_camPos.z > 0 && m_terrain != nullptr) {
     GLfloat heightLimit = m_terrain->GetHeight(m_camPos.x, m_camPos.z);
-    m_camPtr->ApplyGravity(heightLimit, m_deltaTime);
+    //m_camPtr->ApplyGravity(heightLimit, m_deltaTime);
   }
 
   this->m_view = this->m_camPtr->GetViewMatrix();
