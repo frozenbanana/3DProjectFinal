@@ -23,6 +23,8 @@ void Terrain::SetMeshData(BMPData BMPData) {
       ComputeNormals();
       ComputeTexCoords();
       ComputeIndices();
+      ComputeTangents();
+      PrepModelData();
     }
 }
 
@@ -184,7 +186,7 @@ void Terrain::ComputeNormals() {
 	sum = glm::vec3(0.0f, 1.0f, 0.0f);
       }
 
-      m_vertices[z*m_width + x].GetNormal() = glm::normalize(sum);
+      m_vertices[z*m_width + x].SetNormal(glm::normalize(sum));
     }
   }
 
@@ -207,6 +209,55 @@ void Terrain::ComputeTexCoords() {
   }
 }
 
+void Terrain::ComputeTangents() {
+  for (size_t i = 0; i < m_vertices.size(); i+=3) {
+    glm::vec3 v0 = m_vertices[i + 0].GetPos();
+    glm::vec3 v1 = m_vertices[i + 1].GetPos();
+    glm::vec3 v2 = m_vertices[i + 2].GetPos();
+
+    glm::vec2 tex0 = m_vertices[i + 0].GetTexCoord();
+    glm::vec2 tex1 = m_vertices[i + 1].GetTexCoord();
+    glm::vec2 tex2 = m_vertices[i + 2].GetTexCoord();
+
+    // Edges of triangle
+    glm::vec3 edge1 = v1 - v0;
+    glm::vec3 edge2 = v2 - v0;
+
+    // Texcoord edges
+    glm::vec2 texEdge1 = tex1 = tex0;
+    glm::vec2 texEdge2 = tex2 = tex0;
+
+    // Explaination: Note that edge and texEdge are from the same triangle
+    //               edge is expressed in modelspace and tex in UVs
+    //               tanget is alined with u-coordinate of texCoord
+    //               bitanget is alned with v-coordinate of texCoord
+    //
+    //               edge1 and 2 can be written as a linear combination of texCoord
+    //               and tanget and bitanget.
+    //
+    //               tanget, bitanget and normal can be seen as a basis and the edges can be expressed in that world
+    //               The problem can be expressed in matrix form:
+    //               | E1x E1y E1z |   | texEdge1.x texEdge1.y | * | Tx Ty Tz |
+    //               | E2x E2y E2z | = | texEdge2.x texEdge2.y |   | Bx By Bz |
+
+    float normalizer = 1.0f / (texEdge1.x * texEdge2.y - texEdge1.y * texEdge2.x);
+
+    glm::vec3 tangent = (edge1 * texEdge2.y - edge2 * texEdge1.y) * normalizer;
+    glm::vec3 bitangent = (edge2 * texEdge1.x - edge1 * texEdge1.x) * normalizer;
+
+    m_vertices[i + 0].SetTangent(tangent);
+    m_vertices[i + 1].SetTangent(tangent);
+    m_vertices[i + 2].SetTangent(tangent);
+
+    // Same thing for binormals
+    m_vertices[i + 0].SetBitangent(bitangent);
+    m_vertices[i + 1].SetBitangent(bitangent);
+    m_vertices[i + 2].SetBitangent(bitangent);
+
+   std::cout << "tangets: " << m_vertices[i].GetTangent().x <<  m_vertices[i].GetTangent().y << m_vertices[i].GetTangent().z << '\n';
+  }
+}
+
 void Terrain::SetHeight(GLuint zPos, GLuint xPos, GLfloat height) {
   glm::vec3 pos = glm::vec3((GLfloat)xPos, height, (GLfloat)zPos);
   m_vertices[zPos*m_width + xPos].SetPos(pos);
@@ -217,7 +268,7 @@ GLfloat Terrain::GetHeight(GLfloat xPos, GLfloat zPos) {
   return m_vertices[(int)zPos*m_width + (int)xPos].GetPos().y;
 }
 
-ModelData& Terrain::GetModelData() {
+void Terrain::PrepModelData() {
   // Package data for display
   std::vector<std::vector<glm::vec3> > terrainPos;
   std::vector<GLuint> terrainVAO;
@@ -235,7 +286,9 @@ ModelData& Terrain::GetModelData() {
   m_modelData.s_meshTextures.clear();
   m_modelData.s_meshPos = terrainPos;
   m_modelData.s_modelMat = glm::mat4(1.0f);
+}
 
+ModelData& Terrain::GetModelData() {
   return m_modelData;
 }
 
