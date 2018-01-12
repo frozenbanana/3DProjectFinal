@@ -34,6 +34,7 @@ private:
   bool computedNormals;
   bool computedIndices;
 
+  void PrepModelData();
   void LoadBMPData(std::string fileName);
   void SetMeshData(BMPData BMPData);
   void SetHeight(unsigned zPos, unsigned xPos, float height);
@@ -41,6 +42,7 @@ private:
   void ComputeNormals();
   void ComputeTexCoords();
   void ComputeIndices();
+  void ComputeTangents();
 };
 
 #endif

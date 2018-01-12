@@ -117,6 +117,7 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *material, aiTexture
   std::vector<Texture> textures;
   for (GLuint i = 0; i < material->GetTextureCount(type); i++)
     {
+      std::cout << "Material count" << i << '\n';
       aiString str;
       material->GetTexture(type, i, &str);
 
