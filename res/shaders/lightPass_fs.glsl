@@ -49,6 +49,7 @@ layout (binding=7) uniform sampler2D lDepth;
 //Functions for lights
 vec3 pntLightCalc(PntLight lgt, vec3 frag_pos, vec3 frag_nor, vec3 view_dir, vec4 frag_col);
 vec3 dirLightCalc(DirLight lgt, vec3 frag_nor, vec3 view_dir, vec4 frag_col);
+vec3 sptLightCalc(SptLight lgt, vec3 frag_pos, vec3 frag_nor, vec4 frag_lpos, vec3 view_dir, vec4 frag_col);
 
 //Functions for shadow mapping
 float shadCalc(vec4 fragPos, vec3 fragNor, vec3 lightPos);
@@ -67,21 +68,25 @@ void main() {
   //CALCULATE COLORS------------------------------------------------------------
   vec3 fin_col = vec3(0.0, 0.0, 0.0);
 
+  //Modifiers (May not be 0)
+  float pnt_mod = 1.0;
+  float dir_mod = 1.0;
+  float spt_mod = 1.0;
+
   for(int i = 0; i < NR_OF_PNTLIGHTS; i++) {
-    fin_col += pntLightCalc(pnt_lights[0], fragment_w_pos, fragment_w_nor, view_dir, fragment_col);
+    fin_col += pnt_mod * pntLightCalc(pnt_lights[0], fragment_w_pos, fragment_w_nor, view_dir, fragment_col);
   }
 
   for(int i = 0; i < NR_OF_DIRLIGHTS; i++) {
-    fin_col += dirLightCalc(dir_lights[0], fragment_w_nor, view_dir, fragment_col);
+    fin_col += dir_mod * dirLightCalc(dir_lights[0], fragment_w_nor, view_dir, fragment_col);
   }
 
+  for(int i = 0; i < NR_OF_SPTLIGHTS; i++) {
+    fin_col += spt_mod * sptLightCalc(spt_lights[0], fragment_w_pos, fragment_w_nor, fragment_l_pos, view_dir, fragment_col);
+    //SHADOW MAPPING INSIDE
+  }
 
-  fin_col = fin_col / (NR_OF_PNTLIGHTS + NR_OF_PNTLIGHTS);
-
-  //SHADOW MAPPING--------------------------------------------------------------
-
-  float shadVal = shadCalc(fragment_l_pos, fragment_w_nor, spt_lights[0].pos);
-  shadVal = 1.0f - shadVal; //Invert
+  fin_col = fin_col / (NR_OF_PNTLIGHTS + NR_OF_PNTLIGHTS + NR_OF_SPTLIGHTS);
 
   // float shadVal = pcf_shadCalc(texture(gLgtPos, v_uvs), texture(gNormal, v_uvs), pnt_lights[0].pos);
   // out_col = texture(gPosition, v_uvs) * (1.0f - shadVal);
@@ -89,7 +94,7 @@ void main() {
 
   //out_col = vec4( vec3(fragment_col) * fin_lgt * shadVal, 1.0 );
   //out_col = fragment_col * (vec4(amb_lgt, 1.0) + vec4( dif_lgt, 1.0 ) + vec4(spe_lgt, 1.0));
-  out_col = vec4(fin_col, 1.0); // * shadVal;
+  out_col = vec4(fin_col, 1.0);
   out_col = normalize(out_col);
 
   out_col += pnt_lights[0].dif * 0.01 + dir_lights[0].dif * 0.01 + spt_lights[0].dif * 0.01; //All uploads must be used or we get a segmentation error
@@ -130,12 +135,37 @@ vec3 dirLightCalc(DirLight lgt, vec3 frag_nor, vec3 view_dir, vec4 frag_col) {
   return amb_col + dif_col + spe_col;
 }
 
+vec3 sptLightCalc(SptLight lgt, vec3 frag_pos, vec3 frag_nor, vec4 frag_lpos, vec3 view_dir, vec4 frag_col) {
+  float shad_val = pcf_shadCalc(frag_lpos, frag_nor, lgt.pos);
+
+  vec3 light_dir = normalize(lgt.pos - frag_pos);
+  vec3 half_dir = normalize(light_dir + view_dir);
+
+  float dif_coe = max( dot(frag_nor, light_dir), 0 );
+
+  float spe_coe = pow( max( dot(frag_nor, half_dir), 0.0 ), 1.0 /*M?*/ );
+
+  vec3 amb_col = vec3(lgt.amb) * frag_col.rgb;
+  vec3 dif_col = vec3(lgt.dif) * dif_coe * frag_col.rgb;
+  vec3 spe_col = vec3(lgt.spe) * spe_coe * frag_col.a;
+
+
+  return (amb_col + (dif_col + spe_col) * shad_val);  //Soft Shadow
+  //return ((amb_col + dif_col + spe_col) * shad_val); //Hard Shadow
+
+  //if (v_uvs.x < 0.5) {
+  //  return (amb_col + (dif_col + spe_col) * shad_val);  //Soft Shadow
+  //}
+  //else{
+  //  return ((amb_col + dif_col + spe_col) * shad_val); //Hard Shadow
+  //}
+}
 
 float shadCalc(vec4 fragPos, vec3 fragNor, vec3 lightPos) {
 	vec3 projPos;
 	float lightDepth;
 	float fragDepth;
-	float bias = 0.005;   // Statc bias
+	float bias = 0.005;
 	float shadow = 0.0;		// Instancing at 0.0
 
 	projPos = fragPos.xyz / fragPos.w;				// Go back from the projection space by dividing by w. Range [-w, w] becomes range [-1, 1]
@@ -146,14 +176,14 @@ float shadCalc(vec4 fragPos, vec3 fragNor, vec3 lightPos) {
 
 	fragDepth = projPos.z;    								// Get the depth "we" see from our current pos
 
-	bias = max(0.05 * dot(fragNor, lightPos), 0.005);	// Calculate a bias value
+	//bias = max(0.05 * dot(fragNor, lightPos), 0.005);	//NTS: the normals of the terrain makes the bias remove the shadow
 
 	if(lightDepth < (fragDepth - bias)){
 		// If  lightDepth is smaller the fragment lies in shadow
 		shadow = 1.0;
 	}
 
-	return shadow;
+	return (1.0 - shadow);
 }
 
 float pcf_shadCalc(vec4 fragPos, vec3 fragNor, vec3 lightPos) {
@@ -162,12 +192,12 @@ float pcf_shadCalc(vec4 fragPos, vec3 fragNor, vec3 lightPos) {
 	vec2 texelSize;
 	float pcfDepth;
 	float shadow = 0.0;
-	float bias;         // Dynamic Bias
+	float bias = 0.005;
 
 	projPos = fragPos.xyz / fragPos.w;
 	projPos = (projPos * 0.5) + 0.5;
 
-	bias = max(0.05 * dot(fragNor, lightPos), 0.005);
+	//bias = max(0.05 * dot(fragNor, lightPos), 0.005);  //NTS: the normals of the terrain makes the bias remove the shadow
 
 	texelSize = 1.0/textureSize(lDepth, 0);			//One texel equals the size of 1 divided by the size of the texture map
 														//the 0 here means that the map is at mipmap level 0
@@ -186,5 +216,5 @@ float pcf_shadCalc(vec4 fragPos, vec3 fragNor, vec3 lightPos) {
 
 	shadow = shadow/9.0f;	//Divide the shadow by number of texels sampled from
 
-	return shadow;
+	return (1.0 - shadow);
 }

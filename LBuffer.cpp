@@ -20,6 +20,17 @@ void LBuffer::CreateTexture(GLuint id, GLint internalFormat, GLenum format, GLen
     type,             //GLenum type           -What format each pixel is representing its data in
     NULL              //const GLvoid* data    -A pointer to where the image data lies
   );
+
+  //
+  //These lines of code makes it so that anything outside the range of the depthmap is set to
+  //give a value 1.0, that is to say, as far away as possible. This prevents some sharp edges in the shadow
+  //It also prevents the texture from wrapping and creating clones of the shadow here and there
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);			//Clamp S-axis close by border (s-axis = x-axis)
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);			//Clamp T-axis close by border (t-axis = y-axis)
+  GLfloat borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+  //
+
   //Set mipmap levels
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

@@ -129,8 +129,8 @@ int main() {
     COLOR_WHITE,
     COLOR_WHITE,
     1,
-    0.5,
-    0.25
+    0.05,
+    0.024
   );
 
   Model pnt_light_cube("res/models/cube/cube_green_phong_12_tris_QUADS.obj");
