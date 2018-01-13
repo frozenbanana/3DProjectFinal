@@ -12,9 +12,19 @@ in vec3 v_nor[];
 in vec2 v_uvs[];
 in vec4 v_lgtpos[];
 
+// normal mapping
+in vec3 v_nor_cam[]; // normal in camera space
+in vec3 v_tan_cam[]; // tangent in camera space
+in vec3 v_btan_cam[]; // bitangent in camera space
+
+out vec3 g_nor_cam; // normal in camera space
+out vec3 g_tan_cam; // tangent in camera space
+out vec3 g_btan_cam; // bitangent in camera space
+// end normalmapping
 out vec3 g_pos;
 out vec3 g_nor;
 out vec2 g_uvs;
+
 out vec4 g_lgtpos;
 
 void processPrimitive();
@@ -33,7 +43,11 @@ void processPrimitive(){
     g_pos = v_pos[i];
     g_nor = v_nor[i];
     g_uvs = v_uvs[i];
+    g_nor_cam = v_nor_cam[i]; // normal in camera space
+    g_tan_cam = v_tan_cam[i]; // tangent in camera space
+    g_btan_cam = v_btan_cam[i]; // bitangent in camera space
     g_lgtpos = v_lgtpos[i];
+
     EmitVertex();
   }
   EndPrimitive();
