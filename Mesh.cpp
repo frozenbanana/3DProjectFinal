@@ -1,5 +1,9 @@
 #include "Mesh.hpp"
 
+Mesh::Mesh() {
+
+}
+
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices) {
   m_vertices = vertices;
   m_indices = indices;
@@ -46,6 +50,12 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vecto
   // Vertex texture
   glEnableVertexAttribArray(2);
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(2*sizeof(glm::vec3)));
+  // Vertex tangent
+  glEnableVertexAttribArray(3);
+  glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(2 * sizeof(glm::vec3) + sizeof(glm::vec2)));
+  // Vertex bitanget
+  glEnableVertexAttribArray(4);
+  glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(glm::vec3) + sizeof(glm::vec2)));
  }
 
 std::vector<glm::vec3> Mesh::GetPos() {
@@ -59,5 +69,7 @@ std::vector<glm::vec3> Mesh::GetPos() {
 GLuint Mesh::GetVAO() { return m_vao; }
 GLuint Mesh::GetVBO() { return m_vbo; }
 GLuint Mesh::GetEBO() { return m_ebo; }
-
+void Mesh::SetVAO(GLuint id) { m_vao = id; };
+void Mesh::SetVBO(GLuint id) { m_vbo = id; };
+void Mesh::SetEBO(GLuint id) { m_ebo = id; };
 Mesh::~Mesh() {}

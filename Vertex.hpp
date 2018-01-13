@@ -35,6 +35,12 @@ public:
   inline glm::vec3 GetTangent() { return m_tangent; };
   inline glm::vec3 GetBitangent() { return m_bitangent; };
 
+  inline glm::vec3& GetPosRef() { return m_pos; };
+  inline glm::vec3& GetNormalRef() { return m_normal; };
+  inline glm::vec2& GetTexCoordRef() { return m_texCoord; };
+  inline glm::vec3& GetTangentRef() { return m_tangent; };
+  inline glm::vec3& GetBitangentRef() { return m_bitangent; };
+
 private:
   glm::vec3 m_pos;
   glm::vec3 m_normal;
