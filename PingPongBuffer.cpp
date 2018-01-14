@@ -4,6 +4,7 @@
 
 //Private
 void PingPongBuffer::createBuffer(GLuint buffer_id) {
+  //Bind2DTextureTo(buffer_id, COMPUTE_TEX);
   glBindTexture(GL_TEXTURE_2D, buffer_id);
 	glTexImage2D(
 		GL_TEXTURE_2D,
@@ -22,10 +23,14 @@ void PingPongBuffer::createBuffer(GLuint buffer_id) {
   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
   //testing : NTS: nope
 
+  //glGenerateMipmap(GL_TEXTURE_2D);
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		//When shrunk go blurry
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		//When enlarged go blurry
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	//Set wrapping to clamp to edge
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	//Set wrapping to clamp to edge
+
+  //glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void PingPongBuffer::bindAndCompute(GLuint source_buffer, GLuint target_buffer) {
