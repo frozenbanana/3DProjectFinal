@@ -16,21 +16,10 @@ in vec4 v_lgtpos[];
 in vec3 v_nor_cam[]; // normal in camera space
 in vec3 v_tan_cam[]; // tangent in camera space
 in vec3 v_btan_cam[]; // bitangent in camera space
-// in vec3 v_camDir_cam[]; // a vector from vertex to camera in cam space
-// in vec3 v_lgtDir_cam[]; // a vector from vertex to light in cam space
-// in vec3 v_lgtPos_cam[]; // Position of light in cam space
-// in vec3 v_camDir_tan[]; // a vector in from vertex to camera in tan space
-// in vec3 v_lgtDir_tan[]; // a vector from vertex to light in tan space
-
 
 out vec3 g_nor_cam; // normal in camera space
 out vec3 g_tan_cam; // tangent in camera space
 out vec3 g_btan_cam; // bitangent in camera space
-// out vec3 g_camDir_cam; // a vector from vertex to camera in cam space
-// out vec3 g_lgtDir_cam; // a vector from vertex to light in cam space
-// out vec3 g_lgtPos_cam; // Position of light in cam space
-// out vec3 g_camDir_tan; // a vector in from vertex to camera in tan space
-// out vec3 g_lgtDir_tan; // a vector from vertex to light in tan space
 // end normalmappoutg
 
 out vec3 g_pos;

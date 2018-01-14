@@ -440,14 +440,14 @@ void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
   /*########## COMPUTE PASS ##################################################*/
   glUseProgram(this->m_comShaderPtr->GetProgram());
 
-  this->m_ppBuffer.DoPingPong(10, this->m_gBuffer.GetColTextureId());
+  this->m_ppBuffer.DoPingPong(2, this->m_gBuffer.GetColTextureId());
 
   /*########## LIGHT PASS ####################################################*/
   //Select the program to use and load up the gBuffer textures
   glUseProgram(this->m_lgtShaderPtr->GetProgram());
 
-  this->m_ppBuffer.BindResult();
   this->m_gBuffer.PrepLightPass();
+  this->m_ppBuffer.BindResult();
 
   //Upload all lights in the LightPack
   this->UploadLightPack(this->m_lgtShaderPtr, lPack);
