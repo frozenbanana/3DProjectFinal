@@ -299,6 +299,9 @@ void Display::SetDRShaders(Shader* geoS, Shader* lgtS) {
   this->m_geoShaderPtr->FindUniformMatrixLoc("perspective");
   this->m_geoShaderPtr->FindUniformMatrixLoc("light_mat");
 
+  //Locate space for camera position
+  this->m_geoShaderPtr->FindUniformVec3Loc("camPos");
+
   //Locate space for the texures of models
   this->FixTextureUniforms(this->m_geoShaderPtr, "diffuse", 1);
   this->FixTextureUniforms(this->m_geoShaderPtr, "specular", 1);

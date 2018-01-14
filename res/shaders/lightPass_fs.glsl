@@ -43,9 +43,9 @@ layout (binding=0) uniform sampler2D gPosition;
 layout (binding=1) uniform sampler2D gNormal;
 layout (binding=2) uniform sampler2D gDiffSpec;
 layout (binding=3) uniform sampler2D gLgtPos;
-layout (binding=6) uniform sampler2D texture_computed0;
+layout (binding=7) uniform sampler2D texture_computed0;
 //layout (rgba8, binding=6) uniform image2D texture_computed0;
-layout (binding=7) uniform sampler2D lDepth;
+layout (binding=8) uniform sampler2D lDepth;
 
 //Functions for lights
 vec3 pntLightCalc(PntLight lgt, vec3 frag_pos, vec3 frag_nor, vec3 view_dir, vec4 frag_col);
@@ -96,11 +96,11 @@ void main() {
   // // out_col = texture(texture_computed0, v_uvs) * (1.0f - shadVal);
   //
   // out_col += pnt_lights[0].dif * 0.0001 + spt_lights[0].dif * 0.0001; //All uploads must be used or we get a segmentation error
-  if (v_uvs.x < 0.5) {
-    out_col = texture(texture_computed0, v_uvs);
-    //ivec2 imgCrds = ivec2( v_uvs.x * 640, v_uvs.y * 480 );
-    //out_col = imageLoad(texture_computed0, imgCrds);
-  }
+  //if (v_uvs.x < 0.5) {
+  //  out_col = texture(texture_computed0, v_uvs);
+  //  //ivec2 imgCrds = ivec2( v_uvs.x * 640, v_uvs.y * 480 );
+  //  //out_col = imageLoad(texture_computed0, imgCrds);
+  //}
 
   //out_col += pnt_lights[0].dif * 0.01 + dir_lights[0].dif * 0.01 + spt_lights[0].dif * 0.01; //All uploads must be used or we get a segmentation error
 }//Main

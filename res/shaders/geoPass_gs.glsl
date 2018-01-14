@@ -3,7 +3,7 @@
 layout(triangles) in;
 layout(triangle_strip, max_vertices = 3) out;
 
-uniform vec3 worldPos;
+uniform vec3 camPos;
 uniform mat4 model;
 // in vec3 v_posWorld[];
 in vec3 v_worldPos[];
@@ -76,7 +76,7 @@ bool cullPrimitive(){
   transformedCullNorm = (model * vec4(cullNorm, 0.0)).xyz;
 
   // vector from worldera to corner point of triangle
-  cullCam = normalize(cornerVec - worldPos);
+  cullCam = normalize(cornerVec - camPos);
 
   coe = dot(transformedCullNorm, cullCam);
 
