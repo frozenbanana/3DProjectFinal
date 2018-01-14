@@ -30,6 +30,7 @@ uniform mat4 light_mat;
 
 void main() {
   vec4 w_pos = model * vec4(in_pos, 1.0);
+  vec4 positionRelativeToCamera = view * w_pos;
 
   gl_Position = perspective * view * w_pos;
 
@@ -40,27 +41,19 @@ void main() {
   v_uvs = in_uvs;
 
   // NORMALMAPPING
-  // Get vector from origin to vert pos in cam space
-  // vec3 pos_cam = vec3(view * model * vec4(in_pos, 1.0));
-  // v_camDir_cam = vec3(0.0f, 0.0f, 0.0f) - pos_cam;
-  //
-  // // Get vector from vertex to the camera in cam space
-  // vec3 lgtPos = vec3(light_mat[3][0], light_mat[3][1], light_mat[3][2]);  // Get light pos from matrix
-	// vec3 lghPos_cam = (view * vec4(lgtPos), 1.0f).xyz;
-	// v_lgtDir_cam = lgtPos_cam + v_camDir_cam;
 
   // Get Normal, Tangent and Bitanget in cam space
-  v_nor_cam  = vec3(view * model * vec4(in_nor, 1.0f) );
-  v_tan_cam  = vec3(view * model * vec4(in_tan, 1.0f) );
-  v_btan_cam = vec3(view * model * vec4(in_btan, 1.0f) );
-
-  // Get vector from vertex to light in tan space
-  // Get vector from vertex to camera in tan space
-  // mat3 TBN = transpose(mat3(v_tan_cam, v_btan_cam, v_nor_cam));
-  // v_lgtDir_tan = TBN * v_lgtDir_cam;
-  // v_camDir_tan = TBN * v_camDir_cam;
+  v_nor_cam  = vec3(view * model * vec4(in_nor, 0.0f) );
+  v_tan_cam  = vec3(view * model * vec4(in_tan, 0.0f) );
+  v_btan_cam = vec3(view * model * vec4(in_btan, 0.0f) );
   // END NORMALMAPPING
-
+  // mat3 toTangSpace = mat3(g_tan_cam.x, g_btan_cam.x, g_nor_cam.x,
+  //                             g_tan_cam.y, g_btan_cam.y, g_nor_cam.y,
+  //                             g_tan_cam.z, g_btan_cam.z, g_nor_cam.z);
+  //
+  //
+  // v_
+  // v_camDir_tan = toTangSpace * (-positionRelativeToCamera);
   //WIP
   v_lgtpos = light_mat * w_pos;
   //v_lgtpos = v_pos; //Temp, just to prevent crashing
