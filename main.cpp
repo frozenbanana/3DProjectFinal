@@ -21,18 +21,28 @@
 #include "GLOBALS.hpp"
 #include "PackageStructs.hpp"
 
+// terrain
+const char* heightmapPath = "res/heightmap/example/BMP_example.bmp";
+const char* terrainDiffTexPath = "res/textures/grass.jpeg";
+const char* terrainSpecTexPath = "res/textures/exampleTerrainSpecular.png";
+const char* normalmapPath = "res/textures/normal1.jpeg";
+
+// basic shader
 const char* vertex_shader = "res/shaders/base_vs.glsl";
 const char* geometry_shader = "res/shaders/base_gs.glsl";
 const char* fragment_shader = "res/shaders/base_fs.glsl";
 
+// deferred rendering
 const char* geo_vs = "res/shaders/geoPass_vs.glsl";
 const char* geo_gs = "res/shaders/geoPass_gs.glsl";
 const char* geo_fs = "res/shaders/geoPass_fs.glsl";
 const char* lgt_vs = "res/shaders/lightPass_vs.glsl";
 const char* lgt_fs = "res/shaders/lightPass_fs.glsl";
 
+// compute shading
 const char* gau_cs = "res/shaders/PTcompute.glsl";
 
+// shadow mapping
 const char* sha_vs = "res/shaders/shadowPass_vs.glsl";
 const char* sha_fs = "res/shaders/shadowPass_fs.glsl";
 
@@ -65,9 +75,9 @@ int main() {
 
   // SETUP MODELS
   // terrain
-  Terrain terrain("res/heightmap/example/BMP_example.bmp", 20);
+  Terrain terrain(heightmapPath, 20, terrainDiffTexPath, terrainSpecTexPath, normalmapPath);
+  // Terrain terrain(heightmapPath, 20, terrainDiffTexPath, terrainSpecTexPath); // WIthout normal map
   display.SetTerrain(&terrain);
-  // quadtree.InsertModelInTree(&terrain.GetModelData());
 
   // cubes
   Model cubes[23];
@@ -100,26 +110,25 @@ int main() {
         glm::vec3(  27.0f,  5.0f,  18.0f),
         glm::vec3(  27.0f,  5.0f,  27.0f),
   };
-  quadtree.InsertModelInTree(&cubes[0].GetModelData());
   for (size_t i = 0; i < 23; i++) {
-    cubes[i].LoadModel("res/models/cube/cube_green_phong_12_tris_QUADS.obj");
+    cubes[i].LoadModel("res/models/cubeObj/cube.obj");
     cubes[i].SetPos(cubesPos[i]);
     quadtree.InsertModelInTree(&cubes[i].GetModelData());
   }
 
-  // Nano dude
-  Model nanoDudes[3];
-  glm::vec3 nanoDudesPos[3] = {
-    glm::vec3(  85.0f,    4.0f,   85.0f), // bottom left
-    glm::vec3(  155.0f,   4.0f,   155.0f),
-    glm::vec3(  425.0f,   0.0f,   425.0f),
-  };
-
-  for (size_t i = 0; i < 3; i++) {
-    nanoDudes[i].LoadModel("res/models/nano/nanosuit.obj");
-    nanoDudes[i].SetPos(nanoDudesPos[i]);
-    quadtree.InsertModelInTree(&nanoDudes[i].GetModelData());
-  }
+  // // Nano dude
+  // Model nanoDudes[3];
+  // glm::vec3 nanoDudesPos[3] = {
+  //   glm::vec3(  85.0f,    4.0f,   85.0f), // bottom left
+  //   glm::vec3(  155.0f,   4.0f,   155.0f),
+  //   glm::vec3(  425.0f,   0.0f,   425.0f),
+  // };
+  //
+  // for (size_t i = 0; i < 1; i++) {
+  //   nanoDudes[i].LoadModel("res/models/nano/nanosuit.obj");
+  //   nanoDudes[i].SetPos(nanoDudesPos[i]);
+  //   quadtree.InsertModelInTree(&nanoDudes[i].GetModelData());
+  // }
 
   // SETUP lights
   LightHandler lightHandler;
@@ -173,6 +182,7 @@ int main() {
      modelsToDraw.push_back(&terrain.GetModelData()); // add always terrain
      display.DrawDR(modelsToDraw, lPack);             // Draw models
 
+     // getchar();
      quadtree.ClearModelPack();                      // reset modelpack for new culling
   }
 

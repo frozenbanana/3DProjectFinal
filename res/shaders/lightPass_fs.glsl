@@ -91,6 +91,11 @@ void main() {
 
   out_col = vec4(fin_col, 1.0);
 
+  // float shadVal = pcf_shadCalc(texture(gLgtPos, v_uvs), texture(gNormal, v_uvs), pnt_lights[0].pos);
+  // out_col = texture(gDiffSpec, v_uvs) * (1.0f - shadVal);
+  // // out_col = texture(texture_computed0, v_uvs) * (1.0f - shadVal);
+  //
+  // out_col += pnt_lights[0].dif * 0.0001 + spt_lights[0].dif * 0.0001; //All uploads must be used or we get a segmentation error
   if (v_uvs.x < 0.5) {
     out_col = texture(texture_computed0, v_uvs);
     //ivec2 imgCrds = ivec2( v_uvs.x * 640, v_uvs.y * 480 );

@@ -7,7 +7,6 @@
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-GLint TextureFromFile(const char* path, std::string directory);
 
 Model::Model() : Transform() {
 
@@ -19,8 +18,8 @@ Model::Model(std::string path) : Transform() {
 
 void Model::LoadModel(std::string path) {
   // Read file via assimp
-  Assimp::Importer importer;
-  const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+  Assimp::Importer importer;                                                                 // TEST
+  const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
   // Check for errors
   if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
@@ -70,20 +69,32 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
     vector.z = mesh->mNormals[i].z;
     vertex.SetNormal(vector);
 
-    // if mesh contains texCoords
-    if(mesh->mTextureCoords[0]) {
+    if (mesh->mTextureCoords[0]) { // does the mesh contain texture coordinates?
       glm::vec2 vec;
-      // in assimp a vertex can have 8 different texture coordinates. Assume first is best
+      // a vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't
+      // use models where a vertex can have multiple texture coordinates so we always take the first set (0).
       vec.x = mesh->mTextureCoords[0][i].x;
       vec.y = mesh->mTextureCoords[0][i].y;
       vertex.SetTexCoord(vec);
-    } else {
+
+      // tangent
+      vector.x = mesh->mTangents[i].x;
+      vector.y = mesh->mTangents[i].y;
+      vector.z = mesh->mTangents[i].z;
+      vertex.SetTangent(vector);
+
+      // bitangent
+      vector.x = mesh->mBitangents[i].x;
+      vector.y = mesh->mBitangents[i].y;
+      vector.z = mesh->mBitangents[i].z;
+      vertex.SetBitangent(vector);
+    }
+    else {
       vertex.SetTexCoord(glm::vec2(0.0f, 0.0f));
     }
-
     // Store newly filled vertex
     vertices.push_back(vertex);
-  }
+    }
 
   // Indices
   for (GLuint i = 0; i < mesh->mNumFaces; i++) {
@@ -108,25 +119,20 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
   }
 
-  //std::cout << "Textures size: " << textures.size() << '\n';
-
   return Mesh(vertices, indices, textures);
 };
 
 std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName) {
   std::vector<Texture> textures;
-  for (GLuint i = 0; i < material->GetTextureCount(type); i++)
-    {
+  for (GLuint i = 0; i < material->GetTextureCount(type); i++) {
       aiString str;
       material->GetTexture(type, i, &str);
 
       // Check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
       bool skip = false;
 
-      for (GLuint j = 0; j < m_textures_loaded.size(); j++)
-	{
-          if(m_textures_loaded[j].path == str)
-	    {
+      for (GLuint j = 0; j < m_textures_loaded.size(); j++) {
+          if(m_textures_loaded[j].path == str) {
               textures.push_back(m_textures_loaded[j]);
               skip = true; // A texture with the same filepath has already been loaded, continue to next one. (optimization)
               break;
@@ -147,6 +153,17 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *material, aiTexture
 
   return textures;
 }
+
+// void Model::SetTexture(std::string path, std::string typeName) {
+//   // NOTE: Only use this for models with one mesh!
+//   std::string directory = path.substr(0, path.find_last_of('/'));
+//   std::string filename = directory + '/' + filename;
+//   Texture tex;
+//   tex.id = TextureFromFile(path.c_str(), directory, typeName);
+//   tex.type = typeName;
+//   tex.path = aiString(filename);
+//   m_textures_loaded[0].push_back(tex);
+// }
 
 GLint Model::TextureFromFile(const char *path, std::string directory, std::string typeName) {
   //Generate texture ID and load texture data

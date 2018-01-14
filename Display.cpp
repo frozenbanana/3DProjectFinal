@@ -298,7 +298,6 @@ void Display::SetDRShaders(Shader* geoS, Shader* lgtS) {
   this->m_geoShaderPtr->FindUniformMatrixLoc("view");
   this->m_geoShaderPtr->FindUniformMatrixLoc("perspective");
   this->m_geoShaderPtr->FindUniformMatrixLoc("light_mat");
-  this->m_geoShaderPtr->FindUniformVec3Loc("camPos");
 
   //Locate space for the texures of models
   this->FixTextureUniforms(this->m_geoShaderPtr, "diffuse", 1);
@@ -410,6 +409,9 @@ void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
     int n_tex = 0;        //Varable tracking how many textures were found
     if (modelData.s_meshTextures.size() > 0) {
       switch (modelData.s_meshTextures[i].size()) {
+        case 3:
+          Bind2DTextureTo(modelData.s_meshTextures[i][2].id, NORMALMAP_TEX);
+          n_tex++;
         case 2:
           //NTS:  The below line SHOULD NOT BE USED. The uniform is linked to a binding from where it gets its values
           //      Uploading to this uniform messes with how it is read. Line (And function) left for future reference.
@@ -426,7 +428,7 @@ void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
           break;
       }
     }
-    // this->m_geoShaderPtr->DirectInt("n_tex", n_tex);  //Variable uploaded to shader for checking if the uniform samplers contain anything
+    this->m_geoShaderPtr->DirectInt("n_tex", n_tex);  //Variable uploaded to shader for checking if the uniform samplers contain anything
 
     // draw points 0-3 from the currently bound VAO with current in-use shader
     glDrawElements(GL_TRIANGLES, modelData.s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
@@ -439,7 +441,7 @@ void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
   /*########## COMPUTE PASS ##################################################*/
   glUseProgram(this->m_comShaderPtr->GetProgram());
 
-  this->m_ppBuffer.DoPingPong(10, this->m_gBuffer.GetColTextureId());
+  this->m_ppBuffer.DoPingPong(2, this->m_gBuffer.GetColTextureId());
 
   /*########## LIGHT PASS ####################################################*/
   //Select the program to use and load up the gBuffer textures
@@ -537,25 +539,32 @@ void Display::RenderMeshDR(ModelData* modelData) {
 
     //Upload mesh textures
     int n_tex = 0;        //Varable tracking how many textures were found
-    if (modelData->s_meshTextures.size() > 0) {
       switch (modelData->s_meshTextures[i].size()) {
+        case 3:
+          Bind2DTextureTo(modelData->s_meshTextures[i][0].id, MESHDIFF_TEX);
+          Bind2DTextureTo(modelData->s_meshTextures[i][1].id, MESHSPEC_TEX);
+          Bind2DTextureTo(modelData->s_meshTextures[i][2].id, NORMALMAP_TEX);
+          n_tex = 3;
+          break;
         case 2:
           //NTS:  The below line SHOULD NOT BE USED. The uniform is linked to a binding from where it gets its values
           //      Uploading to this uniform messes with how it is read. Line (And function) left for future reference.
-          //this->UploadTexture(this->m_geoShaderPtr, modelData->s_meshTextures[i][1].id, 1);    //Specular
-          Bind2DTextureTo(modelData->s_meshTextures[i][1].id, MESHSPEC_TEX);
-          n_tex++;
-        case 1:
-          //this->UploadTexture(this->m_geoShaderPtr, modelData->s_meshTextures[i][0].id, 0);    //Diffuse
+          //this->UploadTexture(this->m_geoShaderPtr, modelData.s_meshTextures[i][1].id, 1);    //Specular
           Bind2DTextureTo(modelData->s_meshTextures[i][0].id, MESHDIFF_TEX);
-          n_tex++;
+          Bind2DTextureTo(modelData->s_meshTextures[i][1].id, MESHSPEC_TEX);
+          n_tex = 2;
+          break;
+        case 1:
+          //this->UploadTexture(this->m_geoShaderPtr, modelData.s_meshTextures[i][0].id, 0);    //Diffuse
+          Bind2DTextureTo(modelData->s_meshTextures[i][0].id, MESHDIFF_TEX);
+          n_tex = 1;
           break;
         default:
           //No textures in mesh
           break;
       }
-    }
-    // this->m_geoShaderPtr->DirectInt("n_tex", n_tex);  //Variable uploaded to shader for checking if the uniform samplers contain anything
+      // std::cout << "n_tex:" << n_tex << '\n';
+     this->m_geoShaderPtr->DirectInt("n_tex", n_tex);  //Variable uploaded to shader for checking if the uniform samplers contain anything
 
     // draw points 0-3 from the currently bound VAO with current in-use shader
     glDrawElements(GL_TRIANGLES, modelData->s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);

@@ -12,8 +12,9 @@ enum TextureEnums {
   LGTPOS_TEX,     //3
   MESHDIFF_TEX,   //4
   MESHSPEC_TEX,   //5
-  COMPUTE_TEX,    //6
-  DEPTH_TEX,      //7
+  NORMALMAP_TEX,  //6
+  COMPUTE_TEX,    //7
+  DEPTH_TEX,      //8
   NUM_OF_TEX
 };
 
