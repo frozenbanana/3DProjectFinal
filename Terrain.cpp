@@ -8,26 +8,26 @@ Terrain::Terrain(std::string filePath, GLuint maxHeight, std::string diffTexPath
   if (diffTexPath != "unknown") {
     Texture diffTex;
     TextureFromFile(diffTexPath.c_str(), "texture_diffuse", diffTex);
-    std::cout << "diff texture from terrain      (id): " << diffTex.id << '\n';
+    // std::cout << "diff texture from terrain      (id): " << diffTex.id << '\n';
     m_textures.push_back(diffTex); // adding diffuse texture to m_textures
   }
 
   if (specTexPath != "unknown") {
     Texture specTex;
     TextureFromFile(specTexPath.c_str(), "texture_specular", specTex);
-    std::cout << "spectex texture from terrain   (id): " << specTex.id << '\n';
+    // std::cout << "spectex texture from terrain   (id): " << specTex.id << '\n';
     m_textures.push_back(specTex); // adding specular texture to m_textures
   }
 
   if (normTexPath != "unknown") {
     Texture normTex;
     TextureFromFile(normTexPath.c_str(), "texture_normalmap", normTex);
-    std::cout << "normalMap texture from terrain (id): " << normTex.id << '\n';
+    // std::cout << "normalMap texture from terrain (id): " << normTex.id << '\n';
     m_textures.push_back(normTex); // adding normal texture
   }
 
   if (!m_vertices.empty()) {
-    std::cout << "size of textures vector:" << m_textures.size() << '\n';
+    // std::cout << "size of textures vector:" << m_textures.size() << '\n';
     m_terrainMeshPtr = new Mesh(m_vertices, m_indices, m_textures);
     PrepModelData();
   }
@@ -395,8 +395,8 @@ void Terrain::TextureFromFile(const char *path, std::string typeName, Texture& t
   glGenerateMipmap(GL_TEXTURE_2D);
 
   // Parameters
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 

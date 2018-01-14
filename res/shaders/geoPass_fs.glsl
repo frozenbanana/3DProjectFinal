@@ -3,11 +3,18 @@
 in vec3 g_pos;
 in vec3 g_nor;
 in vec2 g_uvs;
+
 // normal map
 in vec3 g_nor_cam; // normal in camera space
 in vec3 g_tan_cam; // tangent in camera space
 in vec3 g_btan_cam; // bitangent in camera space
+// in vec3 g_camDir_cam; // a vector from vertex to camera in cam space
+// in vec3 g_lgtDir_cam; // a vector from vertex to light in cam space
+// in vec3 g_lgtPos_cam; // Position of light in cam space
+// in vec3 g_camDir_tan; // a vector in from vertex to camera in tan space
+// in vec3 g_lgtDir_tan; // a vector from vertex to light in tan space
 // end normal map
+
 in vec4 g_lgtpos;
 
 layout(location = 0) out vec3 gPosition;
@@ -26,9 +33,10 @@ void main() {
 
   // NORMAL CALCULATIONS
   if(n_tex == 3) {
-    mat3 TBN = transpose(mat3(g_tan_cam, g_btan_cam, g_nor_cam));
-    vec3 rawNormalFromMap = texture(texture_normal0, g_uvs).rgb;
-    gNormal = normalize(TBN * rawNormalFromMap);
+    mat3 TBN = transpose(mat3(g_tan_cam.x, g_btan_cam.x, g_nor_cam.x,
+                           g_tan_cam.y, g_btan_cam.y, g_nor_cam.y,
+                           g_tan_cam.z, g_btan_cam.z, g_nor_cam.z));
+    gNormal = TBN * ((texture(texture_normal0, g_uvs).rgb * 2.0  - 1.0));
   }
   else {
     gNormal = normalize(g_nor);

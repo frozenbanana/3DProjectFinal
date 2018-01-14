@@ -17,15 +17,20 @@ void PingPongBuffer::createBuffer(GLuint buffer_id) {
 		NULL			          //source
 	);
 
+<<<<<<< HEAD
   //testing : https://www.khronos.org/opengl/wiki/Common_Mistakes#Creating_a_complete_texture
   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
   //testing : NTS: nope
 
+=======
+  // glGenerateMipmap(GL_TEXTURE_2D);
+>>>>>>> cubes have their own textures.
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		//When shrunk go blurry
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		//When enlarged go blurry
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	//Set wrapping to clamp to edge
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	//Set wrapping to clamp to edge
+  glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void PingPongBuffer::bindAndCompute(GLuint source_buffer, GLuint target_buffer) {
@@ -36,7 +41,7 @@ void PingPongBuffer::bindAndCompute(GLuint source_buffer, GLuint target_buffer) 
     GL_FALSE,
     0,
     GL_READ_ONLY,			  //Only read from this texture
-    GL_RGBA8						//GL_RGB16F
+    GL_RGBA32F						//GL_RGB16F
   );
 
   glBindImageTexture(
@@ -46,7 +51,7 @@ void PingPongBuffer::bindAndCompute(GLuint source_buffer, GLuint target_buffer) 
     GL_FALSE,
     0,
     GL_WRITE_ONLY,			//Only write to this texture
-    GL_RGBA8						//GL_RGB16F
+    GL_RGBA32F						//GL_RGB16F
   );
 
   glDispatchCompute(this->m_texture_width / 10, this->m_texture_height / 10, 1);

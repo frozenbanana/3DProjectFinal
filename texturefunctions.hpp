@@ -20,10 +20,14 @@ enum TextureEnums {
 
 inline void Bind2DTextureTo(GLuint texture_id, TextureEnums target_unit) {
 <<<<<<< HEAD
+<<<<<<< HEAD
   //std::cout << "Binding texture id: " << texture_id << " to texture unit: " << target_unit << '\n';
 =======
   std::cout << "Binding texture id: " << texture_id << " to texture unit: " << target_unit << '\n';
 >>>>>>> terrain has working texture.
+=======
+  // std::cout << "Binding texture id: " << texture_id << " to texture unit: " << target_unit << '\n';
+>>>>>>> cubes have their own textures.
   glActiveTexture(GL_TEXTURE0 + target_unit);
   glBindTexture(GL_TEXTURE_2D, texture_id);
 }

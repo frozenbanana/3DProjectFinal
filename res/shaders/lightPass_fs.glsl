@@ -86,6 +86,7 @@ void main() {
     fin_col += spt_mod * sptLightCalc(spt_lights[0], fragment_w_pos, fragment_w_nor, fragment_l_pos, view_dir, fragment_col);
     //SHADOW MAPPING INSIDE
   }
+<<<<<<< HEAD
 
   fin_col = fin_col / (0.8 * (NR_OF_PNTLIGHTS + NR_OF_PNTLIGHTS + NR_OF_SPTLIGHTS));
 
@@ -158,6 +159,14 @@ vec3 sptLightCalc(SptLight lgt, vec3 frag_pos, vec3 frag_nor, vec4 frag_lpos, ve
   //else{
   //  return ((amb_col + dif_col + spe_col) * shad_val); //Hard Shadow
   //}
+=======
+*/
+  float shadVal = pcf_shadCalc(texture(gLgtPos, v_uvs), texture(gNormal, v_uvs), pnt_lights[0].pos);
+  out_col = texture(gDiffSpec, v_uvs) * (1.0f - shadVal);
+  // out_col = texture(texture_computed0, v_uvs) * (1.0f - shadVal);
+
+  out_col += pnt_lights[0].dif * 0.0001 + spt_lights[0].dif * 0.0001; //All uploads must be used or we get a segmentation error
+>>>>>>> cubes have their own textures.
 }
 
 float shadCalc(vec4 fragPos, vec3 fragNor, vec3 lightPos) {

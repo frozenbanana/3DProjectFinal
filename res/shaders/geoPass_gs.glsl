@@ -16,11 +16,23 @@ in vec4 v_lgtpos[];
 in vec3 v_nor_cam[]; // normal in camera space
 in vec3 v_tan_cam[]; // tangent in camera space
 in vec3 v_btan_cam[]; // bitangent in camera space
+// in vec3 v_camDir_cam[]; // a vector from vertex to camera in cam space
+// in vec3 v_lgtDir_cam[]; // a vector from vertex to light in cam space
+// in vec3 v_lgtPos_cam[]; // Position of light in cam space
+// in vec3 v_camDir_tan[]; // a vector in from vertex to camera in tan space
+// in vec3 v_lgtDir_tan[]; // a vector from vertex to light in tan space
+
 
 out vec3 g_nor_cam; // normal in camera space
 out vec3 g_tan_cam; // tangent in camera space
 out vec3 g_btan_cam; // bitangent in camera space
-// end normalmapping
+// out vec3 g_camDir_cam; // a vector from vertex to camera in cam space
+// out vec3 g_lgtDir_cam; // a vector from vertex to light in cam space
+// out vec3 g_lgtPos_cam; // Position of light in cam space
+// out vec3 g_camDir_tan; // a vector in from vertex to camera in tan space
+// out vec3 g_lgtDir_tan; // a vector from vertex to light in tan space
+// end normalmappoutg
+
 out vec3 g_pos;
 out vec3 g_nor;
 out vec2 g_uvs;
@@ -43,9 +55,14 @@ void processPrimitive(){
     g_pos = v_pos[i];
     g_nor = v_nor[i];
     g_uvs = v_uvs[i];
-    g_nor_cam = v_nor_cam[i]; // normal in camera space
-    g_tan_cam = v_tan_cam[i]; // tangent in camera space
+    g_nor_cam = v_nor_cam[i];  // normal in camera space
+    g_tan_cam = v_tan_cam[i];  // tangent in camera space
     g_btan_cam = v_btan_cam[i]; // bitangent in camera space
+    // g_camDir_cam = v_camDir_cam[i]; // a vector from vertex to camera in cam space
+    // g_lgtDir_cam = v_lgtDir_cam[i]; // a vector from vertex to light in cam space
+    // g_lgtPos_cam = v_lgtpos_cam[i]; // Position of light in cam space
+    // g_camDir_tan = v_camDir_tan[i]; // a vector in from vertex to camera in tan space
+    // g_lgtDir_tan = v_lgtDir_tan[i]; // a vector from vertex to light in tan space
     g_lgtpos = v_lgtpos[i];
 
     EmitVertex();
