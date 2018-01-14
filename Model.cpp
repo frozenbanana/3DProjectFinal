@@ -13,7 +13,6 @@ Model::Model() : Transform() {
 }
 
 Model::Model(std::string path) : Transform() {
-  std::cout << "Begining to load" << '\n';
   LoadModel(path.c_str());
 }
 
@@ -120,8 +119,6 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
   }
 
-  //std::cout << "Textures size: " << textures.size() << '\n';
-
   return Mesh(vertices, indices, textures);
 };
 
@@ -156,6 +153,17 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *material, aiTexture
 
   return textures;
 }
+
+// void Model::SetTexture(std::string path, std::string typeName) {
+//   // NOTE: Only use this for models with one mesh!
+//   std::string directory = path.substr(0, path.find_last_of('/'));
+//   std::string filename = directory + '/' + filename;
+//   Texture tex;
+//   tex.id = TextureFromFile(path.c_str(), directory, typeName);
+//   tex.type = typeName;
+//   tex.path = aiString(filename);
+//   m_textures_loaded[0].push_back(tex);
+// }
 
 GLint Model::TextureFromFile(const char *path, std::string directory, std::string typeName) {
   //Generate texture ID and load texture data

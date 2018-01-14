@@ -44,6 +44,7 @@ public:
   Model();
   Model(std::string path);
   void LoadModel(std::string path);
+  // void SetTexture(std::string path, std::string typeName);
   std::vector<Mesh> GetModelMeshes();
   ModelData& GetModelData();
   ~Model();

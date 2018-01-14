@@ -446,8 +446,8 @@ void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
   //Select the program to use and load up the gBuffer textures
   glUseProgram(this->m_lgtShaderPtr->GetProgram());
 
-  this->m_gBuffer.PrepLightPass();
   this->m_ppBuffer.BindResult();
+  this->m_gBuffer.PrepLightPass();
 
   //Upload all lights in the LightPack
   this->UploadLightPack(this->m_lgtShaderPtr, lPack);
@@ -550,13 +550,14 @@ void Display::RenderMeshDR(ModelData* modelData) {
         case 1:
           //this->UploadTexture(this->m_geoShaderPtr, modelData.s_meshTextures[i][0].id, 0);    //Diffuse
           Bind2DTextureTo(modelData->s_meshTextures[i][0].id, MESHDIFF_TEX);
-          n_tex++;
+          n_tex = 1;
           break;
         default:
           //No textures in mesh
           break;
       }
-    // this->m_geoShaderPtr->DirectInt("n_tex", n_tex);  //Variable uploaded to shader for checking if the uniform samplers contain anything
+      // std::cout << "n_tex:" << n_tex << '\n';
+     this->m_geoShaderPtr->DirectInt("n_tex", n_tex);  //Variable uploaded to shader for checking if the uniform samplers contain anything
 
     // draw points 0-3 from the currently bound VAO with current in-use shader
     glDrawElements(GL_TRIANGLES, modelData->s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
