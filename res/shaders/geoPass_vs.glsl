@@ -12,14 +12,14 @@ out vec2 v_uvs;
 out vec4 v_lgtpos;
 
 // normal mapping
-out vec3 v_nor_cam; // normal in camera space
-out vec3 v_tan_cam; // tangent in camera space
-out vec3 v_btan_cam; // bitangent in camera space
-// out vec3 v_camDir_cam; // a vector from vertex to camera in cam space
-// out vec3 v_lgtDir_cam; // a vector from vertex to light in cam space
-// out vec3 v_lgtPos_cam; // Position of light in cam space
+out vec3 v_nor_world; // normal in camera space
+out vec3 v_tan_world; // tangent in camera space
+out vec3 v_btan_world; // bitangent in camera space
+// out vec3 v_worldDir_world; // a vector from vertex to camera in cam space
+// out vec3 v_lgtDir_world; // a vector from vertex to light in cam space
+// out vec3 v_lgtPos_world; // Position of light in cam space
 //
-// out vec3 v_camDir_tan; // a vector in from vertex to camera in tan space
+// out vec3 v_worldDir_tan; // a vector in from vertex to camera in tan space
 // out vec3 v_lgtDir_tan; // a vector from vertex to light in tan space
 // end normal mapping
 
@@ -42,18 +42,11 @@ void main() {
 
   // NORMALMAPPING
 
-  // Get Normal, Tangent and Bitanget in cam space
-  v_nor_cam  = vec3(view * model * vec4(in_nor, 0.0f) );
-  v_tan_cam  = vec3(view * model * vec4(in_tan, 0.0f) );
-  v_btan_cam = vec3(view * model * vec4(in_btan, 0.0f) );
+  // Get Normal, Tangent and Bitanget in world space
+  v_nor_world  = vec3(model * vec4(in_nor, 0.0f) );
+  v_tan_world  = vec3(model * vec4(in_tan, 0.0f) );
+  v_btan_world = vec3(model * vec4(in_btan, 0.0f) );
   // END NORMALMAPPING
-  // mat3 toTangSpace = mat3(g_tan_cam.x, g_btan_cam.x, g_nor_cam.x,
-  //                             g_tan_cam.y, g_btan_cam.y, g_nor_cam.y,
-  //                             g_tan_cam.z, g_btan_cam.z, g_nor_cam.z);
-  //
-  //
-  // v_
-  // v_camDir_tan = toTangSpace * (-positionRelativeToCamera);
   //WIP
   v_lgtpos = light_mat * w_pos;
   //v_lgtpos = v_pos; //Temp, just to prevent crashing
