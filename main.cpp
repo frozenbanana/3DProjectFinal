@@ -25,7 +25,7 @@
 const char* heightmapPath = "res/heightmap/example/BMP_example.bmp";
 const char* terrainDiffTexPath = "res/textures/grass.jpeg";
 const char* terrainSpecTexPath = "res/textures/exampleTerrainSpecular.png";
-const char* normalmapPath = "res/textures/normal2.png";
+const char* normalmapPath = "res/textures/normal1.jpeg";
 
 // basic shader
 const char* vertex_shader = "res/shaders/base_vs.glsl";
@@ -116,21 +116,6 @@ int main() {
     quadtree.InsertModelInTree(&cubes[i].GetModelData());
   }
 
-<<<<<<< HEAD
-  // Nano dude
-  Model nanoDudes[3];
-  glm::vec3 nanoDudesPos[3] = {
-    glm::vec3(  85.0f,    4.0f,   85.0f), // bottom left
-    glm::vec3(  155.0f,   4.0f,   155.0f),
-    glm::vec3(  425.0f,   0.0f,   425.0f),
-  };
-
-  for (size_t i = 0; i < 3; i++) {
-    nanoDudes[i].LoadModel("res/models/nano/nanosuit.obj");
-    nanoDudes[i].SetPos(nanoDudesPos[i]);
-    quadtree.InsertModelInTree(&nanoDudes[i].GetModelData());
-  }
-=======
   // // Nano dude
   // Model nanoDudes[3];
   // glm::vec3 nanoDudesPos[3] = {
@@ -144,7 +129,6 @@ int main() {
   //   nanoDudes[i].SetPos(nanoDudesPos[i]);
   //   quadtree.InsertModelInTree(&nanoDudes[i].GetModelData());
   // }
->>>>>>> cubes have their own textures.
 
   // SETUP lights
   LightHandler lightHandler;

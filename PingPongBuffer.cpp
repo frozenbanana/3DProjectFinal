@@ -17,20 +17,11 @@ void PingPongBuffer::createBuffer(GLuint buffer_id) {
 		NULL			          //source
 	);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   //testing : https://www.khronos.org/opengl/wiki/Common_Mistakes#Creating_a_complete_texture
   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
   //testing : NTS: nope
 
-=======
-  // glGenerateMipmap(GL_TEXTURE_2D);
->>>>>>> cubes have their own textures.
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		//When shrunk go blurry
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		//When enlarged go blurry
-=======
->>>>>>> normalmap is loaded but normals are following camera.
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	//Set wrapping to clamp to edge
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	//Set wrapping to clamp to edge
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		//When shrunk go blurry

@@ -298,7 +298,6 @@ void Display::SetDRShaders(Shader* geoS, Shader* lgtS) {
   this->m_geoShaderPtr->FindUniformMatrixLoc("view");
   this->m_geoShaderPtr->FindUniformMatrixLoc("perspective");
   this->m_geoShaderPtr->FindUniformMatrixLoc("light_mat");
-  this->m_geoShaderPtr->FindUniformVec3Loc("camPos");
 
   //Locate space for the texures of models
   this->FixTextureUniforms(this->m_geoShaderPtr, "diffuse", 1);

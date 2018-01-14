@@ -30,7 +30,6 @@ uniform mat4 light_mat;
 
 void main() {
   vec4 w_pos = model * vec4(in_pos, 1.0);
-  vec4 positionRelativeToCamera = view * w_pos;
 
   gl_Position = perspective * view * w_pos;
 
