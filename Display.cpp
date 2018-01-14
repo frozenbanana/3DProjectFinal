@@ -302,6 +302,9 @@ void Display::SetDRShaders(Shader* geoS, Shader* lgtS) {
   //Locate space for camera position
   this->m_geoShaderPtr->FindUniformVec3Loc("camPos");
 
+  //Locate space for texture vector
+  this->m_geoShaderPtr->FindUniformVec3Loc("n_tex");
+
   //Locate space for the texures of models
   this->FixTextureUniforms(this->m_geoShaderPtr, "diffuse", 1);
   this->FixTextureUniforms(this->m_geoShaderPtr, "specular", 1);
@@ -344,7 +347,7 @@ void Display::SetComputeShader(Shader* comS, Shader* tarS) {
 
   //Set the uniform that the result should be sent to
   glUseProgram(tarS->GetProgram());
-  this->FixTextureUniforms(tarS, "computed", 1);
+  //this->FixTextureUniforms(tarS, "computed", 1);
   //tarS->FindUniformTextureLoc(type_str, i);
   //glUniform1i(tarS->GetUniform("texture_computed0"), COMPUTE_TEX);
 }
@@ -541,13 +544,15 @@ void Display::RenderMeshDR(ModelData* modelData) {
     glBindVertexArray(modelData->s_VAOs[i]);
 
     //Upload mesh textures
-    int n_tex = 0;        //Varable tracking how many textures were found
+    //int n_tex = 0;        //Varable tracking how many textures were found
+    glm::vec3 n_tex = glm::vec3(0.0f, 0.0f, 0.0f);
       switch (modelData->s_meshTextures[i].size()) {
         case 3:
           Bind2DTextureTo(modelData->s_meshTextures[i][0].id, MESHDIFF_TEX);
           Bind2DTextureTo(modelData->s_meshTextures[i][1].id, MESHSPEC_TEX);
           Bind2DTextureTo(modelData->s_meshTextures[i][2].id, NORMALMAP_TEX);
-          n_tex = 3;
+          //n_tex = 3;
+          n_tex = glm::vec3(1.0f, 1.0f, 1.0f);
           break;
         case 2:
           //NTS:  The below line SHOULD NOT BE USED. The uniform is linked to a binding from where it gets its values
@@ -555,19 +560,22 @@ void Display::RenderMeshDR(ModelData* modelData) {
           //this->UploadTexture(this->m_geoShaderPtr, modelData.s_meshTextures[i][1].id, 1);    //Specular
           Bind2DTextureTo(modelData->s_meshTextures[i][0].id, MESHDIFF_TEX);
           Bind2DTextureTo(modelData->s_meshTextures[i][1].id, MESHSPEC_TEX);
-          n_tex = 2;
+          //n_tex = 2;
+          n_tex = glm::vec3(1.0f, 1.0f, 0.0f);
           break;
         case 1:
           //this->UploadTexture(this->m_geoShaderPtr, modelData.s_meshTextures[i][0].id, 0);    //Diffuse
           Bind2DTextureTo(modelData->s_meshTextures[i][0].id, MESHDIFF_TEX);
-          n_tex = 1;
+          //n_tex = 1;
+          n_tex = glm::vec3(1.0f, 0.0f, 0.0f);
           break;
         default:
           //No textures in mesh
           break;
       }
       // std::cout << "n_tex:" << n_tex << '\n';
-     this->m_geoShaderPtr->DirectInt("n_tex", n_tex);  //Variable uploaded to shader for checking if the uniform samplers contain anything
+     //this->m_geoShaderPtr->DirectInt("n_tex", n_tex);  //Variable uploaded to shader for checking if the uniform samplers contain anything
+     this->m_geoShaderPtr->UploadVec3(n_tex, 1);
 
     // draw points 0-3 from the currently bound VAO with current in-use shader
     glDrawElements(GL_TRIANGLES, modelData->s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);

@@ -21,21 +21,19 @@ layout(binding = 4) uniform sampler2D texture_diffuse0;
 layout(binding = 5) uniform sampler2D texture_specular0;
 layout(binding = 6) uniform sampler2D texture_normal0;
 
-uniform int n_tex;
+uniform vec3 n_tex;
+
 void main() {
+
   gPosition = g_pos;
 
-  // NORMAL CALCULATIONS
-  if(n_tex == 3) {
-    mat3 TBN = transpose(mat3(g_tan_world.x, g_btan_world.x, g_nor_world.x,
-                              g_tan_world.y, g_btan_world.y, g_nor_world.y,
-                              g_tan_world.z, g_btan_world.z, g_nor_world.z));
+  //// NORMAL CALCULATIONS
+  mat3 TBN = transpose(mat3(g_tan_world.x, g_btan_world.x, g_nor_world.x,
+                            g_tan_world.y, g_btan_world.y, g_nor_world.y,
+                            g_tan_world.z, g_btan_world.z, g_nor_world.z));
 
-    gNormal = TBN * (texture(texture_normal0, g_uvs).rgb * 2.0  - 1.0);
-  }
-  else {
-    gNormal = normalize(g_nor);
-  }
+  //gNormal = ((3 - n_tex)/3) * normalize(g_nor) + (n_tex/3)* TBN * (texture(texture_normal0, g_uvs).rgb * 2.0  - 1.0);
+  gNormal = n_tex.z * normalize(g_nor) + n_tex.z * TBN * (texture(texture_normal0, g_uvs).rgb * 2.0  - 1.0);
 
   gDiffSpec.rgb = texture(texture_diffuse0, g_uvs).rgb;
   //gDiffSpec = vec4(1.0);

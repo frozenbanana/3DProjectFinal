@@ -116,19 +116,19 @@ int main() {
     quadtree.InsertModelInTree(&cubes[i].GetModelData());
   }
 
-  // // Nano dude
-  // Model nanoDudes[3];
-  // glm::vec3 nanoDudesPos[3] = {
-  //   glm::vec3(  85.0f,    4.0f,   85.0f), // bottom left
-  //   glm::vec3(  155.0f,   4.0f,   155.0f),
-  //   glm::vec3(  425.0f,   0.0f,   425.0f),
-  // };
-  //
-  // for (size_t i = 0; i < 1; i++) {
-  //   nanoDudes[i].LoadModel("res/models/nano/nanosuit.obj");
-  //   nanoDudes[i].SetPos(nanoDudesPos[i]);
-  //   quadtree.InsertModelInTree(&nanoDudes[i].GetModelData());
-  // }
+  // Nano dude
+  Model nanoDudes[3];
+  glm::vec3 nanoDudesPos[3] = {
+   glm::vec3(  85.0f,    4.0f,   85.0f), // bottom left
+   glm::vec3(  155.0f,   4.0f,   155.0f),
+   glm::vec3(  425.0f,   0.0f,   425.0f),
+  };
+
+  for (size_t i = 0; i < 1; i++) {
+   nanoDudes[i].LoadModel("res/models/nano/nanosuit.obj");
+   nanoDudes[i].SetPos(nanoDudesPos[i]);
+   quadtree.InsertModelInTree(&nanoDudes[i].GetModelData());
+  }
 
   // SETUP lights
   LightHandler lightHandler;

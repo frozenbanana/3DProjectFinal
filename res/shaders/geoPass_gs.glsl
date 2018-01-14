@@ -52,7 +52,6 @@ void processPrimitive(){
     EmitVertex();
   }
   EndPrimitive();
-
 }
 
 bool cullPrimitive(){

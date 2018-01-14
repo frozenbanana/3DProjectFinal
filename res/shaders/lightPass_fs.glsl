@@ -91,16 +91,11 @@ void main() {
 
   out_col = vec4(fin_col, 1.0);
 
-  // float shadVal = pcf_shadCalc(texture(gLgtPos, v_uvs), texture(gNormal, v_uvs), pnt_lights[0].pos);
-  // out_col = texture(gDiffSpec, v_uvs) * (1.0f - shadVal);
-  // // out_col = texture(texture_computed0, v_uvs) * (1.0f - shadVal);
-  //
-  // out_col += pnt_lights[0].dif * 0.0001 + spt_lights[0].dif * 0.0001; //All uploads must be used or we get a segmentation error
-  //if (v_uvs.x < 0.5) {
-  //  out_col = texture(texture_computed0, v_uvs);
-  //  //ivec2 imgCrds = ivec2( v_uvs.x * 640, v_uvs.y * 480 );
-  //  //out_col = imageLoad(texture_computed0, imgCrds);
-  //}
+  if (v_uvs.x < 0.5) {
+    out_col = texture(texture_computed0, v_uvs);
+    //ivec2 imgCrds = ivec2( v_uvs.x * 640, v_uvs.y * 480 );
+    //out_col = imageLoad(texture_computed0, imgCrds);
+  }
 
   //out_col += pnt_lights[0].dif * 0.01 + dir_lights[0].dif * 0.01 + spt_lights[0].dif * 0.01; //All uploads must be used or we get a segmentation error
 }//Main
@@ -154,8 +149,8 @@ vec3 sptLightCalc(SptLight lgt, vec3 frag_pos, vec3 frag_nor, vec4 frag_lpos, ve
   vec3 spe_col = vec3(lgt.spe) * spe_coe * frag_col.a;
 
 
-  return (amb_col + (dif_col + spe_col) * shad_val);  //Soft Shadow
-  //return ((amb_col + dif_col + spe_col) * shad_val); //Hard Shadow
+  //return (amb_col + (dif_col + spe_col) * shad_val);  //Soft Shadow
+  return ((amb_col + dif_col + spe_col) * shad_val); //Hard Shadow
 
   //if (v_uvs.x < 0.5) {
   //  return (amb_col + (dif_col + spe_col) * shad_val);  //Soft Shadow
