@@ -17,6 +17,11 @@ void PingPongBuffer::createBuffer(GLuint buffer_id) {
 		NULL			          //source
 	);
 
+  //testing : https://www.khronos.org/opengl/wiki/Common_Mistakes#Creating_a_complete_texture
+  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+  //testing : NTS: nope
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);		//When shrunk go blurry
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);		//When enlarged go blurry
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	//Set wrapping to clamp to edge
@@ -105,4 +110,13 @@ void PingPongBuffer::DoPingPong(int n_passes, GLuint src_buffer) {
 
 void PingPongBuffer::BindResult() {
   Bind2DTextureTo(this->m_buffers[0], COMPUTE_TEX);
+  //glBindImageTexture(
+  //  COMPUTE_TEX,        //Always bind to slot 0
+  //  this->m_buffers[0],
+  //  0,
+  //  GL_FALSE,
+  //  0,
+  //  GL_READ_ONLY,			  //Only read from this texture
+  //  GL_RGBA8						//GL_RGB16F
+  //);
 }

@@ -156,11 +156,6 @@ int main() {
     COLOR_RED
   );
 
-//std::cout << "Before" << '\n';
-//
-//std::cout << "IN main: " << lightHandler.GetLightPack().s_pnt_lights[0].getConstant() << '\n';
-//
-//std::cout << "After" << '\n';
 
   // Vector to draw
   std::vector<ModelData*> modelsToDraw;

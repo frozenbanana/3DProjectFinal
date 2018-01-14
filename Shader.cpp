@@ -189,7 +189,6 @@ void Shader::FindUniformVec3Loc(std::string uniformName) {
   }
 }
 
-
 void Shader::FindUniformMatrixLoc(std::string uniformName) {
 
   GLint uniformLoc = glGetUniformLocation(m_program, uniformName.c_str());

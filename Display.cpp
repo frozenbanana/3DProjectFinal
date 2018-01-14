@@ -343,6 +343,8 @@ void Display::SetComputeShader(Shader* comS, Shader* tarS) {
   //Set the uniform that the result should be sent to
   glUseProgram(tarS->GetProgram());
   this->FixTextureUniforms(tarS, "computed", 1);
+  //tarS->FindUniformTextureLoc(type_str, i);
+  //glUniform1i(tarS->GetUniform("texture_computed0"), COMPUTE_TEX);
 }
 
 void Display::SetShadowShader(Shader* shaS) {
