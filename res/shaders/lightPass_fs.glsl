@@ -91,11 +91,11 @@ void main() {
 
   out_col = vec4(fin_col, 1.0);
 
-  if (v_uvs.x < 0.5) {
-    out_col = texture(texture_computed0, v_uvs);
-    //ivec2 imgCrds = ivec2( v_uvs.x * 640, v_uvs.y * 480 );
-    //out_col = imageLoad(texture_computed0, imgCrds);
-  }
+  // if (v_uvs.x < 0.5) {
+  //   out_col = texture(texture_computed0, v_uvs);
+  //   //ivec2 imgCrds = ivec2( v_uvs.x * 640, v_uvs.y * 480 );
+  //   //out_col = imageLoad(texture_computed0, imgCrds);
+  // }
 
   //out_col += pnt_lights[0].dif * 0.01 + dir_lights[0].dif * 0.01 + spt_lights[0].dif * 0.01; //All uploads must be used or we get a segmentation error
 }//Main

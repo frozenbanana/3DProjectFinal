@@ -14,7 +14,7 @@ const int SHADOW_HEIGHT = 1024;
 const int SHADOW_WIDTH = 1024;
 const GLfloat PI = 3.1415926535f;
 const int QUADTREE_ROOT_WIDTH = 512;
-const int QUADTREE_MIN_WIDTH = 32;
+const int QUADTREE_MIN_WIDTH = 8;
 
 // void PrintMat4(glm::mat4 matrix) {
 //   float *mvp = (float*)glm::value_ptr(matrix);

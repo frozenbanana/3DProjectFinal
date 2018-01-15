@@ -16,6 +16,7 @@ struct ModelData {
   std::vector< std::vector<GLuint> > s_meshIndices;
   std::vector<std::vector<glm::vec3> > s_meshPos;
   std::vector< std::vector<Texture> > s_meshTextures;
+  glm::vec3 s_localizePos[9];
   glm::mat4 s_modelMat;
 };
 
