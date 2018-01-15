@@ -1,4 +1,5 @@
 #version 440
+// #version 440
 
 #define NR_OF_PNTLIGHTS 1
 struct PntLight {

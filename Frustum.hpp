@@ -43,7 +43,7 @@ public:
   ~Frustum() {}
 
   GLboolean InsideFrustrum(glm::vec3 point) {
-    for (GLuint i = 0; i < 4; i++) {    // Only need to check left, right, far and near plane
+    for (GLuint i = 0; i < 6; i++) {    // Only need to check left, right, far and near plane
        if (m_planes[i].ClassifyPoint(point) < 0.0f) {
          return false;
        }
