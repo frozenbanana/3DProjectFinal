@@ -12,7 +12,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch)
   m_pitch = pitch;
   m_fov = glm::radians(45.0f);
   m_aspect = ((GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT);
-  m_nearPlane = 0.1f;
+  m_nearPlane = 0.001f;
   m_farPlane = 1000.0f;
 
   m_heightOffset = 5.0f;

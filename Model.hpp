@@ -40,6 +40,10 @@ private:
   std::vector<std::vector<glm::vec3> > GetModelMeshesPos();
   std::vector< std::vector<Texture> > GetMeshTextures();
   ModelData m_modelData;
+  GLfloat m_minX, m_maxX;
+  GLfloat m_minY, m_maxY;
+  GLfloat m_minZ, m_maxZ;
+  void ControllMinMaxPos(glm::vec3 meshPos);
 public:
   Model();
   Model(std::string path);

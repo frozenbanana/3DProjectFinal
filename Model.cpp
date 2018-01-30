@@ -17,6 +17,10 @@ Model::Model(std::string path) : Transform() {
 }
 
 void Model::LoadModel(std::string path) {
+  // Prepare min, max pos
+  m_minX = m_minY = m_minZ = 999999999.0f; //giving them a ridiculus value to easy change
+  m_maxX = m_maxY = m_maxZ = -999999999.0f;
+
   // Read file via assimp
   Assimp::Importer importer;                                                                 // TEST
   const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
@@ -46,6 +50,17 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene) {
   }
 }
 
+void Model::ControllMinMaxPos(glm::vec3 meshPos) {
+  // Max values
+  if (meshPos.x > m_maxX) {m_maxX = meshPos.x; };
+  if (meshPos.y > m_maxY) {m_maxY = meshPos.y; };
+  if (meshPos.z > m_maxZ) {m_maxZ = meshPos.z; };
+
+  // Min values
+  if (meshPos.x < m_minX) {m_minX = meshPos.x; };
+  if (meshPos.y < m_minY) {m_minY = meshPos.y; };
+  if (meshPos.z < m_minZ) {m_minZ = meshPos.z; };
+}
 
 Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
   // Data containers to fill
@@ -61,6 +76,7 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
     vector.x = mesh->mVertices[i].x;
     vector.y = mesh->mVertices[i].y;
     vector.z = mesh->mVertices[i].z;
+    ControllMinMaxPos(vector);
     vertex.SetPos(vector);
 
     // Normals
@@ -260,6 +276,15 @@ ModelData& Model::GetModelData() {
   m_modelData.s_meshIndices = GetModelMeshesIndices();
   m_modelData.s_meshTextures = GetMeshTextures();
   m_modelData.s_modelMat = GetModelMatrix();
+  m_modelData.s_localizePos[0] = glm::vec3(m_modelData.s_modelMat * glm::vec4(m_maxX, m_maxY, m_maxZ,1.0f)); // Top
+  m_modelData.s_localizePos[1] = glm::vec3(m_modelData.s_modelMat * glm::vec4(m_maxX, m_maxY, m_minZ,1.0f));
+  m_modelData.s_localizePos[2] = glm::vec3(m_modelData.s_modelMat * glm::vec4(m_minX, m_maxY, m_minZ,1.0f));
+  m_modelData.s_localizePos[3] = glm::vec3(m_modelData.s_modelMat * glm::vec4(m_minX, m_maxY, m_maxZ,1.0f));
+  m_modelData.s_localizePos[4] = glm::vec3(m_modelData.s_modelMat * glm::vec4(m_maxX, m_minY, m_maxZ,1.0f)); // bottom
+  m_modelData.s_localizePos[5] = glm::vec3(m_modelData.s_modelMat * glm::vec4(m_maxX, m_minY, m_minZ,1.0f));
+  m_modelData.s_localizePos[6] = glm::vec3(m_modelData.s_modelMat * glm::vec4(m_minX, m_minY, m_minZ,1.0f));
+  m_modelData.s_localizePos[7] = glm::vec3(m_modelData.s_modelMat * glm::vec4(m_minX, m_minY, m_maxZ,1.0f));
+  m_modelData.s_localizePos[8] = glm::vec3(m_modelData.s_modelMat * glm::vec4(m_maxX - m_minX, m_maxY - m_minY, m_maxZ - m_minZ, 1.0f));
 
   return m_modelData;
 }
