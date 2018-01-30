@@ -1,9 +1,4 @@
-<<<<<<< HEAD
 #version 450
-=======
-#version 440
-// #version 440
->>>>>>> af3277cfad5f5522bd370552e8fb12a361fd8dc4
 
 #define NR_OF_PNTLIGHTS 1
 struct PntLight {
