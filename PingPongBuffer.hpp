@@ -17,15 +17,6 @@ private:
 
   void createBuffer(GLuint buffer_id);
   void bindAndCompute(GLuint source_buffer, GLuint target_buffer);
-
-  //EXPERIMENT STUFF
-  GLuint m_quadVAO;
-  GLuint m_quadVBO;
-
-  void CreateQuad();
-  void RenderQuad();
-  void bindAndPixel(GLuint source_buffer, GLuint target_buffer);
-
 public:
   PingPongBuffer();
   ~PingPongBuffer();
@@ -44,9 +35,6 @@ public:
 	//void getUniformVec2Location(JMshader* shaderPtr);
 	//
 	//void bindMap();
-
-  //EXPERIMENT STUFF
-  void DoPixel(GLuint src_buffer);
 };
 
 #endif

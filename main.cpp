@@ -42,12 +42,6 @@ const char* lgt_fs = "res/shaders/lightPass_fs.glsl";
 // compute shading
 const char* gau_cs = "res/shaders/PTcompute.glsl";
 
-// EXPERIMENT
-const char* gau_vs = "res/shaders/blurPass_vs.glsl";
-const char* gau_fs = "res/shaders/blurPass_fs.glsl";
-
-
-
 // shadow mapping
 const char* sha_vs = "res/shaders/shadowPass_vs.glsl";
 const char* sha_fs = "res/shaders/shadowPass_fs.glsl";
@@ -73,7 +67,6 @@ int main() {
 
   // SETUP COMPUTE SHADER
   Shader comShader(gau_cs);
-  //Shader comShader(gau_vs, gau_fs);
   display.SetComputeShader(&comShader, &lightShader);
 
   // SETUP SHADOW SHADER
@@ -187,14 +180,7 @@ int main() {
      quadtree.FillModelPack(quadtree.GetRootNode());  // recursivly fill modelPackage in QuadTree
      modelsToDraw = quadtree.GetModelPack();          // Add culled models
      modelsToDraw.push_back(&terrain.GetModelData()); // add always terrain
-
-     //printOpenGLError();//---------------------------------------------------------
-
      display.DrawDR(modelsToDraw, lPack);             // Draw models
-
-     //printOpenGLError();//---------------------------------------------------------
-
-     //while(true){};
 
      // getchar();
      quadtree.ClearModelPack();                      // reset modelpack for new culling

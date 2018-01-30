@@ -186,7 +186,6 @@ void Shader::FindUniformVec3Loc(std::string uniformName) {
   }
   else {
     m_vec3Uniforms.push_back(uniformLoc);
-    //std::cout << "Pushing back <" << uniformName << "> to index " << (m_vec3Uniforms.size() - 1) << '\n';
   }
 }
 
@@ -321,9 +320,7 @@ void Shader::FindUniformSptLightLoc(std::string shader_arr_name, int shader_arr_
 }
 
 void Shader::UploadVec3(glm::vec3 vec, GLuint index) {
-  glUniform3fv(m_vec3Uniforms[index], 1, glm::value_ptr(vec));
-
-  //std::cout << "Uploading index " << index << '\n';
+  glUniformMatrix4fv(m_vec3Uniforms[index], 1, GL_FALSE, glm::value_ptr(vec));
 }
 
 void Shader::UploadMatrix(glm::mat4 matrix, GLuint index) {

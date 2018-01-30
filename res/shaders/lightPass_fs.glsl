@@ -1,4 +1,4 @@
-#version 450
+#version 440
 
 #define NR_OF_PNTLIGHTS 1
 struct PntLight {
@@ -44,7 +44,7 @@ layout (binding=1) uniform sampler2D gNormal;
 layout (binding=2) uniform sampler2D gDiffSpec;
 layout (binding=3) uniform sampler2D gLgtPos;
 layout (binding=7) uniform sampler2D texture_computed0;
-//layout (rgba8, binding=7) uniform image2D texture_computed0;
+//layout (rgba8, binding=6) uniform image2D texture_computed0;
 layout (binding=8) uniform sampler2D lDepth;
 
 //Functions for lights
