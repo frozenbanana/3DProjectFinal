@@ -125,7 +125,7 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
   }
   // Set appropriate openGL version
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   //Set width and height
@@ -163,6 +163,7 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
   // start GLEW extension handler
   glewExperimental = GL_TRUE;
   glewInit();
+  printOpenGLError();//Invalid enumerant. Can be ignored? https://stackoverflow.com/questions/10857335/opengl-glgeterror-returns-invalid-enum-after-call-to-glewinit
 
   // get version info
   const GLubyte* renderer = glGetString(GL_RENDERER); // get renderer string
@@ -347,7 +348,7 @@ void Display::SetComputeShader(Shader* comS, Shader* tarS) {
 
   //Set the uniform that the result should be sent to
   glUseProgram(tarS->GetProgram());
-  //this->FixTextureUniforms(tarS, "computed", 1);
+  this->FixTextureUniforms(tarS, "computed", 1);
   //tarS->FindUniformTextureLoc(type_str, i);
   //glUniform1i(tarS->GetUniform("texture_computed0"), COMPUTE_TEX);
 }
@@ -465,9 +466,7 @@ void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
 }
 
 void Display::DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack) {
-
   /*########## SHADOW PASS ###################################################*/
-
   //Set Viewport
   glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 
@@ -478,17 +477,20 @@ void Display::DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack) {
   //Upload the light matrix
   this->m_shaShaderPtr->UploadMatrix( lPack.s_spt_lights[0].getLightMat(), 1);
 
+  printOpenGLError();//Invalid enumerant ???  // FIXED
+
   //Loop through all models
   for (GLuint i = 0; i < modelPack.size(); i++) {
       this->m_shaShaderPtr->UploadMatrix(modelPack[i]->s_modelMat, 0);
       RenderMeshDR(modelPack[i]);
   }
 
+  printOpenGLError();//Invalid operation. Textures? // FIXED
+
   //Unbind framebuffer after render
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
   /*########## GEOMETRY PASS #################################################*/
-
   //Set Viewport
   glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
@@ -504,6 +506,8 @@ void Display::DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack) {
   //Upload camera position
   this->m_geoShaderPtr->UploadVec3(this->m_camPos, 0);
 
+  printOpenGLError();//Invalid operation. ??? // FIXED
+
   //Upload the light matrix
   this->m_geoShaderPtr->UploadMatrix( lPack.s_spt_lights[0].getLightMat(), 3);
 
@@ -512,6 +516,8 @@ void Display::DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack) {
       RenderMeshDR(modelPack[i]);
   }
 
+  printOpenGLError();//Invalid operation : in rendermesh. Textures? // FIXED
+
   //Unbind framebuffer after render
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -519,7 +525,8 @@ void Display::DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack) {
   /*########## COMPUTE PASS ##################################################*/
   glUseProgram(this->m_comShaderPtr->GetProgram());
 
-  this->m_ppBuffer.DoPingPong(10, this->m_gBuffer.GetColTextureId());
+  this->m_ppBuffer.DoPingPong(2, this->m_gBuffer.GetColTextureId());
+  //this->m_ppBuffer.DoPixel(this->m_gBuffer.GetColTextureId());
 
   /*########## LIGHT PASS ####################################################*/
   //Select the program to use and load up the gBuffer textures
@@ -529,8 +536,12 @@ void Display::DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack) {
   this->m_ppBuffer.BindResult();
   this->m_lBuffer.PrepLightPass();
 
+  printOpenGLError();//Invalid operation (??? vec3?) // FIXED
+
   //Upload camera position
-  this->m_geoShaderPtr->UploadVec3(this->m_camPos, 0);
+  this->m_lgtShaderPtr->UploadVec3(this->m_camPos, 0);
+
+  printOpenGLError();//Invalid operation vec3
 
   //Upload all lights in the LightPack
   this->UploadLightPack(this->m_lgtShaderPtr, lPack);
@@ -573,9 +584,17 @@ void Display::RenderMeshDR(ModelData* modelData) {
           //No textures in mesh
           break;
       }
+
+      printOpenGLError();//Invalid operation. Textures? // FIXED
+
       // std::cout << "n_tex:" << n_tex << '\n';
      //this->m_geoShaderPtr->DirectInt("n_tex", n_tex);  //Variable uploaded to shader for checking if the uniform samplers contain anything
      this->m_geoShaderPtr->UploadVec3(n_tex, 1);
+
+     printOpenGLError();  //Invalid operation. Vec3 // Identified
+                          //This error is set during the shadow pass due to
+                          //there being no n_tex vector in the shader
+                          //Nothing is changed and the error should be harmless
 
     // draw points 0-3 from the currently bound VAO with current in-use shader
     glDrawElements(GL_TRIANGLES, modelData->s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);

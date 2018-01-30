@@ -41,7 +41,7 @@ void PingPongBuffer::bindAndCompute(GLuint source_buffer, GLuint target_buffer) 
     GL_FALSE,
     0,
     GL_READ_ONLY,			  //Only read from this texture
-    GL_RGBA32F						//GL_RGB16F
+    GL_RGBA8						//GL_RGB16F
   );
 
   glBindImageTexture(
@@ -51,7 +51,7 @@ void PingPongBuffer::bindAndCompute(GLuint source_buffer, GLuint target_buffer) 
     GL_FALSE,
     0,
     GL_WRITE_ONLY,			//Only write to this texture
-    GL_RGBA32F						//GL_RGB16F
+    GL_RGBA8						//GL_RGB16F
   );
 
   glDispatchCompute(this->m_texture_width / 10, this->m_texture_height / 10, 1);
@@ -83,6 +83,9 @@ void PingPongBuffer::InitPingPongBuffer(int texture_width, int texture_height, G
   this->createBuffer(this->m_buffers[0]);
   this->createBuffer(this->m_buffers[1]);
 
+  //EX
+  this->CreateQuad();
+
 }
 
 void PingPongBuffer::DoPingPong(int n_passes, GLuint src_buffer) {
@@ -111,12 +114,13 @@ void PingPongBuffer::DoPingPong(int n_passes, GLuint src_buffer) {
     y = t;
 
   }
+
 }
 
 void PingPongBuffer::BindResult() {
   Bind2DTextureTo(this->m_buffers[0], COMPUTE_TEX);
   //glBindImageTexture(
-  //  COMPUTE_TEX,        //Always bind to slot 0
+  //  COMPUTE_TEX,        //Always bind to slot 7
   //  this->m_buffers[0],
   //  0,
   //  GL_FALSE,
@@ -124,4 +128,84 @@ void PingPongBuffer::BindResult() {
   //  GL_READ_ONLY,			  //Only read from this texture
   //  GL_RGBA8						//GL_RGB16F
   //);
+}
+
+//EXPERIMENT STUFF
+//Private
+void PingPongBuffer::CreateQuad() {
+  //Create four vertices covering the window
+  float quad[] = {
+    //Pos                 //UVs
+    -1.0f,  1.0f, 1.0f,   0.0f, 1.0f,
+    -1.0f, -1.0f, 1.0f,   0.0f, 0.0f,
+     1.0f,  1.0f, 1.0f,   1.0f, 1.0f,
+     1.0f, -1.0f, 1.0f,   1.0f, 0.0f
+  };
+
+  //Generate arrays and buffers
+  glGenVertexArrays(1, &(this->m_quadVAO));
+  glGenBuffers(1, &(this->m_quadVBO));
+
+  //Bind them together
+  glBindVertexArray(this->m_quadVAO);
+  glBindBuffer(GL_ARRAY_BUFFER, this->m_quadVBO);
+
+  //Tell GL how to handle the buffer
+  glBufferData(GL_ARRAY_BUFFER, sizeof(quad), &quad, GL_STATIC_DRAW);
+
+  //Tell GL how to read buffer
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(
+    0,                  //Index of the attribute
+    3,                  //Number of components for the attribute
+    GL_FLOAT,           //Type of values in attribute
+    GL_FALSE,           //Are they normalized?
+    5 * sizeof(float),  //In the array, how long steps should be taken for each element?
+    (void*)0          //Inside the element, how big is the offset to the relevant values?
+  );
+
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(
+    1,                          //Index of the attribute
+    2,                          //Number of components for the attribute
+    GL_FLOAT,                   //Type of values in attribute
+    GL_FALSE,                   //Are they normalized?
+    5 * sizeof(float),          //In the array, how long steps should be taken for each element?
+    (void*)(3 * sizeof(float))  //Inside the element, how big is the offset to the relevant values?
+  );
+}
+
+void PingPongBuffer::RenderQuad() {
+  glBindVertexArray(this->m_quadVAO);     //Bind the quad
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);  //Draw the stuff
+  glBindVertexArray(0);                   //Unbind the quad
+}
+
+void PingPongBuffer::bindAndPixel(GLuint source_buffer, GLuint target_buffer) {
+  glBindImageTexture(
+    0,                  //Always bind to slot 0
+    source_buffer,
+    0,
+    GL_FALSE,
+    0,
+    GL_READ_ONLY,			  //Only read from this texture
+    GL_RGBA8						//GL_RGB16F
+  );
+
+  glBindImageTexture(
+    1,                  //Always bind to slot 1
+    target_buffer,
+    0,
+    GL_FALSE,
+    0,
+    GL_WRITE_ONLY,			//Only write to this texture
+    GL_RGBA8						//GL_RGB16F
+  );
+
+  this->RenderQuad();
+}
+
+//Public
+void PingPongBuffer::DoPixel(GLuint src_buffer) {
+  this->bindAndPixel(src_buffer, this->m_buffers[0]); //NTS: Bind [0] directly
 }
