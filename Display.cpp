@@ -170,7 +170,7 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
   const GLubyte* version = glGetString(GL_VERSION); // version as a string
   std::cout << "Renderer: " << renderer << std::endl;
   std::cout << "Version: " << version << std::endl;
-  std::cout << "GLEW version: " << GLEW_VERSION << "." << GLEW_VERSION_MAJOR << "." << GLEW_VERSION_MINOR << "." << GLEW_VERSION_MICRO << std::endl;
+  std::cout << "GLEW version: " << glewGetString(GLEW_VERSION) << std::endl;
 
   m_deltaTime = 0.0f;
   m_lastFrame = 0.0f;
@@ -289,7 +289,7 @@ void Display::SetComputeShader(Shader* comS, Shader* tarS) {
 
   //Set the uniform that the result should be sent to
   glUseProgram(tarS->GetProgram());
-  //this->FixTextureUniforms(tarS, "computed", 1);
+  this->FixTextureUniforms(tarS, "computed", 1);
   //tarS->FindUniformTextureLoc(type_str, i);
   //glUniform1i(tarS->GetUniform("texture_computed0"), COMPUTE_TEX);
 }
