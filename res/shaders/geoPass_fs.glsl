@@ -34,7 +34,7 @@ void main() {
 
   //gNormal = (1 - n_tex.z) * normalize(g_nor) + n_tex.z * TBN * (texture(texture_normal0, g_uvs).rgb * 2.0  - 1.0);
   gNormal = (1 - n_tex.z) * normalize(g_nor);
-  gNormal = n_tex.z  TBN * (texture(texture_normal0, g_uvs).rgb * 2.0  - 1.0);
+  gNormal = n_tex.z * TBN * (texture(texture_normal0, g_uvs).rgb * 2.0  - 1.0);
 
   gDiffSpec.rgb = texture(texture_diffuse0, g_uvs).rgb;
   //gDiffSpec.rgb = texture(texture_normal0, g_uvs).rgb;
