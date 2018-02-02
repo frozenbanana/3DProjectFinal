@@ -66,8 +66,8 @@ int main() {
   display.SetDRShaders(&geoShader, &lightShader);
 
   // SETUP COMPUTE SHADER
-  Shader comShader(gau_cs);
-  display.SetComputeShader(&comShader, &lightShader);
+  //Shader comShader(gau_cs);
+  //display.SetComputeShader(&comShader, &lightShader);
 
   // SETUP SHADOW SHADER
   Shader shaShader(sha_vs, sha_fs);
