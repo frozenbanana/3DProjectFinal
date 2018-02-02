@@ -163,6 +163,7 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
   // start GLEW extension handler
   glewExperimental = GL_TRUE;
   glewInit();
+  //Error: Invalid Enum (Last and potentially only relevant error from search)
 
   // get version info
   const GLubyte* renderer = glGetString(GL_RENDERER); // get renderer string
@@ -215,66 +216,6 @@ void Display::ToggleCamera() {
 void Display::Clear(float r, float g, float b, float a) {
 	glClearColor(r, g, b, a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void Display::SetShader(Shader* shaderPtr) {
-  //NTS: Function specific for this program
-
-  m_shaderPtr = shaderPtr;
-
-  //Locate space in shader for matrices
-  m_shaderPtr->FindUniformMatrixLoc("model");
-  m_shaderPtr->FindUniformMatrixLoc("view");
-  m_shaderPtr->FindUniformMatrixLoc("perspective");
-  m_shaderPtr->FindUniformVec3Loc("camPos");
-
-  //Locate space in shader for lights
-  this->FixLightUniforms(m_shaderPtr, "pnt_lights", "dir_lights", "spt_lights", 1, 0, 0);
-}
-
-void Display::Update() {
-  glfwSwapBuffers(m_window);
-  glfwPollEvents();
-  // Set frame time
-  GLfloat currentFrame = glfwGetTime();
-  m_deltaTime = currentFrame - m_lastFrame;
-  m_lastFrame = currentFrame;
-
-  if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-    m_isClosed = true;
-  }
-
-  // m_camPtr->UpdateCameraVectors();
-  glm::mat4 modelMatrix = glm::mat4(1.0f);
-  glm::mat4 viewMatrix = m_camPtr->GetViewMatrix();
-  glm::mat4 persMatrix = m_camPtr->GetPersMatrix();
-  glm::vec3 camPos = m_camPtr->GetPosition();
-  m_shaderPtr->UploadMatrix(modelMatrix, 0);
-  m_shaderPtr->UploadMatrix(viewMatrix, 1);
-  m_shaderPtr->UploadMatrix(persMatrix, 2);
-  m_shaderPtr->UploadVec3(camPos, 0); // first index of vec3uniform vector in Shader class
-}
-
-void Display::Draw(ModelData& modelData, LightPack& lPack) {
-  if (modelData.s_insideFrustum) {
-    glUseProgram(m_shaderPtr->GetProgram());
-
-    this->UploadLightPack(m_shaderPtr, lPack);
-
-    m_shaderPtr->UploadMatrix(modelData.s_modelMat, 0);
-    RenderMesh(&modelData);
-  }
-}
-
-void Display::Draw(std::vector<ModelData*> modelPack, LightPack& lPack) {
-    // Modelpack contains all models inside frustum
-    glUseProgram(m_shaderPtr->GetProgram());
-
-    UploadLightPack(m_shaderPtr, lPack);
-    for (GLuint i = 0; i < modelPack.size(); i++) {
-      m_shaderPtr->UploadMatrix(modelPack[i]->s_modelMat, 0);
-      RenderMesh(modelPack[i]);
-    }
 }
 
 void Display::RenderMesh(ModelData* modelData) {
@@ -395,75 +336,6 @@ void Display::UpdateDR() {
   this->m_pers = this->m_camPtr->GetPersMatrix();
 }
 
-void Display::DrawDR(ModelData& modelData, LightPack& lPack) {
-  // std::cout << "In DrawDR" << '\n';
-  /*########## GEOMETRY PASS #################################################*/
-  //Select program to use and bind framebuffer
-  glUseProgram(this->m_geoShaderPtr->GetProgram());
-  this->m_gBuffer.PrepGeoPass();
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  //Upload the model matrix for the model and loop through all meshes
-  this->m_geoShaderPtr->UploadMatrix(modelData.s_modelMat, 0);
-  this->m_geoShaderPtr->UploadMatrix(this->m_view, 1);
-  this->m_geoShaderPtr->UploadMatrix(this->m_pers, 2);
-
-  for (GLuint i = 0; i < modelData.s_meshIndices.size(); i++) {
-    glBindVertexArray(modelData.s_VAOs[i]);
-
-    //Upload mesh textures
-    int n_tex = 0;        //Varable tracking how many textures were found
-    if (modelData.s_meshTextures.size() > 0) {
-      switch (modelData.s_meshTextures[i].size()) {
-        case 3:
-          Bind2DTextureTo(modelData.s_meshTextures[i][2].id, NORMALMAP_TEX);
-          n_tex++;
-        case 2:
-          //NTS:  The below line SHOULD NOT BE USED. The uniform is linked to a binding from where it gets its values
-          //      Uploading to this uniform messes with how it is read. Line (And function) left for future reference.
-          //this->UploadTexture(this->m_geoShaderPtr, modelData.s_meshTextures[i][1].id, 1);    //Specular
-          Bind2DTextureTo(modelData.s_meshTextures[i][1].id, MESHSPEC_TEX);
-          n_tex++;
-        case 1:
-          //this->UploadTexture(this->m_geoShaderPtr, modelData.s_meshTextures[i][0].id, 0);    //Diffuse
-          Bind2DTextureTo(modelData.s_meshTextures[i][0].id, MESHDIFF_TEX);
-          n_tex++;
-          break;
-        default:
-          //No textures in mesh
-          break;
-      }
-    }
-    this->m_geoShaderPtr->DirectInt("n_tex", n_tex);  //Variable uploaded to shader for checking if the uniform samplers contain anything
-
-    // draw points 0-3 from the currently bound VAO with current in-use shader
-    glDrawElements(GL_TRIANGLES, modelData.s_meshIndices[i].size(), GL_UNSIGNED_INT, 0);
-  }
-
-  //Unbind framebuffer after render
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  /*########## COMPUTE PASS ##################################################*/
-  glUseProgram(this->m_comShaderPtr->GetProgram());
-
-  this->m_ppBuffer.DoPingPong(2, this->m_gBuffer.GetColTextureId());
-
-  /*########## LIGHT PASS ####################################################*/
-  //Select the program to use and load up the gBuffer textures
-  glUseProgram(this->m_lgtShaderPtr->GetProgram());
-
-  this->m_gBuffer.PrepLightPass();
-  this->m_ppBuffer.BindResult();
-
-  //Upload all lights in the LightPack
-  this->UploadLightPack(this->m_lgtShaderPtr, lPack);
-
-  //Draw the quad filling the screen
-  this->RenderQuad();
-
-}
-
 void Display::DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack) {
 
   /*########## SHADOW PASS ###################################################*/
@@ -530,7 +402,7 @@ void Display::DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack) {
   this->m_lBuffer.PrepLightPass();
 
   //Upload camera position
-  this->m_geoShaderPtr->UploadVec3(this->m_camPos, 0);
+  this->m_lgtShaderPtr->UploadVec3(this->m_camPos, 0);
 
   //Upload all lights in the LightPack
   this->UploadLightPack(this->m_lgtShaderPtr, lPack);

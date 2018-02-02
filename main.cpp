@@ -25,7 +25,7 @@
 const char* heightmapPath = "res/heightmap/example/BMP_example.bmp";
 const char* terrainDiffTexPath = "res/textures/grass.jpeg";
 const char* terrainSpecTexPath = "res/textures/exampleTerrainSpecular.png";
-const char* normalmapPath = "res/textures/normal1.jpeg";
+const char* normalmapPath = "res/textures/NormalMap.png";
 
 // basic shader
 const char* vertex_shader = "res/shaders/base_vs.glsl";

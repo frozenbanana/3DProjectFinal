@@ -80,17 +80,17 @@ public:
   void Clear(float r, float g, float b, float a);
 
   // SIMPLE
-  void SetShader(Shader* shaderPtr);
-  void Update();
-  void Draw(ModelData& modelData, LightPack& lPack);
-  void Draw(std::vector<ModelData*> modelPack, LightPack& lPack);
+  //void SetShader(Shader* shaderPtr);
+  //void Update();
+  //void Draw(ModelData& modelData, LightPack& lPack);
+  //void Draw(std::vector<ModelData*> modelPack, LightPack& lPack);
 
   // ADVANCED
   void SetDRShaders(Shader* geoS, Shader* lgtS);
   void SetComputeShader(Shader* comS, Shader* tarS);
   void SetShadowShader(Shader* shaS);
   void UpdateDR();
-  void DrawDR(ModelData& modelData, LightPack& lPack);
+  //void DrawDR(ModelData& modelData, LightPack& lPack);
   void DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack);
 
 };

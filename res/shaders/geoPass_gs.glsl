@@ -1,4 +1,4 @@
-#version 420
+#version 450
 
 layout(triangles) in;
 layout(triangle_strip, max_vertices = 3) out;
@@ -6,7 +6,7 @@ layout(triangle_strip, max_vertices = 3) out;
 uniform vec3 camPos;
 uniform mat4 model;
 // in vec3 v_posWorld[];
-in vec3 v_worldPos[];
+//in vec3 v_worldPos[];
 in vec3 v_pos[];
 in vec3 v_nor[];
 in vec2 v_uvs[];
@@ -66,16 +66,21 @@ bool cullPrimitive(){
   vec3 cullCam;		 // The vector from the corner to the worldera
   float coe;		   // A coefficient holder
 
-  vec3 cornerVec = gl_in[0].gl_Position.xyz;
-  edge1 = gl_in[1].gl_Position.xyz - cornerVec;
-  edge2 = gl_in[2].gl_Position.xyz - cornerVec;
+  //vec3 cornerVec = gl_in[0].gl_Position.xyz;
+  //edge1 = gl_in[1].gl_Position.xyz - cornerVec;
+  //edge2 = gl_in[2].gl_Position.xyz - cornerVec;
+
+  vec3 cornerVec = v_pos[0];
+  edge1 = v_pos[2] - cornerVec;
+  edge2 = v_pos[1] - cornerVec;
 
   cullNorm = normalize(cross(edge2, edge1));
   // normal of triangle in world space
   transformedCullNorm = (model * vec4(cullNorm, 0.0)).xyz;
 
   // vector from worldera to corner point of triangle
-  cullCam = normalize(cornerVec - camPos);
+  cullCam = normalize(cornerVec - camPos);                  //Done in World Space
+  //cullCam = normalize(cornerVec - vec3(0.0, 0.0, 0.0));   //Done in MVP Space
 
   coe = dot(transformedCullNorm, cullCam);
 

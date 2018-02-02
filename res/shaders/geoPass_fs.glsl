@@ -1,4 +1,4 @@
-#version 440
+#version 450
 
 in vec3 g_pos;
 in vec3 g_nor;
@@ -32,13 +32,16 @@ void main() {
                             g_tan_world.y, g_btan_world.y, g_nor_world.y,
                             g_tan_world.z, g_btan_world.z, g_nor_world.z));
 
-  //gNormal = ((3 - n_tex)/3) * normalize(g_nor) + (n_tex/3)* TBN * (texture(texture_normal0, g_uvs).rgb * 2.0  - 1.0);
-  gNormal = n_tex.z * normalize(g_nor) + n_tex.z * TBN * (texture(texture_normal0, g_uvs).rgb * 2.0  - 1.0);
+  //gNormal = (1 - n_tex.z) * normalize(g_nor) + n_tex.z * TBN * (texture(texture_normal0, g_uvs).rgb * 2.0  - 1.0);
+  gNormal = (1 - n_tex.z) * normalize(g_nor);
+  gNormal = n_tex.z  TBN * (texture(texture_normal0, g_uvs).rgb * 2.0  - 1.0);
 
   gDiffSpec.rgb = texture(texture_diffuse0, g_uvs).rgb;
+  //gDiffSpec.rgb = texture(texture_normal0, g_uvs).rgb;
+  //gDiffSpec.rgb = gNormal;
   //gDiffSpec = vec4(1.0);
 
-  gDiffSpec.a = texture(texture_specular0, g_uvs).r;
+  gDiffSpec.a = (1 - n_tex.y) * 1.0 + n_tex.y * texture(texture_specular0, g_uvs).r;
 
   gLgtPos = g_lgtpos;
 }
