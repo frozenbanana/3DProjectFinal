@@ -151,8 +151,8 @@ int main() {
   lightHandler.AddDirLight(
     glm::vec3(-1.0, -1.0, 1.0),
     COLOR_WHITE,
-    COLOR_GREEN,
-    COLOR_GREEN
+    COLOR_WHITE,
+    COLOR_WHITE
   );
 
   lightHandler.AddSptLight(
@@ -160,7 +160,7 @@ int main() {
     glm::vec3(85.0f, 4.0f, 85.0f),
     0.1f,
     150.0f,
-    COLOR_WHITE,
+    COLOR_RED,
     COLOR_RED,
     COLOR_RED
   );
