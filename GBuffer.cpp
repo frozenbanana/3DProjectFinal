@@ -71,7 +71,7 @@ void GBuffer::InitGBuffer() {
     //Create and attach texture for diffuse and specular color
     glGenTextures(1, &(this->m_gDiffSpec));
     this->CreateTexture(this->m_gDiffSpec, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
-    // this->CreateTexture(this->m_gDiffSpec, GL_RGBA32F, GL_RGBA32F, GL_UNSIGNED_BYTE);
+    //this->CreateTexture(this->m_gDiffSpec, GL_RGBA32F, GL_RGBA, GL_FLOAT);
     this->AttachTexture(this->m_gDiffSpec, GL_COLOR_ATTACHMENT2);
 
     /*############### SHADOW MAPPING #########################################*/

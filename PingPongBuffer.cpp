@@ -91,10 +91,13 @@ void PingPongBuffer::DoPingPong(int n_passes, GLuint src_buffer) {
                                 //Also ensures that pingpongBuffer[0] is allways written to last
   int x = 1;
   int y = 0;
-  int t;		                    //Holder variable
+  //int t;		                    //Holder variable
 
   //Do a first pass if there are supposed to be passes at all
   if(n_passes > 0){
+
+    glUniform2i(this->m_xy_uniLoc, y, x);		                                    //Update uniform vector
+
     this->bindAndCompute(src_buffer, this->m_buffers[1]);
   }
 
@@ -106,22 +109,24 @@ void PingPongBuffer::DoPingPong(int n_passes, GLuint src_buffer) {
 
     //Swap so x = 0 or 1
     //and y = 1 or 0
-    t = x;
-    x = y;
-    y = t;
+    //t = x;
+    //x = y;
+    //y = t;
+    x = !x;
+    y = !y;
 
   }
 }
 
 void PingPongBuffer::BindResult() {
-  Bind2DTextureTo(this->m_buffers[0], COMPUTE_TEX);
-  //glBindImageTexture(
-  //  COMPUTE_TEX,        //Always bind to slot 0
-  //  this->m_buffers[0],
-  //  0,
-  //  GL_FALSE,
-  //  0,
-  //  GL_READ_ONLY,			  //Only read from this texture
-  //  GL_RGBA8						//GL_RGB16F
-  //);
+  //Bind2DTextureTo(this->m_buffers[0], COMPUTE_TEX);
+  glBindImageTexture(
+    COMPUTE_TEX,        //Slot
+    this->m_buffers[0],
+    0,
+    GL_FALSE,
+    0,
+    GL_READ_WRITE,			  //Only read from this texture
+    GL_RGBA8						//GL_RGB16F
+  );
 }
