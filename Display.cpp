@@ -392,7 +392,7 @@ void Display::DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack) {
   /*########## COMPUTE PASS ##################################################*/
   glUseProgram(this->m_comShaderPtr->GetProgram());
 
-  this->m_ppBuffer.DoPingPong(10, this->m_gBuffer.GetColTextureId());
+  this->m_ppBuffer.DoPingPong(1, this->m_gBuffer.GetColTextureId());
 
   /*########## LIGHT PASS ####################################################*/
   //Select the program to use and load up the gBuffer textures

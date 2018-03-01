@@ -9,15 +9,21 @@ layout (local_size_x=10 , local_size_y=10 , local_size_z=1) in;			//Local work-g
 
 //shared vec4 row[640];
 //shared vec4 col[480];
-shared vec4 both[2][640];
+//shared vec4 both[2][640]; //NTS: Wrong, is not 2D, is 2 times 1D
+
+shared vec4 colMap[10][10]; //Positions within one global work group and between the local work groups
 
 uniform ivec2 xORy;														//A variable deciding if blur is made vertically or horizontally
 
-//uniform float weight[5] = float[] (0.38774, 0.06136, 0.06136, 0.24477, 0.24477);		//Gaussian curve numbers [Declining]
-uniform float weight[5] = float[] (0.24477, 0.06136, 0.38774, 0.06136, 0.24477);		//Gaussian curve numbers [Spread]
+//uniform float weight[5] = float[] (0.38774, 0.24477, 0.24477, 0.06136, 0.06136);		//Gaussian curve numbers [Declining]
+//uniform float weight[5] = float[] (0.06136, 0.24477, 0.38774, 0.24477, 0.06136);		//Gaussian curve numbers [Spread]
+uniform float weight[5] = float[] (0.7, 0.8, 0.9, 0.8, 0.7);
 
 void main() {
   ivec2 txlPos;		//A variable keeping track of where on the texture current texel is from
+
+  ivec2 locPos;
+
   vec4 result = vec4(0.0, 0.0, 0.0, 0.0);		//A variable to store color
   vec2 offset;		//A vector to tell where new values should be gotten from
   ivec2 plus_offset;
@@ -26,10 +32,17 @@ void main() {
 
   txlPos = ivec2(gl_GlobalInvocationID.xy);		//Get txl-pos
 
+  //The index for the shared colMap variable can be determined using
+  //gl_LocalInvocationID which gives coordinates between (0,0) and (9, 9)
+  locPos = ivec2(gl_LocalInvocationID.xy);
+
   //row[txlPos.x] = imageLoad(texture_source0, txlPos);
   //col[txlPos.y] = row[txlPos.x];
-  both[0][txlPos.x] = imageLoad(texture_source0, txlPos);
-  both[1][txlPos.y] = both[0][txlPos.x];
+
+  //both[0][txlPos.x] = imageLoad(texture_source0, txlPos);
+  //both[1][txlPos.y] = both[0][txlPos.x];
+
+  colMap[locPos.x][locPos.y] = imageLoad(texture_source0, txlPos);
 
   barrier();
 
@@ -53,19 +66,27 @@ void main() {
   }
 */
 
-  int maxX_maxY[2] = {640, 480};
-  int curX_curY[2] = {txlPos.x, txlPos.y};
+  //int maxX_maxY[2] = {640, 480};
+  //int mx = 10;
+
+  //int curX_curY[2] = {txlPos.x, txlPos.y};
+  int cr = int( dot(locPos, xORy) );
 
   for (int i = -2; i < 3; i++) {
-    int mx = maxX_maxY[ xORy.y ];   //Get the max value for the pass
-    int cr = curX_curY[ xORy.y ];   //Get the current value for the pass
+    //int mx = maxX_maxY[ xORy.y ];   //Get the max value for the pass
+    //int cr = curX_curY[ xORy.y ];   //Get the current value for the pass
 
-    int index = min( max(cr + i , 0) , mx );  //Determine if the index will be out-of-bounds
+    //int index = min( max(cr + i , 0) , mx );  //Determine if the index will be out-of-bounds
+    int index = min( max(cr + i , 0) , 10 );
 
-    result += both[xORy.y][index] * weight[i+2];
+    //result += both[xORy.y][index] * weight[i+2];
+    result += colMap[index][locPos.y] * weight[i+2] * xORy.x;
+    result += colMap[locPos.x][index] * weight[i+2] * xORy.y;
   }
 
   //result = vec4(vec2(gl_GlobalInvocationID.xy) / vec2(640,480), 0.0, 1.0);
+  //result = vec4(1.0, 0.0, 0.0, 0.0);
+  //result = imageLoad(texture_source0, txlPos);
 
   imageStore(texture_target0, txlPos, result);			//Save color in target texture
 }

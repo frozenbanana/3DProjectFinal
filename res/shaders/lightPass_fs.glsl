@@ -91,11 +91,11 @@ void main() {
 
   out_col = vec4(fin_col, 1.0);
 
-  //if (v_uvs.x < 0.5) {
-  // out_col = texture(texture_computed0, v_uvs);
-  // //ivec2 imgCrds = ivec2( v_uvs.x * 640, v_uvs.y * 480 );
-  // //out_col = imageLoad(texture_computed0, imgCrds);
-  //}
+  if (v_uvs.x < 0.5) {
+   out_col = texture(texture_computed0, v_uvs);
+   //ivec2 imgCrds = ivec2( v_uvs.x * 640, v_uvs.y * 480 );
+   //out_col = imageLoad(texture_computed0, imgCrds);
+  }
 
   //out_col += pnt_lights[0].dif * 0.01 + dir_lights[0].dif * 0.01 + spt_lights[0].dif * 0.01; //All uploads must be used or we get a segmentation error
 }//Main
@@ -122,7 +122,7 @@ vec3 pntLightCalc(PntLight lgt, vec3 frag_pos, vec3 frag_nor, vec3 view_dir, vec
 
 vec3 dirLightCalc(DirLight lgt, vec3 frag_nor, vec3 view_dir, vec4 frag_col) {
   vec3 light_dir = normalize(-lgt.dir);
-  vec3 ref_dir = reflect(light_dir, frag_nor);
+  vec3 ref_dir = reflect(-light_dir, frag_nor);
 
   float dif_coe = max(dot(frag_nor, light_dir), 0.0);
   float spe_coe = pow( max( dot(view_dir, ref_dir), 0.0 ),  1.0 /*M?*/);
