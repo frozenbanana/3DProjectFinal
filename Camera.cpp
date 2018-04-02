@@ -19,7 +19,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch)
   // make camera perspective matrix
   m_pers = glm::perspective(m_fov, m_aspect, m_nearPlane, m_farPlane);
 
-  m_movementSpeed = 10.0f;
+  m_movementSpeed = 50.0f;
   m_mouseSensitivity = 0.6f;
   m_zoom = 1.0f;
   UpdateCameraVectors();

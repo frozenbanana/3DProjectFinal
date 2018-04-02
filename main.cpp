@@ -131,9 +131,10 @@ int main() {
   }
 
   // SETUP lights
+  glm::vec3 pntLigtPos(30.0f, 30.0f, 20.0f);
   LightHandler lightHandler;
   lightHandler.AddPntLight(
-    glm::vec3(30.0f, 30.0f, 30.0f),
+    pntLigtPos,
     COLOR_WHITE,
     COLOR_WHITE,
     COLOR_WHITE,
@@ -142,9 +143,9 @@ int main() {
     0.024
   );
 
+  // supportive cube to show point light position
   Model pnt_light_cube("res/models/cube/cube_green_phong_12_tris_QUADS.obj");
-  pnt_light_cube.SetPos(glm::vec3(30.0, 30.0, 30.0));
-  pnt_light_cube.SetPos(glm::vec3(0.5, 0.5, 0.5));
+  pnt_light_cube.SetPos(pntLigtPos);
 
   quadtree.InsertModelInTree(&pnt_light_cube.GetModelData());
 
@@ -171,7 +172,7 @@ int main() {
 
   // //PACKAGE LIGHT DATA TO DISPLAY (STATIC)
   LightPack lPack = lightHandler.GetLightPack();
-  display.Clear(0.0f, 0.20f, 0.1f, 1.0f);
+  display.Clear(0.0f, 0.0f, 0.0f, 0.0f);
   //DRAW LOOP
   while(!display.IsClosed()) {
      display.UpdateDR();

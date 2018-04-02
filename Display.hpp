@@ -39,6 +39,7 @@ private:
   Camera* m_camPtr2;
   glm::vec3 m_camPos;
   bool m_camSwap;
+  bool m_applyGravity;
 
   GLuint m_quadVAO;
   GLuint m_quadVBO;
@@ -77,6 +78,7 @@ public:
   void SetExtraCamera(Camera* camPtr);
   void SetTerrain(Terrain* terrainPtr);
   void ToggleCamera();
+  void ToggleGravity();
   void Clear(float r, float g, float b, float a);
 
   // SIMPLE

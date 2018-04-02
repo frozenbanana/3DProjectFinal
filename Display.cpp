@@ -147,6 +147,10 @@ Display::Display(int width, int height, const std::string& title, Camera* camPtr
   m_camPtr2 = nullptr;
   m_camSwap = false;
 
+
+  // Activate gravity
+  m_applyGravity = true;
+
   // Bind terrain
   m_terrain = terrainPtr;
 
@@ -212,6 +216,10 @@ void Display::ToggleCamera() {
     m_camPtr = m_camPtr2;
     m_camPtr2 = temp;
   }
+}
+
+void Display::ToggleGravity() {
+  m_applyGravity = !m_applyGravity;
 }
 
 void Display::Clear(float r, float g, float b, float a) {
@@ -328,9 +336,10 @@ void Display::UpdateDR() {
 
   this->m_camPos = m_camPtr->GetPosition();
 
-  if (m_camPos.x > 0 && m_camPos.z > 0 && m_terrain != nullptr) {
+  if (m_camPos.x > 0 && m_camPos.z > 0
+    && m_applyGravity == true) {
     GLfloat heightLimit = m_terrain->GetHeight(m_camPos.x, m_camPos.z);
-    //m_camPtr->ApplyGravity(heightLimit, m_deltaTime);
+    m_camPtr->ApplyGravity(heightLimit, m_deltaTime);
   }
 
   this->m_view = this->m_camPtr->GetViewMatrix();
@@ -392,11 +401,7 @@ void Display::DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack) {
   /*########## COMPUTE PASS ##################################################*/
   //glUseProgram(this->m_comShaderPtr->GetProgram());
 
-<<<<<<< HEAD
-  this->m_ppBuffer.DoPingPong(1, this->m_gBuffer.GetColTextureId());
-=======
   //this->m_ppBuffer.DoPingPong(10, this->m_gBuffer.GetColTextureId());
->>>>>>> 6eeab93bf16de260130777a15c843c4c8477e699
 
   /*########## LIGHT PASS ####################################################*/
   //Select the program to use and load up the gBuffer textures
@@ -492,6 +497,8 @@ void KeyCallback(GLFWwindow* winPtr, int key, int scan, int act, int mode) {
 
   if (g_key_data[GLFW_KEY_C])
     d->ToggleCamera();
+  if (g_key_data[GLFW_KEY_G])
+    d->ToggleGravity();
 }
 
 void MouseCallback(GLFWwindow* winPtr, double xPos, double yPos) {
