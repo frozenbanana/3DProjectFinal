@@ -125,6 +125,7 @@ vec3 dirLightCalc(DirLight lgt, vec3 frag_nor, vec3 view_dir, vec4 frag_col) {
   vec3 ref_dir = reflect(-light_dir, frag_nor);
 
   float dif_coe = max(dot(frag_nor, light_dir), 0.0);
+
   float spe_coe = pow( max( dot(view_dir, ref_dir), 0.0 ),  1.0 /*M?*/);
 
   vec3 amb_col = vec3(lgt.amb) * frag_col.rgb;

@@ -390,9 +390,13 @@ void Display::DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   /*########## COMPUTE PASS ##################################################*/
-  glUseProgram(this->m_comShaderPtr->GetProgram());
+  //glUseProgram(this->m_comShaderPtr->GetProgram());
 
+<<<<<<< HEAD
   this->m_ppBuffer.DoPingPong(1, this->m_gBuffer.GetColTextureId());
+=======
+  //this->m_ppBuffer.DoPingPong(10, this->m_gBuffer.GetColTextureId());
+>>>>>>> 6eeab93bf16de260130777a15c843c4c8477e699
 
   /*########## LIGHT PASS ####################################################*/
   //Select the program to use and load up the gBuffer textures
