@@ -84,7 +84,6 @@ void QuadTree::InsertModelInTree(ModelData* modeldata) {
   int correctIndex = -1;
   // Get a point of model
   glm::vec4 modelPos = glm::column(modeldata->s_modelMat, 3);
-  // std::cout << "modelpos: " << modelPos.x << ", "<< modelPos.y << ", " << modelPos.z <<'\n';
 
   // compare model with node pos to determine best locataion for model
   Node* currentNodePtr = m_rootNode;

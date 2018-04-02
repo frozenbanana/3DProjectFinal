@@ -43,7 +43,7 @@ public:
   ~Frustum() {}
 
   GLboolean InsideFrustrum(glm::vec3 point) {
-    for (GLuint i = 0; i < 4; i++) {    // Only need to check left, right, far and near plane
+    for (GLuint i = 0; i < 6; i++) {    // Only need to check left, right, far and near plane
        if (m_planes[i].ClassifyPoint(point) < 0.0f) {
          return false;
        }
@@ -57,22 +57,15 @@ public:
     // Prepare node for checking
     nodePtr->s_insideFrustum = false;
 
-    // convert nodePtr to floats to make corners
-    float xPos = (float)nodePtr->s_x;
-    float zPos = (float)nodePtr->s_z;
-    float nodeWidth = (float)nodePtr->s_width;
+    if (nodePtr->s_models.size() == 0) {
+      nodePtr->s_insideFrustum = true; // Beacuse there are nothing to show, it does not matter.
+    }                                  // Skip culling it
 
-    // Create corners from node pos to test for frustum
-    glm::vec3 nodeCorners[4];
-    nodeCorners[0] = glm::vec3(xPos,                  0, zPos + nodeWidth); // TOP_LEFT
-    nodeCorners[1] = glm::vec3(xPos + nodeWidth,      0, zPos + nodeWidth); // TOP_RIGHT
-    nodeCorners[2] = glm::vec3(xPos,                  0, zPos);             // BOTTOM_LEFT
-    nodeCorners[3] = glm::vec3(xPos + nodeWidth,      0, zPos);             // BOTTOM_RIGHT
-
-    // Cull node corners
-    for (size_t i = 0; i < 4 && !nodePtr->s_insideFrustum; i++) {
-      nodePtr->s_insideFrustum = InsideFrustrum(nodeCorners[i]);
-    // std::cout << "Looking at the nodeID: " << nodePtr->s_id << ", inside? "<< nodePtr->s_insideFrustum << '\n';
+    // Cull models extreme points in node
+    for (size_t m = 0; m < nodePtr->s_models.size(); m++) {
+      for (size_t i = 0; i < 9 && !nodePtr->s_insideFrustum; i++) {
+        nodePtr->s_insideFrustum = InsideFrustrum(nodePtr->s_models[m]->s_localizePos[i]);
+      }
     }
 
 

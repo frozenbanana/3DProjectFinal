@@ -7,7 +7,6 @@
 #include <glm/gtc/matrix_access.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-GLint TextureFromFile(const char* path, std::string directory);
 
 Model::Model() : Transform() {
 
@@ -18,9 +17,13 @@ Model::Model(std::string path) : Transform() {
 }
 
 void Model::LoadModel(std::string path) {
+  // Prepare min, max pos
+  m_minX = m_minY = m_minZ = 999999999.0f; //giving them a ridiculus value to easy change
+  m_maxX = m_maxY = m_maxZ = -999999999.0f;
+
   // Read file via assimp
-  Assimp::Importer importer;
-  const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+  Assimp::Importer importer;                                                                 // TEST
+  const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
   // Check for errors
   if (!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
@@ -47,6 +50,17 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene) {
   }
 }
 
+void Model::ControllMinMaxPos(glm::vec3 meshPos) {
+  // Max values
+  if (meshPos.x > m_maxX) {m_maxX = meshPos.x; };
+  if (meshPos.y > m_maxY) {m_maxY = meshPos.y; };
+  if (meshPos.z > m_maxZ) {m_maxZ = meshPos.z; };
+
+  // Min values
+  if (meshPos.x < m_minX) {m_minX = meshPos.x; };
+  if (meshPos.y < m_minY) {m_minY = meshPos.y; };
+  if (meshPos.z < m_minZ) {m_minZ = meshPos.z; };
+}
 
 Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
   // Data containers to fill
@@ -62,6 +76,7 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
     vector.x = mesh->mVertices[i].x;
     vector.y = mesh->mVertices[i].y;
     vector.z = mesh->mVertices[i].z;
+    ControllMinMaxPos(vector);
     vertex.SetPos(vector);
 
     // Normals
@@ -70,20 +85,32 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
     vector.z = mesh->mNormals[i].z;
     vertex.SetNormal(vector);
 
-    // if mesh contains texCoords
-    if(mesh->mTextureCoords[0]) {
+    if (mesh->mTextureCoords[0]) { // does the mesh contain texture coordinates?
       glm::vec2 vec;
-      // in assimp a vertex can have 8 different texture coordinates. Assume first is best
+      // a vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't
+      // use models where a vertex can have multiple texture coordinates so we always take the first set (0).
       vec.x = mesh->mTextureCoords[0][i].x;
       vec.y = mesh->mTextureCoords[0][i].y;
       vertex.SetTexCoord(vec);
-    } else {
+
+      // tangent
+      vector.x = mesh->mTangents[i].x;
+      vector.y = mesh->mTangents[i].y;
+      vector.z = mesh->mTangents[i].z;
+      vertex.SetTangent(vector);
+
+      // bitangent
+      vector.x = mesh->mBitangents[i].x;
+      vector.y = mesh->mBitangents[i].y;
+      vector.z = mesh->mBitangents[i].z;
+      vertex.SetBitangent(vector);
+    }
+    else {
       vertex.SetTexCoord(glm::vec2(0.0f, 0.0f));
     }
-
     // Store newly filled vertex
     vertices.push_back(vertex);
-  }
+    }
 
   // Indices
   for (GLuint i = 0; i < mesh->mNumFaces; i++) {
@@ -113,18 +140,15 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
 
 std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName) {
   std::vector<Texture> textures;
-  for (GLuint i = 0; i < material->GetTextureCount(type); i++)
-    {
+  for (GLuint i = 0; i < material->GetTextureCount(type); i++) {
       aiString str;
       material->GetTexture(type, i, &str);
 
       // Check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
       bool skip = false;
 
-      for (GLuint j = 0; j < m_textures_loaded.size(); j++)
-	{
-          if(m_textures_loaded[j].path == str)
-	    {
+      for (GLuint j = 0; j < m_textures_loaded.size(); j++) {
+          if(m_textures_loaded[j].path == str) {
               textures.push_back(m_textures_loaded[j]);
               skip = true; // A texture with the same filepath has already been loaded, continue to next one. (optimization)
               break;
@@ -145,6 +169,17 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *material, aiTexture
 
   return textures;
 }
+
+// void Model::SetTexture(std::string path, std::string typeName) {
+//   // NOTE: Only use this for models with one mesh!
+//   std::string directory = path.substr(0, path.find_last_of('/'));
+//   std::string filename = directory + '/' + filename;
+//   Texture tex;
+//   tex.id = TextureFromFile(path.c_str(), directory, typeName);
+//   tex.type = typeName;
+//   tex.path = aiString(filename);
+//   m_textures_loaded[0].push_back(tex);
+// }
 
 GLint Model::TextureFromFile(const char *path, std::string directory, std::string typeName) {
   //Generate texture ID and load texture data
@@ -241,6 +276,15 @@ ModelData& Model::GetModelData() {
   m_modelData.s_meshIndices = GetModelMeshesIndices();
   m_modelData.s_meshTextures = GetMeshTextures();
   m_modelData.s_modelMat = GetModelMatrix();
+  m_modelData.s_localizePos[0] = glm::vec3(m_modelData.s_modelMat * glm::vec4(m_maxX, m_maxY, m_maxZ,1.0f)); // Top
+  m_modelData.s_localizePos[1] = glm::vec3(m_modelData.s_modelMat * glm::vec4(m_maxX, m_maxY, m_minZ,1.0f));
+  m_modelData.s_localizePos[2] = glm::vec3(m_modelData.s_modelMat * glm::vec4(m_minX, m_maxY, m_minZ,1.0f));
+  m_modelData.s_localizePos[3] = glm::vec3(m_modelData.s_modelMat * glm::vec4(m_minX, m_maxY, m_maxZ,1.0f));
+  m_modelData.s_localizePos[4] = glm::vec3(m_modelData.s_modelMat * glm::vec4(m_maxX, m_minY, m_maxZ,1.0f)); // bottom
+  m_modelData.s_localizePos[5] = glm::vec3(m_modelData.s_modelMat * glm::vec4(m_maxX, m_minY, m_minZ,1.0f));
+  m_modelData.s_localizePos[6] = glm::vec3(m_modelData.s_modelMat * glm::vec4(m_minX, m_minY, m_minZ,1.0f));
+  m_modelData.s_localizePos[7] = glm::vec3(m_modelData.s_modelMat * glm::vec4(m_minX, m_minY, m_maxZ,1.0f));
+  m_modelData.s_localizePos[8] = glm::vec3(m_modelData.s_modelMat * glm::vec4(m_maxX - m_minX, m_maxY - m_minY, m_maxZ - m_minZ, 1.0f));
 
   return m_modelData;
 }

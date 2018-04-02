@@ -1,5 +1,3 @@
-//THIS ONE
-
 #ifndef GBUFFER_H
 #define GBUFFER_H
 
@@ -10,8 +8,11 @@ class GBuffer
 private:
   GLuint m_gBuffer;
   GLuint m_gPosition, m_gNormal, m_gDiffSpec;
+  GLuint m_gLgtPos; //For Shadow Mapping
+
   GLuint m_rbo_depth;
   GLuint m_uni_gPosition, m_uni_gNormal, m_uni_gDiffSpec;
+  GLuint m_uni_gLgtPos; //For Shadow Mapping
 
   void CreateTexture(GLuint id, GLint internalFormat, GLenum format, GLenum type);
   void AttachTexture(GLuint id, GLenum attachment);

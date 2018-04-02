@@ -12,14 +12,14 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch)
   m_pitch = pitch;
   m_fov = glm::radians(45.0f);
   m_aspect = ((GLfloat)WINDOW_WIDTH / (GLfloat)WINDOW_HEIGHT);
-  m_nearPlane = 0.1f;
-  m_farPlane = 100.0f;
+  m_nearPlane = 0.001f;
+  m_farPlane = 1000.0f;
 
   m_heightOffset = 5.0f;
   // make camera perspective matrix
   m_pers = glm::perspective(m_fov, m_aspect, m_nearPlane, m_farPlane);
 
-  m_movementSpeed = 5.0f;
+  m_movementSpeed = 50.0f;
   m_mouseSensitivity = 0.6f;
   m_zoom = 1.0f;
   UpdateCameraVectors();
@@ -49,7 +49,7 @@ void Camera::UpdateCameraVectors()
 void Camera::ApplyGravity(GLfloat heightLimit, GLfloat deltaTime) {
   GLfloat realHeightLimit = m_heightOffset + heightLimit;
   if (m_position.y > realHeightLimit)
-    m_position.y -= m_up.y * deltaTime;
+    m_position.y -= m_up.y * deltaTime * m_movementSpeed;
   else
     m_position.y = realHeightLimit;
 
@@ -91,7 +91,7 @@ void Camera::ProcessKeyboard(Camera_Movement direction, GLfloat deltaTime)
   }
 
   if (direction == UP) {
-    m_position += m_up * velocity;
+    m_position += m_worldUp * velocity;
   }
 
   UpdateCameraVectors();

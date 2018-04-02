@@ -14,7 +14,7 @@ public:
   LightHandler();
   ~LightHandler();
 
-  void AddPntLight(glm::vec3 pos, glm::vec4 col_amb, glm::vec4 col_dif, glm::vec4 col_spe);
+  void AddPntLight(glm::vec3 pos, glm::vec4 col_amb, glm::vec4 col_dif, glm::vec4 col_spe, float c, float l, float q);
   void AddDirLight(glm::vec3 dir, glm::vec4 col_amb, glm::vec4 col_dif, glm::vec4 col_spe);
   void AddSptLight(glm::vec3 pos, glm::vec3 poi, float n_plane, float f_plane, glm::vec4 col_amb, glm::vec4 col_dif, glm::vec4 col_spe);
 
