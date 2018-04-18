@@ -1,8 +1,5 @@
 #include "PntLight.hpp"
 
-//#include <stdio.h>
-//#include <iostream>
-
 //Public
 PntLight::PntLight(
   glm::vec3 pos,
