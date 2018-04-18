@@ -19,7 +19,6 @@ enum TextureEnums {
 };
 
 inline void Bind2DTextureTo(GLuint texture_id, TextureEnums target_unit) {
-  //std::cout << "Binding texture id: " << texture_id << " to texture unit: " << target_unit << '\n';
   glActiveTexture(GL_TEXTURE0 + target_unit);
   glBindTexture(GL_TEXTURE_2D, texture_id);
 }

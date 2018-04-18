@@ -197,7 +197,6 @@ void Shader::FindUniformMatrixLoc(std::string uniformName) {
   }
   else {
     m_matrixUniforms.push_back(uniformLoc);
-    //std::cout << "Pushed " << uniformName << " to index: " << (this->m_matrixUniforms.size() - 1) << '\n';
   }
 }
 
@@ -330,16 +329,6 @@ void Shader::UploadMatrix(glm::mat4 matrix, GLuint index) {
   //std::cout << "Uploaded index: " << index << '\n';
 }
 
-//void Shader::UploadTexture(GLuint tex_id, int index) {
-//
-//  if (this->m_textureUniforms.size() <= (unsigned int)index) {
-//    std::cout << "ERROR::SHADER::TEXTURE_UNIFORMS::INDEX_OUT_OF_BOUNDS" << '\n';
-//  }
-//  else {
-//    glUniform1i(this->m_textureUniforms[index], tex_id);
-//  }
-//}
-
 void Shader::UploadPntLight(PntLight in_light, GLuint index) {
   //NTS: glUniformXfv takes an uniform id, a number and a vecX pointer
 
@@ -387,14 +376,3 @@ void Shader::UploadSptLight(SptLight in_light, GLuint index) {
   //MATRIX
   //glUniformMatrix4fv(this->m_spt_lights.s_uni_mat[index], 1, GL_FALSE, glm::value_ptr(in_light.getLightMat()));
 }
-
-//void Shader::BindTexture(int index, TextureEnums target_unit) {
-//
-//  if (this->m_textureUniforms.size() <= (unsigned int)index) {
-//    std::cout << "ERROR::SHADER::TEXTURE_UNIFORMS::INDEX_OUT_OF_BOUNDS" << '\n';
-//  }
-//  else {
-//    Bind2DTextureTo(this.>m_textureUniforms[index], target_unit);
-//  }
-//
-//}

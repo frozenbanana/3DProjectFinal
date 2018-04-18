@@ -170,17 +170,6 @@ std::vector<Texture> Model::LoadMaterialTextures(aiMaterial *material, aiTexture
   return textures;
 }
 
-// void Model::SetTexture(std::string path, std::string typeName) {
-//   // NOTE: Only use this for models with one mesh!
-//   std::string directory = path.substr(0, path.find_last_of('/'));
-//   std::string filename = directory + '/' + filename;
-//   Texture tex;
-//   tex.id = TextureFromFile(path.c_str(), directory, typeName);
-//   tex.type = typeName;
-//   tex.path = aiString(filename);
-//   m_textures_loaded[0].push_back(tex);
-// }
-
 GLint Model::TextureFromFile(const char *path, std::string directory, std::string typeName) {
   //Generate texture ID and load texture data
   std::string filename = std::string(path);

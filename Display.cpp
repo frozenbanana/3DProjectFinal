@@ -110,10 +110,6 @@ void Display::FixTextureUniforms(Shader* shader_ptr, std::string type_str, int n
   }
 }
 
-//void Display::UploadTexture(Shader* shader_ptr, GLuint tex_id, int index) {
-//  shader_ptr->UploadTexture(tex_id, index);
-//}
-
 //Public------------------------------------------------------------------------
 
 Display::Display(int width, int height, const std::string& title, Camera* camPtr, Terrain* terrainPtr) {

@@ -180,7 +180,7 @@ int main() {
      frustum.CullNode(quadtree.GetRootNode());        // recursivly cull every node in QuadTree
      quadtree.FillModelPack(quadtree.GetRootNode());  // recursivly fill modelPackage in QuadTree
      modelsToDraw = quadtree.GetModelPack();          // Add culled models
-     modelsToDraw.push_back(&terrain.GetModelData()); // add always terrain
+     modelsToDraw.push_back(&terrain.GetModelData()); // Add always terrain
      display.DrawDR(modelsToDraw, lPack);             // Draw models
 
      // getchar();
