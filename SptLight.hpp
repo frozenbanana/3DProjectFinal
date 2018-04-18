@@ -10,8 +10,6 @@ private:
 
   glm::mat4 m_light_mat;
 
-  //Save light map in here
-
 public:
   SptLight(
     glm::vec3 pos,

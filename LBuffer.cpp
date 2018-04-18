@@ -21,6 +21,7 @@ void LBuffer::CreateTexture(GLuint id, GLint internalFormat, GLenum format, GLen
     NULL              //const GLvoid* data    -A pointer to where the image data lies
   );
 
+  //
   //These lines of code makes it so that anything outside the range of the depthmap is set to
   //give a value 1.0, that is to say, as far away as possible. This prevents some sharp edges in the shadow
   //It also prevents the texture from wrapping and creating clones of the shadow here and there

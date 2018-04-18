@@ -316,7 +316,6 @@ void Display::SetShadowShader(Shader* shaS) {
 }
 
 void Display::UpdateDR() {
-  //std::cout << "In UpdateDR" << '\n';
 
   glfwSwapBuffers(this->m_window);
   glfwPollEvents();
@@ -404,7 +403,7 @@ void Display::DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack) {
   glUseProgram(this->m_lgtShaderPtr->GetProgram());
 
   this->m_gBuffer.PrepLightPass();
-  this->m_ppBuffer.BindResult();
+  //this->m_ppBuffer.BindResult();
   this->m_lBuffer.PrepLightPass();
 
   //Upload camera position
@@ -433,16 +432,12 @@ void Display::RenderMeshDR(ModelData* modelData) {
           n_tex = glm::vec3(1.0f, 1.0f, 1.0f);
           break;
         case 2:
-          //NTS:  The below line SHOULD NOT BE USED. The uniform is linked to a binding from where it gets its values
-          //      Uploading to this uniform messes with how it is read. Line (And function) left for future reference.
-          //this->UploadTexture(this->m_geoShaderPtr, modelData.s_meshTextures[i][1].id, 1);    //Specular
           Bind2DTextureTo(modelData->s_meshTextures[i][0].id, MESHDIFF_TEX);
           Bind2DTextureTo(modelData->s_meshTextures[i][1].id, MESHSPEC_TEX);
           //n_tex = 2;
           n_tex = glm::vec3(1.0f, 1.0f, 0.0f);
           break;
         case 1:
-          //this->UploadTexture(this->m_geoShaderPtr, modelData.s_meshTextures[i][0].id, 0);    //Diffuse
           Bind2DTextureTo(modelData->s_meshTextures[i][0].id, MESHDIFF_TEX);
           //n_tex = 1;
           n_tex = glm::vec3(1.0f, 0.0f, 0.0f);
@@ -451,8 +446,7 @@ void Display::RenderMeshDR(ModelData* modelData) {
           //No textures in mesh
           break;
       }
-      // std::cout << "n_tex:" << n_tex << '\n';
-     //this->m_geoShaderPtr->DirectInt("n_tex", n_tex);  //Variable uploaded to shader for checking if the uniform samplers contain anything
+
      this->m_geoShaderPtr->UploadVec3(n_tex, 1);
 
     // draw points 0-3 from the currently bound VAO with current in-use shader

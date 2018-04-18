@@ -15,13 +15,6 @@ out vec4 v_lgtpos;
 out vec3 v_nor_world; // normal in camera space
 out vec3 v_tan_world; // tangent in camera space
 out vec3 v_btan_world; // bitangent in camera space
-// out vec3 v_worldDir_world; // a vector from vertex to camera in cam space
-// out vec3 v_lgtDir_world; // a vector from vertex to light in cam space
-// out vec3 v_lgtPos_world; // Position of light in cam space
-//
-// out vec3 v_worldDir_tan; // a vector in from vertex to camera in tan space
-// out vec3 v_lgtDir_tan; // a vector from vertex to light in tan space
-// end normal mapping
 
 uniform mat4 model;
 uniform mat4 view;
@@ -40,14 +33,12 @@ void main() {
   v_uvs = in_uvs;
 
   // NORMALMAPPING
-
   // Get Normal, Tangent and Bitanget in world space
   v_nor_world  = vec3(model * vec4(in_nor, 0.0f) );
   v_tan_world  = vec3(model * vec4(in_tan, 0.0f) );
   v_btan_world = vec3(model * vec4(in_btan, 0.0f) );
   // END NORMALMAPPING
-  //WIP
+
   v_lgtpos = light_mat * w_pos;
-  //v_lgtpos = v_pos; //Temp, just to prevent crashing
 
 }

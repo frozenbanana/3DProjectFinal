@@ -1,9 +1,5 @@
 #include "DirLight.hpp"
 
-//Private
-
-
-
 //Public
 DirLight::DirLight(
   glm::vec3 dir,

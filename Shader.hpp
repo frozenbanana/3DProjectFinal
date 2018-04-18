@@ -38,19 +38,7 @@ private:
     std::vector<GLuint> s_uni_amb;
     std::vector<GLuint> s_uni_dif;
     std::vector<GLuint> s_uni_spe;
-
-    //std::vector<GLuint> s_uni_mat;
   };
-
-  /*
-  struct TextureUniforms {
-    std::vector<GLuint> s_uni_dif;
-    std::vector<GLuint> s_uni_spe;
-    //std::vector<GLuint> s_uni_lgt;
-    //std::vector<GLuint> s_uni_com;
-    std::vector<GLuint> s_uni_any;
-  };
-  */
 
   GLuint m_program;
   std::vector<GLint> m_matrixUniforms;
@@ -97,7 +85,6 @@ public:
   void UploadDirLight(DirLight in_light, GLuint index);
   void UploadSptLight(SptLight in_light, GLuint index);
 
-  //void BindTexture(int index, TextureEnums target_unit); //Faulty? [uni-id not same as tex-id]
 };
 
 

@@ -9,10 +9,6 @@ private:
   GLuint m_buffers[2];
   int m_texture_width;
   int m_texture_height;
-  //? GLuint quadVAO;
-  //? GLuint quadVBO;
-  // GLuint ...
-  // GLuint ...
   GLint m_xy_uniLoc;
 
   void createBuffer(GLuint buffer_id);
@@ -26,15 +22,6 @@ public:
   void DoPingPong(int n_passes, GLuint src_buffer);
 
   void BindResult();
-  //OLD STUFF//
-	//void getUniformSamplerLocation(JMshader* shaderPtr);
-	//void uploadUniformSampler(JMshader* shaderPtr);
-	//
-	//void locateUploadAndBindUniformSampler(JMshader* shaderPtr);
-
-	//void getUniformVec2Location(JMshader* shaderPtr);
-	//
-	//void bindMap();
 };
 
 #endif

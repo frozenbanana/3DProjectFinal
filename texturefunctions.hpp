@@ -3,8 +3,6 @@
 
 #include <GL/glew.h>
 
-//#include <stdio.h>
-
 enum TextureEnums {
   POS_TEX,        //0
   NOR_TEX,        //1

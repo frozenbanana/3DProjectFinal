@@ -23,8 +23,6 @@ struct SptLight {
   vec4 dif;
   vec4 spe;
 
-  //MATRIX
-
 };
 
 uniform PntLight pnt_lights[NR_OF_PNTLIGHTS];

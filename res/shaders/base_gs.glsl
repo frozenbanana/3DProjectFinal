@@ -5,7 +5,6 @@ layout(triangle_strip, max_vertices = 3) out;
 
 uniform vec3 camPos;
 uniform mat4 model;
-// in vec3 v_posWorld[];
 in vec3 v_camPos[];
 
 void processPrimitive();

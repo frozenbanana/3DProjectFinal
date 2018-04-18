@@ -2,10 +2,6 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-//Private
-
-
-
 //Public
 SptLight::SptLight(
   glm::vec3 pos,

@@ -53,8 +53,6 @@ int main() {
   Camera camera2(glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, -45.0f);
   Display display(WINDOW_WIDTH, WINDOW_HEIGHT, "Integrating frustum and DR", &camera);
   display.SetExtraCamera(&camera2);
-  //Shader shader(vertex_shader, geometry_shader, fragment_shader);
-  //display.SetShader(&shader);   // Function also fixes uniforms for 3 matrices an a bunch of lights
 
   // SETUP QUADTREE AND FRUSTUM WITH MODELS
   Frustum frustum(camera.GetViewPersMatrix());

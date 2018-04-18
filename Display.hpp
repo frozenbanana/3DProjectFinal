@@ -66,7 +66,6 @@ private:
   void RenderMeshDR(ModelData* modelData);
   void UploadLightPack(Shader* shader_ptr, LightPack& lPack);
   void FixTextureUniforms(Shader* shader_ptr, std::string type_str, int n_tex);
-  //void UploadTexture(Shader* shader_ptr, GLuint tex_id, int index);
 public:
   Camera* m_camPtr;
   GLfloat m_deltaTime;
@@ -81,18 +80,11 @@ public:
   void ToggleGravity();
   void Clear(float r, float g, float b, float a);
 
-  // SIMPLE
-  //void SetShader(Shader* shaderPtr);
-  //void Update();
-  //void Draw(ModelData& modelData, LightPack& lPack);
-  //void Draw(std::vector<ModelData*> modelPack, LightPack& lPack);
-
   // ADVANCED
   void SetDRShaders(Shader* geoS, Shader* lgtS);
   void SetComputeShader(Shader* comS, Shader* tarS);
   void SetShadowShader(Shader* shaS);
   void UpdateDR();
-  //void DrawDR(ModelData& modelData, LightPack& lPack);
   void DrawDR(std::vector<ModelData*> modelPack, LightPack& lPack);
 
 };

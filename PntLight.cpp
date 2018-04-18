@@ -1,11 +1,7 @@
 #include "PntLight.hpp"
 
-#include <stdio.h>
-#include <iostream>
-
-//Private
-
-
+//#include <stdio.h>
+//#include <iostream>
 
 //Public
 PntLight::PntLight(

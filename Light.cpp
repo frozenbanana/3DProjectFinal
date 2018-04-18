@@ -1,8 +1,5 @@
 #include "Light.hpp"
 
-//Private
-
-
 //Public
 Light::Light(glm::vec4 col_amb, glm::vec4 col_dif, glm::vec4 col_spe) {
   this->m_col_amb = col_amb;

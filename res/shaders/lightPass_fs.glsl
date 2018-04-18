@@ -59,7 +59,6 @@ float pcf_shadCalc(vec4 fragPos, vec3 fragNor, vec3 lightPos);
 void main() {
   //GATHER DATA AND CALCULATE SOME STUFF----------------------------------------
   vec3 fragment_w_pos = texture(gPosition, v_uvs).rgb;
-  // vec3 fragment_w_nor = texture(gNormal, v_uvs).rgb;
   vec3 fragment_w_nor = texture(gNormal, v_uvs).rgb;
   vec4 fragment_col   = texture(gDiffSpec, v_uvs);
   vec4 fragment_l_pos = texture(gLgtPos, v_uvs);
@@ -91,20 +90,11 @@ void main() {
 
   out_col = vec4(fin_col, 1.0);
 
-  // if (v_uvs.x < 0.5) {
-  //  out_col = texture(texture_computed0, v_uvs);
-  //  ivec2 imgCrds = ivec2( v_uvs.x * 640, v_uvs.y * 480 );
-  //  out_col = imageLoad(texture_computed0, imgCrds);
-  // }
-
-  //out_col += pnt_lights[0].dif * 0.01 + dir_lights[0].dif * 0.01 + spt_lights[0].dif * 0.01; //All uploads must be used or we get a segmentation error
-}//Main
+  }//Main
 
 vec3 pntLightCalc(PntLight lgt, vec3 frag_pos, vec3 frag_nor, vec3 view_dir, vec4 frag_col) {
   vec3 light_dir = normalize(lgt.pos - frag_pos);
   vec3 half_dir = normalize(light_dir + view_dir);
-
-  //vec3 amb_lgt = vec3(light_col * amb_coe);
 
   float dif_coe = max( dot(frag_nor, light_dir), 0 );
 

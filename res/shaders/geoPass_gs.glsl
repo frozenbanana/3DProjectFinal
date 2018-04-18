@@ -66,10 +66,6 @@ bool cullPrimitive(){
   vec3 cullCam;		 // The vector from the corner to the worldera
   float coe;		   // A coefficient holder
 
-  //vec3 cornerVec = gl_in[0].gl_Position.xyz;
-  //edge1 = gl_in[1].gl_Position.xyz - cornerVec;
-  //edge2 = gl_in[2].gl_Position.xyz - cornerVec;
-
   vec3 cornerVec = v_pos[0];
   edge1 = v_pos[2] - cornerVec;
   edge2 = v_pos[1] - cornerVec;
