@@ -68,7 +68,6 @@ public:
       }
     }
 
-
     // If we are at bottom jump out
     if (nodePtr->s_isLeaf) {
       return;

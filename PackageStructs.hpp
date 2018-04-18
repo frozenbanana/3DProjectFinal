@@ -10,14 +10,14 @@
 
 //For Models
 struct ModelData {
-  bool s_insideFrustum;
-  GLenum s_mode;
-  std::vector<GLuint> s_VAOs;
-  std::vector< std::vector<GLuint> > s_meshIndices;
-  std::vector<std::vector<glm::vec3> > s_meshPos;
-  std::vector< std::vector<Texture> > s_meshTextures;
-  glm::vec3 s_localizePos[9];
-  glm::mat4 s_modelMat;
+  bool s_insideFrustum;                               // is the model inside frustum
+  GLenum s_mode;                                      // Which mode to render
+  std::vector<GLuint> s_VAOs;                         // list of vaos for model
+  std::vector< std::vector<GLuint> > s_meshIndices;   // list of indices for each mesh in model
+  std::vector<std::vector<glm::vec3> > s_meshPos;     // list of position for every mesh
+  std::vector< std::vector<Texture> > s_meshTextures; // list of textures for every mesh
+  glm::vec3 s_localizePos[9];                         // extreme points of model. Used in frustum culling
+  glm::mat4 s_modelMat;                               // model matrix for the model
 };
 
 /*ModelPack*/

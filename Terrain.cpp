@@ -236,17 +236,14 @@ void Terrain::ComputeTangents() {
   for (size_t h = 0; h < m_height - 1; h++) {
     for (size_t w = 0; w < m_width - 1; w++) {
       offset = h * m_width + w;
-      // std::cout << offset << std::endl;
-      // std::cout << offset + m_width<< std::endl;
-      // std::cout << offset + 1 << std::endl;
       if (i < m_vertices.size()) {
-      for (size_t k = 0; k < 3; k++) {
-        ComputeTangentBasis(m_vertices[offset].GetPosRef(), m_vertices[offset + m_width].GetPosRef(), m_vertices[offset + 1].GetPosRef(),
-                            m_vertices[offset].GetTexCoordRef(), m_vertices[offset + m_width].GetTexCoordRef(), m_vertices[offset + 1].GetTexCoordRef(),
-                            m_vertices[i].GetNormalRef(), m_vertices[i].GetTangentRef(), m_vertices[i].GetBitangentRef() );
-        i++;
+        for (size_t k = 0; k < 3; k++) {
+          ComputeTangentBasis(m_vertices[offset].GetPosRef(), m_vertices[offset + m_width].GetPosRef(),              m_vertices[offset + 1].GetPosRef(),
+                              m_vertices[offset].GetTexCoordRef(), m_vertices[offset + m_width].GetTexCoordRef(), m_vertices[offset + 1].GetTexCoordRef(),
+                              m_vertices[i].GetNormalRef(), m_vertices[i].GetTangentRef(), m_vertices[i].GetBitangentRef() );
+          i++;
+        }
       }
-    }
     // Explaination: Note that edge and texEdge are from the same triangle
     //               edge is expressed in modelspace and tex in UVs
     //               tanget is alined with u-coordinate of texCoord
@@ -306,12 +303,10 @@ void Terrain::ComputeTangentBasis(const glm::vec3& P0, const glm::vec3& P1, cons
 		//solve this for the unormalized T and B to get from tangent to object space
 
 		float tmp = 0.0f;
-		if(fabsf(s1*t2 - s2*t1) <= 0.0001f)
-		{
+		if(fabsf(s1*t2 - s2*t1) <= 0.0001f) {
 			tmp = 1.0f;
 		}
-		else
-		{
+		else {
 			tmp = 1.0f/(s1*t2 - s2*t1 );
 		}
 
