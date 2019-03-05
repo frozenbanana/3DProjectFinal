@@ -1,5 +1,7 @@
 # 3DProject
-A Terrain rendered with random meshes from a heightmap. Walk with WASD and SPACE to move up.
+A Terrain rendered with random meshes from a heightmap. Walk with WASD and SPACE to move up. Esc to quit.
+
+![print screen from terrain](https://i.postimg.cc/8k65q3dY/3dprojectterrain.png)
 
 # How to run
 ```
